@@ -1,0 +1,105 @@
+{
+  "places": [
+    {
+      "displayName": {
+        "text": "Delicious Restaurant",
+        "languageCode": "en"
+      },
+      "formattedAddress": "123 Main Street, San Francisco, CA 94105",
+      "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "types": [
+        "restaurant",
+        "food",
+        "point_of_interest",
+        "establishment"
+      ],
+      "rating": 4.5,
+      "userRatingCount": 325,
+      "priceLevel": "PRICE_LEVEL_MODERATE",
+      "photos": [
+        {
+          "name": "places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/AWU5eFgRnrODxFGJUMvSNR8j77aRN7VXd12FffTVm_CULaauXpuLOWo62ciQibTT6L5LcNFIIzk3QE_wvH1XsbnPfPEX0nBH-SU-GmmClnVsRkF7pTnxO5-HTy9cwQNukzG6PSn_",
+          "widthPx": 4032,
+          "heightPx": 3024,
+          "authorAttributions": [
+            {
+              "displayName": "John Smith",
+              "uri": "https://www.google.com/maps/contrib/102242826711097391667/reviews"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayName": {
+        "text": "Tasty Cafe",
+        "languageCode": "en"
+      },
+      "formattedAddress": "456 Market Street, San Francisco, CA 94105",
+      "location": {
+        "latitude": 37.7892,
+        "longitude": -122.4007
+      },
+      "types": [
+        "cafe",
+        "restaurant",
+        "food",
+        "point_of_interest",
+        "establishment"
+      ],
+      "rating": 4.2,
+      "userRatingCount": 187,
+      "priceLevel": "PRICE_LEVEL_INEXPENSIVE",
+      "photos": [
+        {
+          "name": "places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/AWU5eFhxzNhnL4gnFFL0LO0QBM8bK8YFVTA7lDcxyi2A-YILsjKEOFmz1gV33FE5V9cB_TjJkHN0RHR-aIe83Bdmw58t6JtlNcCNvW94i_YSJBmRZF19QwNMbL1Y8EiwRJRoQ-Wn",
+          "widthPx": 4000,
+          "heightPx": 3000,
+          "authorAttributions": [
+            {
+              "displayName": "Jane Doe",
+              "uri": "https://www.google.com/maps/contrib/107647377581352005596/reviews"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayName": {
+        "text": "Sushi Paradise",
+        "languageCode": "en"
+      },
+      "formattedAddress": "789 Howard Street, San Francisco, CA 94105",
+      "location": {
+        "latitude": 37.7859,
+        "longitude": -122.3997
+      },
+      "types": [
+        "restaurant",
+        "japanese_restaurant",
+        "food",
+        "point_of_interest",
+        "establishment"
+      ],
+      "rating": 4.7,
+      "userRatingCount": 532,
+      "priceLevel": "PRICE_LEVEL_EXPENSIVE",
+      "photos": [
+        {
+          "name": "places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/AWU5eFjkTeL-VY6Q4CdJr6ltkiOQOKGuxJ1TJ0o1hCyF03OSq-VnCc3h_PJ6LwUNWGLs5UqILiRt8TQ7wSn0i7lEOYyJ_gn5ZhV2JiXy_jbSIBOegOaX8bmCjeI73xUP09rnHuYE",
+          "widthPx": 3864,
+          "heightPx": 2172,
+          "authorAttributions": [
+            {
+              "displayName": "Sushi Lover",
+              "uri": "https://www.google.com/maps/contrib/115367461728464662861/reviews"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

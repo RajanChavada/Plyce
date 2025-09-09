@@ -1,0 +1,1 @@
+Food locator application that uses google maps api to determine the location of food places nearby.
