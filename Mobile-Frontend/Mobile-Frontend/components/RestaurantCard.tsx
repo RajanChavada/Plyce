@@ -1,98 +1,244 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Restaurant } from '../services/ApiService';
+import { Ionicons } from '@expo/vector-icons';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
   onPress?: () => void;
+  userLocation?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
-const RestaurantCard = ({ restaurant, onPress }: RestaurantCardProps) => {
-  const formatPriceLevel = (priceLevel: string | undefined) => {
-    if (!priceLevel) return '';
+const RestaurantCard = ({ restaurant, onPress, userLocation }: RestaurantCardProps) => {
+  // Calculate distance if both locations are available
+  const getDistance = () => {
+    if (!userLocation || !restaurant.location) return null;
     
-    switch (priceLevel) {
-      case 'PRICE_LEVEL_INEXPENSIVE': return '$';
-      case 'PRICE_LEVEL_MODERATE': return '$$';
-      case 'PRICE_LEVEL_EXPENSIVE': return '$$$';
-      case 'PRICE_LEVEL_VERY_EXPENSIVE': return '$$$$';
-      default: return '';
+    // Calculate distance in km using Haversine formula
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(restaurant.location.latitude - userLocation.latitude);
+    const dLon = deg2rad(restaurant.location.longitude - userLocation.longitude);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(userLocation.latitude)) * Math.cos(deg2rad(restaurant.location.latitude)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    
+    return distance < 1 ? 
+      `${(distance * 1000).toFixed(0)}m` : 
+      `${distance.toFixed(1)}km`;
+  };
+  
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI / 180);
+  };
+  
+  // Get restaurant image URL or use a placeholder
+  const getImageUrl = () => {
+    if (restaurant.photos && restaurant.photos.length > 0 && restaurant.photos[0].googleMapsUri) {
+      return restaurant.photos[0].googleMapsUri;
     }
+    // Fallback placeholder image
+    return 'https://via.placeholder.com/150?text=No+Image';
+  };
+  
+  // Extract restaurant types for displaying as tags
+  const getRestaurantTags = () => {
+    if (!restaurant.types) return [];
+    
+    // Filter out common types that aren't useful as tags
+    const excludeTypes = ['restaurant', 'food', 'point_of_interest', 'establishment'];
+    
+    // Create tags array including types and known dietary options
+    const tags = restaurant.types
+      .filter(type => !excludeTypes.includes(type.toLowerCase()))
+      .map(type => type.replace(/_/g, ' '));
+      
+    // Add dietary preferences if available in the restaurant data
+    const isDietaryTag = restaurant.types.some(
+      t => t.toLowerCase().includes('vegetarian') || 
+           t.toLowerCase().includes('vegan') || 
+           t.toLowerCase().includes('halal')
+    );
+    
+    if (!isDietaryTag) {
+      // Add known dietary tags from the restaurant description
+      if (restaurant.formattedAddress?.toLowerCase().includes('vegetarian') || 
+          restaurant.displayName?.text.toLowerCase().includes('vegetarian')) {
+        tags.push('Vegetarian');
+      }
+      if (restaurant.formattedAddress?.toLowerCase().includes('vegan') || 
+          restaurant.displayName?.text.toLowerCase().includes('vegan')) {
+        tags.push('Vegan');
+      }
+      if (restaurant.formattedAddress?.toLowerCase().includes('halal') || 
+          restaurant.displayName?.text.toLowerCase().includes('halal')) {
+        tags.push('Halal');
+      }
+    }
+    
+    return tags.slice(0, 3); // Limit to 3 tags
+  };
+  
+  // Render star ratings
+  const renderRating = () => {
+    if (!restaurant.rating) return null;
+    
+    const fullStars = Math.floor(restaurant.rating);
+    const halfStar = restaurant.rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
+    return (
+      <View style={styles.ratingContainer}>
+        {[...Array(fullStars)].map((_, i) => (
+          <Ionicons key={`full-${i}`} name="star" size={16} color="#000" />
+        ))}
+        {halfStar && <Ionicons key="half" name="star-half" size={16} color="#000" />}
+        {[...Array(emptyStars)].map((_, i) => (
+          <Ionicons key={`empty-${i}`} name="star-outline" size={16} color="#000" />
+        ))}
+      </View>
+    );
   };
 
+  // Get main cuisine type
+  const getCuisineType = () => {
+    if (!restaurant.types) return 'Restaurant';
+    
+    const cuisineMapping: Record<string, string> = {
+      'italian_restaurant': 'Italian',
+      'japanese_restaurant': 'Japanese',
+      'chinese_restaurant': 'Chinese',
+      'mexican_restaurant': 'Mexican',
+      'indian_restaurant': 'Indian',
+      'thai_restaurant': 'Thai',
+      'french_restaurant': 'French',
+      'cafe': 'Café',
+      'bakery': 'Bakery',
+      'bar': 'Bar',
+      'pizza_restaurant': 'Pizza',
+      'fast_food_restaurant': 'Fast Food'
+    };
+    
+    for (const type of restaurant.types) {
+      if (cuisineMapping[type]) {
+        return cuisineMapping[type];
+      }
+    }
+    
+    return 'Restaurant';
+  };
+  
+  const distance = getDistance();
+  const tags = getRestaurantTags();
+
   return (
-    <TouchableOpacity onPress={onPress} style={styles.card}>
-      <Text style={styles.name}>
-        {restaurant.displayName?.text || 'Unknown Restaurant'}
-      </Text>
-      <Text style={styles.address}>
-        {restaurant.formattedAddress || 'No address available'}
-      </Text>
-      
-      <View style={styles.detailsRow}>
-        {restaurant.rating && (
-          <Text style={styles.rating}>⭐ {restaurant.rating.toFixed(1)}</Text>
-        )}
-        
-        {restaurant.priceLevel && (
-          <Text style={styles.price}>
-            {formatPriceLevel(restaurant.priceLevel)}
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image 
+        source={{ uri: getImageUrl() }} 
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <View style={styles.contentContainer}>
+        <View style={styles.headerRow}>
+          <Text style={styles.title} numberOfLines={1}>
+            {restaurant.displayName?.text || 'Unknown Restaurant'}
           </Text>
+          <Ionicons name="chevron-forward" size={20} color="#000" />
+        </View>
+        
+        <Text style={styles.cuisine}>{getCuisineType()}</Text>
+        
+        <View style={styles.detailsContainer}>
+          {renderRating()}
+          {distance && <Text style={styles.distance}>{distance}</Text>}
+        </View>
+        
+        {tags.length > 0 && (
+          <View style={styles.tagsContainer}>
+            {tags.map((tag, index) => (
+              <View key={index} style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
         )}
       </View>
-      
-      {restaurant.types && restaurant.types.length > 0 && (
-        <Text style={styles.types}>
-          {restaurant.types
-            .filter(type => !type.includes('_') && !['point_of_interest', 'establishment', 'food', 'store'].includes(type))
-            .join(' • ')}
-        </Text>
-      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    flexDirection: 'row',
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
+  image: {
+    width: 100,
+    height: 100,
   },
-  address: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
+  contentContainer: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'space-between',
   },
-  detailsRow: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    flex: 1,
+    marginRight: 8,
+  },
+  cuisine: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 2,
+  },
+  detailsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+  },
+  distance: {
+    fontSize: 12,
+    color: '#555',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 6,
+  },
+  tag: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    marginRight: 6,
     marginBottom: 4,
   },
-  rating: {
-    fontSize: 14,
-    color: '#FF8C00',
-    fontWeight: '500',
-  },
-  price: {
-    fontSize: 14,
-    color: '#2E8B57',
-    fontWeight: '500',
-  },
-  types: {
-    fontSize: 12,
-    color: '#888',
-    marginTop: 4,
+  tagText: {
+    fontSize: 10,
+    color: '#555',
   }
 });
 
