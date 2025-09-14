@@ -1,18 +1,48 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Restaurant } from '../services/ApiService';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Restaurant } from '../services/ApiService';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
-  onPress?: () => void;
   userLocation?: {
     latitude: number;
     longitude: number;
   };
 }
 
-const RestaurantCard = ({ restaurant, onPress, userLocation }: RestaurantCardProps) => {
+const RestaurantCard = ({ restaurant, userLocation }: RestaurantCardProps) => {
+  const router = useRouter();
+  
+  // Extract the correct ID
+  const getRestaurantId = () => {
+    // Use the restaurant's ID if available
+    if (restaurant.place_id) {
+      return restaurant.place_id;
+    } 
+    
+    // Parse the name field if it contains an ID
+    if (restaurant.name && typeof restaurant.name === 'string' && restaurant.name.includes('places/')) {
+      const match = restaurant.name.match(/places\/([^\/]+)/);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    
+    // Use the first part of the restaurant name as a fallback
+    const safeName = restaurant.displayName?.text?.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() || 'unknown';
+    return `fallback-${safeName}-${Math.random().toString(36).substring(2, 10)}`;
+  };
+
+  // Handle navigation to restaurant details
+  const handlePress = () => {
+    const restaurantId = getRestaurantId();
+    console.log('Navigating to restaurant details:', restaurantId);
+    
+    router.push(`/restaurant/${restaurantId}`);
+  };
+
   // Calculate distance if both locations are available
   const getDistance = () => {
     if (!userLocation || !restaurant.location) return null;
@@ -137,7 +167,7 @@ const RestaurantCard = ({ restaurant, onPress, userLocation }: RestaurantCardPro
   const tags = getRestaurantTags();
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
       <Image 
         source={{ uri: getImageUrl() }} 
         style={styles.image}

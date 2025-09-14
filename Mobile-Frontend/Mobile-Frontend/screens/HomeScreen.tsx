@@ -1,44 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  ActivityIndicator, 
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
   SafeAreaView,
   RefreshControl,
   TouchableOpacity,
   TextInput,
-  ScrollView
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useLocation } from '../contexts/LocationContext';
-import ApiService, { Restaurant } from '../services/ApiService';
-import RestaurantCard from '../components/RestaurantCard';
+  ScrollView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useLocation } from "../contexts/LocationContext";
+import ApiService, { Restaurant } from "../services/ApiService";
+import RestaurantCard from "../components/RestaurantCard";
 
 const CUISINE_FILTERS = [
-  'All', 'Italian', 'Japanese', 'Chinese', 'Indian', 'Mexican', 'Thai', 'Pizza'
+  "All",
+  "Italian",
+  "Japanese",
+  "Chinese",
+  "Indian",
+  "Mexican",
+  "Thai",
+  "Pizza",
 ];
 
-const DIETARY_FILTERS = [
-  'Vegetarian', 'Vegan', 'Halal', 'Gluten-Free'
-];
+const DIETARY_FILTERS = ["Vegetarian", "Vegan", "Halal", "Gluten-Free"];
 
-const PRICE_FILTERS = [
-  '$', '$$', '$$$', '$$$$'
-];
+const PRICE_FILTERS = ["$", "$$", "$$$", "$$$$"];
 
 const HomeScreen = () => {
-  const { location, loading: locationLoading, error: locationError, refreshLocation } = useLocation();
+  const router = useRouter();
+  const {
+    location,
+    loading: locationLoading,
+    error: locationError,
+    refreshLocation,
+  } = useLocation();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>(
+    []
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [usingCache, setUsingCache] = useState<boolean>(false);
-  
+
   // Filter states
-  const [selectedCuisine, setSelectedCuisine] = useState('All');
+  const [selectedCuisine, setSelectedCuisine] = useState("All");
   const [selectedDietary, setSelectedDietary] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -49,7 +61,7 @@ const HomeScreen = () => {
       await ApiService.initCache();
       checkCacheAndLoadData();
     };
-    
+
     initializeApp();
   }, []);
 
@@ -59,18 +71,31 @@ const HomeScreen = () => {
       checkCacheAndLoadData();
     }
   }, [location]);
-  
+
   // Apply filters when restaurants or filter criteria change
   useEffect(() => {
     applyFilters();
   }, [restaurants, selectedCuisine, selectedDietary, selectedPrice]);
 
+  // Add this somewhere in your HomeScreen's useEffect initialization
+  useEffect(() => {
+    const refreshData = async () => {
+      // Clear the cache and fetch fresh data
+      await ApiService.clearCache();
+      if (location) {
+        fetchRestaurants(true); // true = force refresh
+      }
+    };
+
+    refreshData();
+  }, []); // Run once on component mount
+
   const checkCacheAndLoadData = async () => {
     if (!location) return;
-    
+
     const hasCachedData = await ApiService.hasCachedData();
     setUsingCache(hasCachedData);
-    
+
     // If we have cached data, use it, otherwise force a refresh
     fetchRestaurants(!hasCachedData);
   };
@@ -81,106 +106,118 @@ const HomeScreen = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Fetching restaurants. Force refresh?', forceRefresh);
-      const data = await ApiService.getNearbyRestaurants(location, 5000, !forceRefresh);
-      
+
+      console.log("Fetching restaurants. Force refresh?", forceRefresh);
+      const data = await ApiService.getNearbyRestaurants(
+        location,
+        5000,
+        !forceRefresh
+      );
+
       setRestaurants(data);
-      
+
       // Update cache status after fetching
       const isUsingCache = !forceRefresh && (await ApiService.hasCachedData());
       setUsingCache(isUsingCache);
-      console.log('Using cache?', isUsingCache);
-      
+      console.log("Using cache?", isUsingCache);
     } catch (err) {
-      setError('Failed to load restaurants. Please try again.');
+      setError("Failed to load restaurants. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const applyFilters = () => {
     let filtered = [...restaurants];
-    
+
     // Apply cuisine filter
-    if (selectedCuisine !== 'All') {
-      filtered = filtered.filter(restaurant => {
+    if (selectedCuisine !== "All") {
+      filtered = filtered.filter((restaurant) => {
         if (!restaurant.types) return false;
-        
+
         // Convert cuisine name to API format (e.g., "Italian" -> "italian_restaurant")
-        const cuisineType = selectedCuisine.toLowerCase() + '_restaurant';
+        const cuisineType = selectedCuisine.toLowerCase() + "_restaurant";
         const cuisineTypeSimple = selectedCuisine.toLowerCase();
-        
-        return restaurant.types.some(type => 
-          type.includes(cuisineType) || 
-          type.includes(cuisineTypeSimple) || 
-          restaurant.displayName?.text.toLowerCase().includes(selectedCuisine.toLowerCase())
+
+        return restaurant.types.some(
+          (type) =>
+            type.includes(cuisineType) ||
+            type.includes(cuisineTypeSimple) ||
+            restaurant.displayName?.text
+              .toLowerCase()
+              .includes(selectedCuisine.toLowerCase())
         );
       });
     }
-    
+
     // Apply dietary filter
     if (selectedDietary) {
-      filtered = filtered.filter(restaurant => {
+      filtered = filtered.filter((restaurant) => {
         // Check types for dietary preferences
-        if (restaurant.types && restaurant.types.some(type => 
-          type.toLowerCase().includes(selectedDietary.toLowerCase())
-        )) {
+        if (
+          restaurant.types &&
+          restaurant.types.some((type) =>
+            type.toLowerCase().includes(selectedDietary.toLowerCase())
+          )
+        ) {
           return true;
         }
-        
+
         // Check name and address for dietary keywords
         const dietaryLower = selectedDietary.toLowerCase();
         return (
           restaurant.displayName?.text.toLowerCase().includes(dietaryLower) ||
-          (restaurant.formattedAddress && restaurant.formattedAddress.toLowerCase().includes(dietaryLower))
+          (restaurant.formattedAddress &&
+            restaurant.formattedAddress.toLowerCase().includes(dietaryLower))
         );
       });
     }
-    
+
     // Apply price filter
     if (selectedPrice) {
       const priceLevel = {
-        '$': 'PRICE_LEVEL_INEXPENSIVE',
-        '$$': 'PRICE_LEVEL_MODERATE',
-        '$$$': 'PRICE_LEVEL_EXPENSIVE',
-        '$$$$': 'PRICE_LEVEL_VERY_EXPENSIVE'
+        $: "PRICE_LEVEL_INEXPENSIVE",
+        $$: "PRICE_LEVEL_MODERATE",
+        $$$: "PRICE_LEVEL_EXPENSIVE",
+        $$$$: "PRICE_LEVEL_VERY_EXPENSIVE",
       }[selectedPrice];
-      
-      filtered = filtered.filter(restaurant => restaurant.priceLevel === priceLevel);
+
+      filtered = filtered.filter(
+        (restaurant) => restaurant.priceLevel === priceLevel
+      );
     }
-    
+
     setFilteredRestaurants(filtered);
   };
 
   const clearCacheAndRefresh = async () => {
     try {
-      console.log('Clearing cache and refreshing');
+      console.log("Clearing cache and refreshing");
       await ApiService.clearCache();
       setUsingCache(false);
       fetchRestaurants(true); // Force refresh after clearing cache
     } catch (err) {
-      setError('Failed to clear cache');
+      setError("Failed to clear cache");
       console.error(err);
     }
   };
 
   const useCachedData = async () => {
     try {
-      console.log('Attempting to use cached data');
+      console.log("Attempting to use cached data");
       const hasCachedData = await ApiService.hasCachedData();
-      
+
       if (hasCachedData) {
-        console.log('Cache available, using it');
+        console.log("Cache available, using it");
         fetchRestaurants(false); // Use cache
       } else {
-        console.log('No cache available, fetching fresh data');
-        setError('No cached data available. Fetching fresh data.');
+        console.log("No cache available, fetching fresh data");
+        setError("No cached data available. Fetching fresh data.");
         fetchRestaurants(true);
       }
     } catch (err) {
-      setError('Failed to check cache');
+      setError("Failed to check cache");
       console.error(err);
     }
   };
@@ -190,7 +227,7 @@ const HomeScreen = () => {
     await refreshLocation();
     setRefreshing(false);
   };
-  
+
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
@@ -211,10 +248,7 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.centered}>
           <Text style={styles.errorText}>{locationError}</Text>
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={refreshLocation}
-          >
+          <TouchableOpacity style={styles.button} onPress={refreshLocation}>
             <Text style={styles.buttonText}>Enable Location</Text>
           </TouchableOpacity>
         </View>
@@ -239,76 +273,68 @@ const HomeScreen = () => {
           </View>
         </TouchableOpacity>
       </View>
-      
+
       {/* Search Bar */}
       <TouchableOpacity style={styles.searchBar}>
         <Ionicons name="search" size={20} color="#999" />
         <Text style={styles.searchText}>Start Typing to Set Location</Text>
         <Ionicons name="close" size={20} color="#999" />
       </TouchableOpacity>
-      
+
       {/* Section Title */}
       <Text style={styles.sectionTitle}>Local Spots (5km)</Text>
-      
+
       {/* Filter Bar */}
       <View style={styles.filterBar}>
         <TouchableOpacity style={styles.filterToggle} onPress={toggleFilters}>
           <Ionicons name="funnel-outline" size={18} color="#000" />
           <Text style={styles.filterText}>Filters</Text>
         </TouchableOpacity>
-        
-        <ScrollView 
-          horizontal 
+
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.filterScroll}
         >
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
-              styles.filterChip, 
-              selectedCuisine !== 'All' && styles.filterChipActive
+              styles.filterChip,
+              selectedCuisine !== "All" && styles.filterChipActive,
             ]}
-            onPress={() => setSelectedCuisine(selectedCuisine === 'All' ? 'All' : 'All')}
+            onPress={() =>
+              setSelectedCuisine(selectedCuisine === "All" ? "All" : "All")
+            }
           >
             <Text style={styles.filterChipText}>Cuisine</Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color="#000" 
-            />
+            <Ionicons name="chevron-down" size={16} color="#000" />
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={[
-              styles.filterChip, 
-              selectedDietary !== null && styles.filterChipActive
+              styles.filterChip,
+              selectedDietary !== null && styles.filterChipActive,
             ]}
-            onPress={() => setSelectedDietary(selectedDietary ? null : 'Vegetarian')}
+            onPress={() =>
+              setSelectedDietary(selectedDietary ? null : "Vegetarian")
+            }
           >
             <Text style={styles.filterChipText}>Dietary</Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color="#000" 
-            />
+            <Ionicons name="chevron-down" size={16} color="#000" />
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={[
-              styles.filterChip, 
-              selectedPrice !== null && styles.filterChipActive
+              styles.filterChip,
+              selectedPrice !== null && styles.filterChipActive,
             ]}
-            onPress={() => setSelectedPrice(selectedPrice ? null : '$')}
+            onPress={() => setSelectedPrice(selectedPrice ? null : "$")}
           >
             <Text style={styles.filterChipText}>$$$</Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color="#000" 
-            />
+            <Ionicons name="chevron-down" size={16} color="#000" />
           </TouchableOpacity>
         </ScrollView>
       </View>
-      
+
       {/* Expanded Filters (when showFilters is true) */}
       {showFilters && (
         <View style={styles.expandedFilters}>
@@ -321,14 +347,18 @@ const HomeScreen = () => {
                     key={cuisine}
                     style={[
                       styles.filterOption,
-                      selectedCuisine === cuisine && styles.filterOptionSelected
+                      selectedCuisine === cuisine &&
+                        styles.filterOptionSelected,
                     ]}
                     onPress={() => setSelectedCuisine(cuisine)}
                   >
-                    <Text style={[
-                      styles.filterOptionText,
-                      selectedCuisine === cuisine && styles.filterOptionTextSelected
-                    ]}>
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        selectedCuisine === cuisine &&
+                          styles.filterOptionTextSelected,
+                      ]}
+                    >
                       {cuisine}
                     </Text>
                   </TouchableOpacity>
@@ -336,7 +366,7 @@ const HomeScreen = () => {
               </View>
             </ScrollView>
           </View>
-          
+
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>Dietary</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -346,16 +376,22 @@ const HomeScreen = () => {
                     key={dietary}
                     style={[
                       styles.filterOption,
-                      selectedDietary === dietary && styles.filterOptionSelected
+                      selectedDietary === dietary &&
+                        styles.filterOptionSelected,
                     ]}
-                    onPress={() => setSelectedDietary(
-                      selectedDietary === dietary ? null : dietary
-                    )}
+                    onPress={() =>
+                      setSelectedDietary(
+                        selectedDietary === dietary ? null : dietary
+                      )
+                    }
                   >
-                    <Text style={[
-                      styles.filterOptionText,
-                      selectedDietary === dietary && styles.filterOptionTextSelected
-                    ]}>
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        selectedDietary === dietary &&
+                          styles.filterOptionTextSelected,
+                      ]}
+                    >
                       {dietary}
                     </Text>
                   </TouchableOpacity>
@@ -363,7 +399,7 @@ const HomeScreen = () => {
               </View>
             </ScrollView>
           </View>
-          
+
           <View style={styles.filterSection}>
             <Text style={styles.filterSectionTitle}>Price</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -373,16 +409,19 @@ const HomeScreen = () => {
                     key={price}
                     style={[
                       styles.filterOption,
-                      selectedPrice === price && styles.filterOptionSelected
+                      selectedPrice === price && styles.filterOptionSelected,
                     ]}
-                    onPress={() => setSelectedPrice(
-                      selectedPrice === price ? null : price
-                    )}
+                    onPress={() =>
+                      setSelectedPrice(selectedPrice === price ? null : price)
+                    }
                   >
-                    <Text style={[
-                      styles.filterOptionText,
-                      selectedPrice === price && styles.filterOptionTextSelected
-                    ]}>
+                    <Text
+                      style={[
+                        styles.filterOptionText,
+                        selectedPrice === price &&
+                          styles.filterOptionTextSelected,
+                      ]}
+                    >
                       {price}
                     </Text>
                   </TouchableOpacity>
@@ -402,8 +441,8 @@ const HomeScreen = () => {
       ) : error ? (
         <View style={styles.centered}>
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity 
-            style={styles.button} 
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => fetchRestaurants()}
           >
             <Text style={styles.buttonText}>Try Again</Text>
@@ -413,13 +452,32 @@ const HomeScreen = () => {
         <FlatList
           data={filteredRestaurants}
           keyExtractor={(item, index) => `restaurant-${index}`}
-          renderItem={({ item }) => (
-            <RestaurantCard 
-              restaurant={item} 
-              userLocation={location || undefined}
-              onPress={() => console.log('Navigate to details for', item.displayName?.text)}
-            />
-          )}
+          renderItem={({ item }) => {
+            // Make sure place_id is properly set
+            if (!item.place_id && item.id) {
+              item.place_id = item.id;
+            }
+
+            // If still no place_id, log and skip
+            if (!item.place_id) {
+              console.warn("Restaurant missing place_id:", item.displayName?.text);
+              return null;
+            }
+
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  console.log('Navigating to restaurant details:', item.place_id);
+                  router.push(`/restaurant/${item.place_id}`);
+                }}
+              >
+                <RestaurantCard
+                  restaurant={item}
+                  userLocation={location || undefined}
+                />
+              </TouchableOpacity>
+            );
+          }}
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl
@@ -431,11 +489,9 @@ const HomeScreen = () => {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                No restaurants found nearby.
-              </Text>
-              <TouchableOpacity 
-                style={styles.button} 
+              <Text style={styles.emptyText}>No restaurants found nearby.</Text>
+              <TouchableOpacity
+                style={styles.button}
                 onPress={() => fetchRestaurants(true)}
               >
                 <Text style={styles.buttonText}>Refresh</Text>
@@ -444,30 +500,40 @@ const HomeScreen = () => {
           }
         />
       )}
-      
+
       {/* Navigation bar */}
       <View style={styles.navBar}>
         <TouchableOpacity style={[styles.navItem, styles.navItemActive]}>
           <Ionicons name="list" size={24} color="#000" />
           <Text style={styles.navItemText}>Local Results</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navItem}>
           <Ionicons name="search" size={24} color="#999" />
-          <Text style={[styles.navItemText, { color: '#999' }]}>Search</Text>
+          <Text style={[styles.navItemText, { color: "#999" }]}>Search</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.navItem}>
           <Ionicons name="compass-outline" size={24} color="#999" />
-          <Text style={[styles.navItemText, { color: '#999' }]}>Discovery</Text>
+          <Text style={[styles.navItemText, { color: "#999" }]}>Discovery</Text>
         </TouchableOpacity>
       </View>
-      
+
       {/* Cache indicator (for development) */}
       {usingCache && __DEV__ && (
         <View style={styles.cacheIndicator}>
           <Text style={styles.cacheText}>Using Cached Data</Text>
         </View>
+      )}
+
+      {/* Add this refresh button */}
+      {__DEV__ && (
+        <TouchableOpacity 
+          style={styles.debugButton}
+          onPress={clearCacheAndRefresh}
+        >
+          <Text style={styles.debugButtonText}>Force Refresh</Text>
+        </TouchableOpacity>
       )}
     </SafeAreaView>
   );
@@ -476,48 +542,48 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   headerTextContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   welcomeText: {
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   nameText: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   profileImage: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
   },
   profileInitial: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 12,
     paddingVertical: 10,
     marginHorizontal: 16,
@@ -527,90 +593,90 @@ const styles = StyleSheet.create({
   searchText: {
     flex: 1,
     marginLeft: 8,
-    color: '#999',
+    color: "#999",
     fontSize: 14,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginHorizontal: 16,
     marginTop: 24,
     marginBottom: 12,
   },
   filterBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 16,
     marginBottom: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   filterToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 8,
     marginRight: 12,
   },
   filterText: {
     marginLeft: 4,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   filterScroll: {
     paddingRight: 16,
   },
   filterChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: "#000",
   },
   filterChipText: {
     fontSize: 13,
     marginRight: 4,
   },
   expandedFilters: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 8,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#ebebeb',
+    borderColor: "#ebebeb",
   },
   filterSection: {
     marginBottom: 12,
   },
   filterSectionTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   filterOptions: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   filterOption: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     marginRight: 8,
   },
   filterOptionSelected: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   filterOptionText: {
     fontSize: 13,
-    color: '#000',
+    color: "#000",
   },
   filterOptionTextSelected: {
-    color: '#fff',
+    color: "#fff",
   },
   listContent: {
     padding: 16,
@@ -618,72 +684,86 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 8,
-    color: '#666',
+    color: "#666",
   },
   errorText: {
-    color: '#c53030',
-    textAlign: 'center',
+    color: "#c53030",
+    textAlign: "center",
     marginBottom: 16,
   },
   emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginBottom: 12,
   },
   button: {
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
   navBar: {
-    flexDirection: 'row',
-    position: 'absolute',
+    flexDirection: "row",
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderTopColor: '#ebebeb',
+    borderTopColor: "#ebebeb",
     paddingTop: 8,
     paddingBottom: 24, // Extra padding for bottom safe area
   },
   navItem: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   navItemActive: {
     borderTopWidth: 2,
-    borderTopColor: '#000',
+    borderTopColor: "#000",
   },
   navItemText: {
     fontSize: 12,
     marginTop: 2,
   },
   cacheIndicator: {
-    position: 'absolute',
+    position: "absolute",
     top: 40,
-    alignSelf: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    alignSelf: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
   cacheText: {
-    color: 'white',
+    color: "white",
     fontSize: 10,
-    fontWeight: '600',
-  }
+    fontWeight: "600",
+  },
+  debugButton: {
+    position: "absolute",
+    top: 80,
+    alignSelf: "center",
+    backgroundColor: "#000",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  debugButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 14,
+  },
 });
 
 export default HomeScreen;
