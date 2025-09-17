@@ -83,6 +83,31 @@ export interface RestaurantDetails extends Restaurant {
     };
   };
   reviews?: Review[];
+  tiktok?: {
+    hashtags?: string[];
+    tag_urls?: string[];
+    search_urls?: string[];
+  };
+  tiktok_links?: TikTokLink[];
+  search_url?: string;
+  tiktokVideos?: TikTokVideo[]; // Add tiktokVideos field
+}
+
+export interface TikTokLink {
+  url: string;
+  title: string;
+}
+
+// Add this interface if not already present
+export interface TikTokVideo {
+  id: string;
+  thumbnail: string;
+  url: string;
+  description: string;
+  loadFailed?: boolean;
+  author?: string;        // Add author if available
+  likes?: number;         // Add like count if available
+  views?: number;         // Add view count if available
 }
 
 class ApiService {
@@ -424,6 +449,168 @@ class ApiService {
       console.log("✅ Cache cleared successfully");
     } catch (error) {
       console.error("Error clearing cache:", error);
+    }
+  }
+
+  // Get TikTok links for a restaurant
+  static async getRestaurantTikTokLinks(
+    placeId: string,
+    useCache: boolean = __DEV__
+  ): Promise<{hashtags: string[], tag_urls: string[], search_urls: string[]}> {
+    // Handle fallback IDs early
+    if (placeId.startsWith('fallback-')) {
+      console.log(`⚠️ Using placeholder data for fallback TikTok links ${placeId}`);
+      return {
+        hashtags: ['Foodie', 'Restaurant'],
+        tag_urls: ['https://www.tiktok.com/tag/Foodie', 'https://www.tiktok.com/tag/Restaurant'],
+        search_urls: ['https://www.tiktok.com/search?q=Foodie', 'https://www.tiktok.com/search?q=Restaurant']
+      };
+    }
+
+    // Try to get from cache first if useCache is true
+    if (useCache) {
+      try {
+        const cachedLinks = await AsyncStorage.getItem(`restaurant_tiktok_${placeId}`);
+        if (cachedLinks) {
+          console.log(`🗄️ Using cached TikTok links for restaurant ${placeId}`);
+          return JSON.parse(cachedLinks);
+        }
+      } catch (error) {
+        console.error('Error reading TikTok links from cache:', error);
+      }
+    }
+
+    // If no cache or cache not requested, fetch from API
+    console.log(`🌐 Fetching TikTok links for restaurant ${placeId}`);
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/tiktok-links`);
+      const linkData = {
+        hashtags: response.data.hashtags || [],
+        tag_urls: response.data.tag_urls || [],
+        search_urls: response.data.search_urls || []
+      };
+      
+      // Cache the results
+      try {
+        await AsyncStorage.setItem(`restaurant_tiktok_${placeId}`, JSON.stringify(linkData));
+      } catch (error) {
+        console.error('Error caching TikTok links:', error);
+      }
+      
+      return linkData;
+    } catch (error) {
+      console.error(`Error fetching TikTok links for ${placeId}:`, error);
+      return { hashtags: [], tag_urls: [], search_urls: [] };
+    }
+  }
+
+  // Add this method to fetch TikTok links through Google search
+  static async getRestaurantTikTokGoogle(
+    placeId: string,
+    useCache: boolean = __DEV__
+  ): Promise<{tiktok_links: TikTokLink[], search_url?: string}> {
+    // Handle fallback IDs early
+    if (placeId.startsWith('fallback-')) {
+      console.log(`⚠️ Using placeholder data for fallback TikTok links ${placeId}`);
+      return {
+        tiktok_links: [{
+          url: 'https://www.tiktok.com/search?q=restaurant',
+          title: 'Search TikTok for restaurants'
+        }],
+        search_url: 'https://www.google.com/search?q=restaurant+tiktok'
+      };
+    }
+
+    // Try to get from cache first if useCache is true
+    if (useCache) {
+      try {
+        const cachedLinks = await AsyncStorage.getItem(`restaurant_tiktok_google_${placeId}`);
+        if (cachedLinks) {
+          console.log(`🗄️ Using cached TikTok Google links for restaurant ${placeId}`);
+          return JSON.parse(cachedLinks);
+        }
+      } catch (error) {
+        console.error('Error reading TikTok Google links from cache:', error);
+      }
+    }
+
+    // If no cache or cache not requested, fetch from API
+    console.log(`🌐 Fetching TikTok Google links for restaurant ${placeId}`);
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/tiktok-google`);
+      const linkData = {
+        tiktok_links: response.data.tiktok_links || [],
+        search_url: response.data.search_url
+      };
+      
+      // Cache the results
+      try {
+        await AsyncStorage.setItem(`restaurant_tiktok_google_${placeId}`, JSON.stringify(linkData));
+      } catch (error) {
+        console.error('Error caching TikTok Google links:', error);
+      }
+      
+      return linkData;
+    } catch (error) {
+      console.error(`Error fetching TikTok Google links for ${placeId}:`, error);
+      return { tiktok_links: [], search_url: undefined };
+    }
+  }
+
+  // Add this method to your ApiService class
+  static async getRestaurantTikTokVideos(
+    placeId: string,
+    useCache: boolean = __DEV__
+  ): Promise<{videos: TikTokVideo[], search_url?: string}> {
+    // Handle fallback IDs early
+    if (placeId.startsWith('fallback-')) {
+      console.log(`⚠️ Using placeholder data for fallback TikTok videos ${placeId}`);
+      return {
+        videos: [
+          {
+            id: 'fallback-1',
+            thumbnail: 'https://placehold.co/300x400/png?text=TikTok+Food',
+            url: 'https://www.tiktok.com/search?q=restaurant',
+            description: 'Explore restaurant videos on TikTok'
+          }
+        ],
+        search_url: 'https://www.tiktok.com/search?q=restaurant'
+      };
+    }
+
+    // Try to get from cache first if useCache is true
+    if (useCache) {
+      try {
+        const cachedVideos = await AsyncStorage.getItem(`restaurant_tiktok_videos_${placeId}`);
+        if (cachedVideos) {
+          console.log(`🗄️ Using cached TikTok videos for restaurant ${placeId}`);
+          return JSON.parse(cachedVideos);
+        }
+      } catch (error) {
+        console.error('Error reading TikTok videos from cache:', error);
+      }
+    }
+
+    // If no cache or cache not requested, fetch from API
+    console.log(`🌐 Fetching TikTok videos for restaurant ${placeId}`);
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/tiktok-videos`);
+      const videoData = {
+        videos: response.data.videos || [],
+        search_url: response.data.search_url
+      };
+      
+      // Cache the results
+      try {
+        await AsyncStorage.setItem(`restaurant_tiktok_videos_${placeId}`, JSON.stringify(videoData));
+      } catch (error) {
+        console.error('Error caching TikTok videos:', error);
+      }
+      
+      return videoData;
+    } catch (error) {
+      console.error(`Error fetching TikTok videos for ${placeId}:`, error);
+      return { videos: [], search_url: undefined };
     }
   }
 }
