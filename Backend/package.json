@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "lottie-react-native": "^7.3.4",
+    "react-native-progress": "^5.0.1"
+  }
+}

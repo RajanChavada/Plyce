@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { useEffect, useState } from "react";
@@ -17,8 +18,12 @@ import ApiService, {
   RestaurantDetails,
   Review,
   TikTokVideo,
+  API_URL,
 } from "../services/ApiService";
 import { Linking } from "react-native";
+import * as Progress from "react-native-progress";
+import LottieView from "lottie-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TIKTOK_LOGO_BASE64 =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDUgNzkuMTYzNDk5LCAyMDE4LzA4LzEzLTE2OjQwOjIyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjMtMDktMTRUMTI6NTQ6MDctMDQ6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjMtMDktMTRUMTI6NTQ6MDctMDQ6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDIzLTA5LTE0VDEyOjU0OjA3LTA0OjAwIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjdiNDgxYjdmLTc3ZDEtNDYxYy04MDdhLWNiYmU0ODRiODM1YSIgeG1wTU06RG9jdW1lbnRJRD0iYWRvYmU6ZG9jaWQ6cGhvdG9zaG9wOjZiNzNhOWY3LTRkOGEtZDQ0Yy05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";
@@ -41,59 +46,47 @@ export default function RestaurantDetailsScreen() {
   }>({
     tiktok_links: [],
   });
-  const [tiktokLoading, setTiktokLoading] = useState(false);
-  const [tiktokVideos, setTiktokVideos] = useState<TikTokVideo[]>([]);
+  const [tiktokLoading, setTiktokLoading] = useState(true); // Set to true by default
+  const [tiktokLoadingProgress, setTiktokLoadingProgress] = useState(0);
+  const [tiktokVideos, setTiktokVideos] = useState<
+    (TikTokVideo & { loadFailed?: boolean })[]
+  >([]);
+  const [tiktokRefreshing, setTiktokRefreshing] = useState(false);
+  const [loadingDots, setLoadingDots] = useState("");
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
-  useEffect(() => {
-    const loadRestaurantDetails = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // Update your fetchRestaurantDetails function to also trigger TikTok videos loading
+  const fetchRestaurantDetails = async () => {
+    if (!id) return;
 
-        if (!id) {
-          setError("No restaurant ID provided");
-          setLoading(false);
-          return;
-        }
+    setLoading(true);
+    try {
+      const details = await ApiService.getRestaurantDetails(id as string);
+      setRestaurant(details);
 
-        console.log("Loading details for restaurant ID:", id);
-
-        // Try to fetch details and reviews
-        try {
-          // For fallback IDs, we'll get a placeholder response from the API
-          const details = await ApiService.getRestaurantDetails(id as string);
-          setRestaurant(details);
-
-          // Fetch TikTok links
-          fetchTikTokLinks();
-
-          // Fetch TikTok videos
-          await fetchTikTokVideos();
-
-          // Only try to get reviews for non-fallback IDs
-          if (!id.toString().startsWith("fallback-")) {
-            try {
-              const reviews = await ApiService.getRestaurantReviews(
-                id as string
-              );
-              if (reviews && reviews.length > 0) {
-                setFeaturedReview(reviews[0]);
-              }
-            } catch (reviewError) {
-              console.error("Error fetching reviews:", reviewError);
-              // Continue without reviews
-            }
-          }
-        } catch (detailsError) {
-          console.error("Error fetching restaurant details:", detailsError);
-          setError("Failed to load restaurant details");
-        }
-      } finally {
-        setLoading(false);
+      // Extract featured review directly from restaurant details
+      if (details.reviews && details.reviews.length > 0) {
+        const reviewWithText = details.reviews.find((r) => r.text?.text);
+        setFeaturedReview(reviewWithText || details.reviews[0]);
+      } else {
+        setFeaturedReview(null);
       }
-    };
 
-    loadRestaurantDetails();
+      // After restaurant details are loaded, fetch TikTok videos
+      fetchTikTokVideos(true);
+    } catch (error) {
+      console.error("Error fetching restaurant details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // This useEffect will only trigger the initial restaurant details fetch
+  useEffect(() => {
+    if (id) {
+      fetchRestaurantDetails();
+    }
   }, [id]);
 
   const fetchTikTokLinks = async () => {
@@ -110,17 +103,110 @@ export default function RestaurantDetailsScreen() {
     }
   };
 
-  const fetchTikTokVideos = async () => {
+  const fetchTikTokVideos = async (useCache = true) => {
     if (!id) return;
 
     setTiktokLoading(true);
+    setTiktokLoadingProgress(0.1); // Start progress
+
     try {
-      const result = await ApiService.getRestaurantTikTokVideos(id as string);
-      setTiktokVideos(result.videos || []);
+      // First check if we have cached results
+      if (useCache) {
+        try {
+          const cachedVideos = await AsyncStorage.getItem(
+            `restaurant_tiktok_videos_${id}`
+          );
+          if (cachedVideos) {
+            console.log(`🗄️ Using cached TikTok videos for restaurant ${id}`);
+            const data = JSON.parse(cachedVideos);
+
+            // Set cached results immediately while fetching fresh ones
+            if (data.videos && data.videos.length > 0) {
+              interface CachedTikTokVideo extends TikTokVideo {
+                loadFailed: boolean;
+                isCached: boolean;
+              }
+
+              const videosWithLoadFailed: CachedTikTokVideo[] = data.videos.map(
+                (video: TikTokVideo): CachedTikTokVideo => ({
+                  ...video,
+                  loadFailed: false,
+                  isCached: true,
+                })
+              );
+              setTiktokVideos(videosWithLoadFailed);
+              setTiktokLoading(false);
+
+              // If we're showing cached results, fetch fresh ones in the background
+              setTiktokRefreshing(true);
+            }
+          }
+        } catch (error) {
+          console.error("Error reading TikTok videos from cache:", error);
+        }
+      }
+
+      // Fetch fresh results regardless
+      setTiktokLoadingProgress(0.3);
+      console.log(`🌐 Fetching TikTok videos for restaurant ${id}`);
+
+      // Start with a timeout for error handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      const response = await fetch(
+        `${API_URL}/restaurants/${id}/tiktok-videos`,
+        {
+          signal: controller.signal,
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch TikTok videos: ${response.status}`);
+      }
+
+      setTiktokLoadingProgress(0.7);
+
+      const data = await response.json();
+      console.log(`Got ${data.videos?.length || 0} TikTok videos`);
+
+      if (data.videos && data.videos.length > 0) {
+        interface TikTokVideoWithLoadState extends TikTokVideo {
+          loadFailed: boolean;
+        }
+
+        const videosWithLoadFailed: TikTokVideoWithLoadState[] =
+          data.videos.map(
+            (video: TikTokVideo): TikTokVideoWithLoadState => ({
+              ...video,
+              loadFailed: false,
+            })
+          );
+        setTiktokVideos(videosWithLoadFailed);
+      } else {
+        // Empty array if no videos
+        setTiktokVideos([]);
+      }
+
+      setTiktokLoadingProgress(1);
+
+      // Cache the results
+      try {
+        await AsyncStorage.setItem(
+          `restaurant_tiktok_videos_${id}`,
+          JSON.stringify(data)
+        );
+      } catch (cacheError) {
+        console.error("Error caching TikTok videos:", cacheError);
+      }
     } catch (error) {
       console.error("Error fetching TikTok videos:", error);
+      setTiktokVideos([]);
     } finally {
       setTiktokLoading(false);
+      setTiktokRefreshing(false);
     }
   };
 
@@ -141,6 +227,29 @@ export default function RestaurantDetailsScreen() {
       router.push(`/restaurant/${id}/reviews`);
     }
   };
+
+  useEffect(() => {
+    if (!tiktokLoading) return;
+
+    const interval = setInterval(() => {
+      setLoadingDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+      // Simulate progress for better UX
+      setTiktokLoadingProgress((prev) => {
+        const increment = Math.random() * 0.1;
+        return Math.min(prev + increment, 0.95);
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [tiktokLoading]);
+
+  // Add this useEffect to load TikTok videos automatically
+  useEffect(() => {
+    if (id && !tiktokVideos.length && !tiktokLoading) {
+      console.log("🔄 Auto-loading TikTok videos on screen open");
+      fetchTikTokVideos(true);
+    }
+  }, [id, restaurant]); // Add dependencies that should trigger the fetch
 
   if (loading) {
     return (
@@ -183,17 +292,46 @@ export default function RestaurantDetailsScreen() {
 
         {/* Restaurant Information */}
         <View style={styles.restaurantCard}>
-          {restaurant.photos && restaurant.photos.length > 0 ? (
-            <Image
-              source={{ uri: restaurant.photos[0].googleMapsUri }}
-              style={styles.restaurantImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.placeholderImage}>
-              <Text>No image available</Text>
-            </View>
-          )}
+          {/* Restaurant Image */}
+          <View style={styles.imageContainer}>
+            {restaurant && (
+              <Image
+                source={{
+                  uri: imageError
+                    ? `https://via.placeholder.com/800x400/f0f0f0/666666?text=${encodeURIComponent(
+                        restaurant?.displayName?.text || "Restaurant"
+                      )}`
+                    : ApiService.getRestaurantPhotoUrl(restaurant),
+                }}
+                style={styles.restaurantImage}
+                onLoadStart={() => setImageLoading(true)}
+                onLoadEnd={() => setImageLoading(false)}
+                onError={(e) => {
+                  console.log(
+                    "Failed to load restaurant image:",
+                    e.nativeEvent.error
+                  );
+                  setImageError(true);
+                  setImageLoading(false);
+                }}
+                resizeMode="cover"
+              />
+            )}
+
+            {imageLoading && (
+              <View style={styles.imageLoadingOverlay}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            )}
+
+            {/* Back button */}
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.restaurantDetails}>
             <Text style={styles.restaurantName}>
@@ -295,28 +433,62 @@ export default function RestaurantDetailsScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>TikTok Reviews</Text>
-            {tiktokVideos.length > 0 && (
-              <TouchableOpacity
-                onPress={() =>
-                  Linking.openURL(
-                    `https://www.tiktok.com/search?q=${encodeURIComponent(
-                      restaurant?.displayName?.text || ""
-                    )}+restaurant`
-                  )
-                }
-              >
-                <Text style={styles.seeMoreText}>See More</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={() => {
+                setTiktokRefreshing(true);
+                fetchTikTokVideos(false).finally(() =>
+                  setTiktokRefreshing(false)
+                );
+              }}
+              disabled={tiktokLoading}
+            >
+              <Ionicons
+                name={tiktokRefreshing ? "sync-circle" : "refresh"}
+                size={20}
+                color={tiktokLoading ? "#ccc" : "#555"}
+                style={tiktokRefreshing ? styles.spinningIcon : {}}
+              />
+            </TouchableOpacity>
           </View>
 
           {tiktokLoading ? (
-            <ActivityIndicator size="small" color="#000" />
+            <View style={styles.tiktokLoadingContainer}>
+              {/* Replace LottieView with custom TikTok-styled loading animation */}
+              <View style={styles.tiktokLogoContainer}>
+                <Ionicons name="logo-tiktok" size={40} color="#EE1D52" />
+                <View style={[styles.loadingDot, { animationDelay: "0s" }]} />
+                <View style={[styles.loadingDot, { animationDelay: "0.2s" }]} />
+                <View style={[styles.loadingDot, { animationDelay: "0.4s" }]} />
+              </View>
+              <Text style={styles.loadingText}>
+                Finding TikTok videos{loadingDots}
+              </Text>
+              <Text style={styles.loadingSubtext}>
+                This may take a few moments...
+              </Text>
+              <Progress.Bar
+                progress={tiktokLoadingProgress}
+                width={200}
+                color="#EE1D52"
+              />
+            </View>
           ) : tiktokVideos.length > 0 ? (
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.tiktokScroll}
+              refreshControl={
+                <RefreshControl
+                  refreshing={tiktokRefreshing}
+                  onRefresh={() => {
+                    setTiktokRefreshing(true);
+                    fetchTikTokVideos(false).finally(() =>
+                      setTiktokRefreshing(false)
+                    );
+                  }}
+                  colors={["#EE1D52"]}
+                />
+              }
             >
               {tiktokVideos.map((video) => (
                 <TouchableOpacity
@@ -517,14 +689,23 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#fff",
   },
+  imageContainer: {
+    position: "relative",
+    width: "100%",
+    height: 250,
+    backgroundColor: "#f0f0f0",
+  },
   restaurantImage: {
     width: "100%",
-    height: 200,
+    height: "100%",
   },
-  placeholderImage: {
-    width: "100%",
-    height: 200,
-    backgroundColor: "#f0f0f0",
+  imageLoadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -717,5 +898,33 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
   },
-  // Reusing the existing tiktokButtonText style from above
+  tiktokLoadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    height: 200,
+  },
+  tiktokLogoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 15,
+  },
+  loadingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#EE1D52",
+    marginLeft: 4,
+    opacity: 0.6,
+  },
+  loadingSubtext: {
+    marginTop: 5,
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 10,
+  },
+  spinningIcon: {
+    transform: [{ rotate: "45deg" }],
+  },
 });

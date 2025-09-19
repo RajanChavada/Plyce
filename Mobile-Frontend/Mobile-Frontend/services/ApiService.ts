@@ -13,7 +13,7 @@ const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 // Determine the correct API URL based on environment
 function getApiUrl() {
   if (Platform.OS === "ios") {
-    return "http://localhost:8000";
+    return "http://192.168.2.87:8000";
   } else if (Platform.OS === "android") {
     return "http://10.0.2.2:8000";
   } else {
@@ -21,7 +21,7 @@ function getApiUrl() {
   }
 }
 
-const API_URL = getApiUrl();
+export const API_URL = getApiUrl();
 
 console.log("Using API URL:", API_URL);
 
@@ -611,6 +611,45 @@ class ApiService {
     } catch (error) {
       console.error(`Error fetching TikTok videos for ${placeId}:`, error);
       return { videos: [], search_url: undefined };
+    }
+  }
+
+  // Add this method to your ApiService class
+  static getRestaurantPhotoUrl(restaurant: Restaurant, index: number = 0): string {
+    // Default placeholder if no photo is available
+    const fallbackUrl = `https://via.placeholder.com/400x300/f0f0f0/666666?text=${encodeURIComponent(
+      restaurant?.displayName?.text || 'Restaurant'
+    )}`;
+    
+    // Check if restaurant has photos
+    if (!restaurant?.photos || restaurant.photos.length === 0 || index >= restaurant.photos.length) {
+      return fallbackUrl;
+    }
+    
+    const photo = restaurant.photos[index];
+    
+    // Check for googleMapsUri - this is the preferred source
+    if (photo.googleMapsUri) {
+      return photo.googleMapsUri;
+    }
+    
+    // Check for name - this might be a direct Places API v1 reference
+    if (photo.name) {
+      // You may need to adjust this URL format based on your backend implementation
+      return `${API_URL}/restaurants/photo?reference=${encodeURIComponent(photo.name)}&maxwidth=400`;
+    }
+    
+    return fallbackUrl;
+  }
+
+  // Add to ApiService class
+  static async getFallbackRestaurantImage(placeId: string): Promise<string> {
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/fallback-image`);
+      return response.data.image_url;
+    } catch (error) {
+      console.error('Error fetching fallback image:', error);
+      return `https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant`;
     }
   }
 }

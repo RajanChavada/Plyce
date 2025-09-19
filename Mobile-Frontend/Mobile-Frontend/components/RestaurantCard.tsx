@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Restaurant } from '../services/ApiService';
+import ApiService, { Restaurant } from '../services/ApiService';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -14,7 +14,9 @@ interface RestaurantCardProps {
 
 const RestaurantCard = ({ restaurant, userLocation }: RestaurantCardProps) => {
   const router = useRouter();
-  
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   // Extract the correct ID
   const getRestaurantId = () => {
     // Use the restaurant's ID if available
@@ -68,14 +70,19 @@ const RestaurantCard = ({ restaurant, userLocation }: RestaurantCardProps) => {
   };
   
   // Get restaurant image URL or use a placeholder
-  const getImageUrl = () => {
-    if (restaurant.photos && restaurant.photos.length > 0 && restaurant.photos[0].googleMapsUri) {
-      return restaurant.photos[0].googleMapsUri;
+  const getRestaurantImage = () => {
+    if (imageError || !restaurant.photos || restaurant.photos.length === 0) {
+      // Return a placeholder image URL based on restaurant name
+      const restaurantName = encodeURIComponent(restaurant.displayName?.text || 'Restaurant');
+      return `https://via.placeholder.com/400x200/f0f0f0/666666?text=${restaurantName}`;
     }
-    // Fallback placeholder image
-    return 'https://via.placeholder.com/150?text=No+Image';
+    
+    return restaurant.photos[0].googleMapsUri;
   };
-  
+
+  // Get the photo URL using our new helper
+  const imageUrl = ApiService.getRestaurantPhotoUrl(restaurant);
+
   // Extract restaurant types for displaying as tags
   const getRestaurantTags = () => {
     if (!restaurant.types) return [];
@@ -168,19 +175,34 @@ const RestaurantCard = ({ restaurant, userLocation }: RestaurantCardProps) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress}>
-      <Image 
-        source={{ uri: getImageUrl() }} 
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <View style={styles.contentContainer}>
-        <View style={styles.headerRow}>
-          <Text style={styles.title} numberOfLines={1}>
-            {restaurant.displayName?.text || 'Unknown Restaurant'}
-          </Text>
-          <Ionicons name="chevron-forward" size={20} color="#000" />
-        </View>
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: imageError ? 
+            `https://via.placeholder.com/400x200/f0f0f0/666666?text=${encodeURIComponent(restaurant?.displayName?.text || 'Restaurant')}` : 
+            imageUrl 
+          }}
+          style={styles.restaurantImage}
+          onLoadStart={() => setImageLoading(true)}
+          onLoadEnd={() => setImageLoading(false)}
+          onError={() => {
+            console.log(`Failed to load image for ${restaurant?.displayName?.text || 'unknown restaurant'}`);
+            setImageError(true);
+            setImageLoading(false);
+          }}
+          resizeMode="cover"
+        />
         
+        {imageLoading && (
+          <View style={styles.imageLoadingOverlay}>
+            <ActivityIndicator size="small" color="#666" />
+          </View>
+        )}
+      </View>
+      
+      <View style={styles.cardContent}>
+        <Text style={styles.restaurantName}>
+          {restaurant?.displayName?.text || 'Restaurant'}
+        </Text>
         <Text style={styles.cuisine}>{getCuisineType()}</Text>
         
         <View style={styles.detailsContainer}>
@@ -215,11 +237,35 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  image: {
-    width: 100,
-    height: 100,
+  imageContainer: {
+    position: 'relative',
   },
-  contentContainer: {
+  restaurantImage: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#f0f0f0',
+  },
+  imageLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(240, 240, 240, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageErrorOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardContent: {
     flex: 1,
     padding: 12,
     justifyContent: 'space-between',
@@ -229,7 +275,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  title: {
+  restaurantName: {
     fontSize: 16,
     fontWeight: 'bold',
     flex: 1,

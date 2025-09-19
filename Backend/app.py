@@ -3,6 +3,7 @@ import requests
 import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from typing import List
 import re
@@ -75,6 +76,21 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+# Add this helper function to generate proper photo URLs
+def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
+    """Generate a proper Google Places photo URL"""
+    if not photo_reference:
+        return None
+    
+    # For the Places API v1, use this format
+    # photo_reference should be in the format "places/{place_id}/photos/{photo_id}"
+    if photo_reference.startswith("places/"):
+        return f"https://places.googleapis.com/v1/{photo_reference}/media?maxHeightPx={max_width}&key={GOOGLE_API_KEY}"
+    else:
+        # Legacy format for backward compatibility
+        return f"https://maps.googleapis.com/maps/api/place/photo?maxwidth={max_width}&photo_reference={photo_reference}&key={GOOGLE_API_KEY}"
+
+# Update the restaurants endpoint to include proper photo URLs
 @app.get("/restaurants")
 async def get_restaurants(lat: float, lng: float, radius: int = 5000):
     # Use the new Places API
@@ -108,13 +124,30 @@ async def get_restaurants(lat: float, lng: float, radius: int = 5000):
     # Process the response
     data = response.json()
     
-    # Ensure each place has a place_id field
+    # Ensure each place has a place_id field and proper photo URLs
     if 'places' in data:
         for index, place in enumerate(data["places"]):
             # Make sure each place has a place_id that equals the id field
             if "id" in place:
-                place["place_id"] = place["id"]  # This is critical! 
-                print(f"Restaurant {index}: {place.get('displayName', {}).get('text', 'Unknown')}, ID: {place['place_id']}")
+                place["place_id"] = place["id"]
+                
+                # Process photos to generate proper URLs
+                if "photos" in place and place["photos"]:
+                    processed_photos = []
+                    for photo in place["photos"]:
+                        # For the new Places API, photos have a 'name' field
+                        if "name" in photo:
+                            photo_url = get_photo_url(photo["name"])
+                            if photo_url:
+                                processed_photos.append({
+                                    "name": photo["name"],
+                                    "googleMapsUri": photo_url,
+                                    "widthPx": photo.get("widthPx", 400),
+                                    "heightPx": photo.get("heightPx", 300)
+                                })
+                    place["photos"] = processed_photos
+                
+                print(f"Restaurant {index}: {place.get('displayName', {}).get('text', 'Unknown')}, ID: {place['place_id']}, Photos: {len(place.get('photos', []))}")
             else:
                 print(f"Warning: Restaurant {index} has no ID!")
     else:
@@ -122,7 +155,7 @@ async def get_restaurants(lat: float, lng: float, radius: int = 5000):
     
     return data
 
-# Endpoints to fetch the details 
+# Update the restaurant details endpoint as well
 @app.get("/restaurants/{place_id}")
 async def get_restaurant_details(place_id: str):
     if place_id.startswith("fallback-"):
@@ -131,10 +164,6 @@ async def get_restaurant_details(place_id: str):
             "displayName": {"text": place_id.replace("fallback-", "").split("-")[0].capitalize()},
             "message": "Details not available for fallback IDs"
         }
-
-    # Fix here 
-    # if not place_id.startswith("places/"):
-    #     place_id = f"places/{place_id}"
     
     url = f"https://places.googleapis.com/v1/places/{place_id}"
     
@@ -154,6 +183,21 @@ async def get_restaurant_details(place_id: str):
         # Map id → place_id for frontend consistency
         if 'id' in data:
             data['place_id'] = data['id']
+        
+        # Process photos to generate proper URLs
+        if "photos" in data and data["photos"]:
+            processed_photos = []
+            for photo in data["photos"]:
+                if "name" in photo:
+                    photo_url = get_photo_url(photo["name"])
+                    if photo_url:
+                        processed_photos.append({
+                            "name": photo["name"],
+                            "googleMapsUri": photo_url,
+                            "widthPx": photo.get("widthPx", 400),
+                            "heightPx": photo.get("heightPx", 300)
+                        })
+            data["photos"] = processed_photos
             
         return data
     except requests.exceptions.RequestException as e:
@@ -538,3 +582,79 @@ def generate_placeholder_videos(restaurant_name, limit, search_url):
         })
     
     return videos
+
+@app.get("/restaurants/photo")
+async def get_restaurant_photo(reference: str, maxwidth: int = 400):
+    """Get a restaurant photo by reference"""
+    try:
+        photo_url = get_photo_url(reference, maxwidth)
+        if not photo_url:
+            raise HTTPException(status_code=404, detail="Photo reference not valid")
+            
+        # Redirect to the actual photo URL
+        return RedirectResponse(url=photo_url)
+    except Exception as e:
+        print(f"Error getting photo: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"Photo not found: {str(e)}")
+
+
+@app.get("/restaurants/{place_id}/fallback-image")
+async def get_restaurant_fallback_image(place_id: str):
+    """Get a restaurant image from web search as fallback"""
+    try:
+        # Get restaurant name
+        restaurant_details_url = f"https://places.googleapis.com/v1/places/{place_id}"
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "id,displayName,formattedAddress"
+        }
+        
+        response = requests.get(restaurant_details_url, headers=headers)
+        response.raise_for_status()
+        restaurant_data = response.json()
+        
+        restaurant_name = restaurant_data.get("displayName", {}).get("text", "")
+        restaurant_address = restaurant_data.get("formattedAddress", "")
+        
+        # Search for restaurant images on Google Images
+        search_query = f"{restaurant_name} {restaurant_address} restaurant"
+        encoded_query = urllib.parse.quote(search_query)
+        google_image_url = f"https://www.google.com/search?q={encoded_query}&tbm=isch"
+        
+        browser_headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+        }
+        
+        # Make request to Google Images
+        response = requests.get(google_image_url, headers=browser_headers, timeout=10)
+        
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Find images
+            images = soup.find_all('img')
+            
+            for img in images:
+                src = img.get('src', '')
+                # Skip small images and data URLs
+                if src.startswith('http') and 'encrypted-tbn' not in src:
+                    return {
+                        "place_id": place_id,
+                        "restaurant_name": restaurant_name,
+                        "image_url": src
+                    }
+        
+        # If no image found, return a placeholder
+        return {
+            "place_id": place_id,
+            "restaurant_name": restaurant_name,
+            "image_url": f"https://via.placeholder.com/400x200/f0f0f0/666666?text={restaurant_name.replace(' ', '+')}"
+        }
+        
+    except Exception as e:
+        print(f"Error getting fallback image: {str(e)}")
+        return {
+            "place_id": place_id,
+            "image_url": "https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant"
+        }
