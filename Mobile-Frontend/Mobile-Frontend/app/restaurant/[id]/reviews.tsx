@@ -1,4 +1,4 @@
-import ReviewsScreen from "../../../screens/ReviewsScreen";
+import { ReviewsScreen } from "../../../src/screens";
 
 export default function ReviewsPage() {
   return <ReviewsScreen />;

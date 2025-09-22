@@ -1,7 +1,7 @@
 
 import { Stack } from 'expo-router';
-import { LocationProvider } from '../contexts/LocationContext';
-import ApiService from '../services/ApiService';
+import { LocationProvider } from '../src/contexts/LocationContext';
+import ApiService from '../src/services/ApiService';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 
