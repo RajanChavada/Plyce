@@ -235,11 +235,14 @@ class ApiService {
 
   // Get restaurants - either from cache or API
   static async getNearbyRestaurants(
-    location: LocationData,
-    radius: number = 5000,
-    useCache: boolean = __DEV__
+    location: {
+      latitude: number;
+      longitude: number;
+      radius?: number;
+    },
+    useCache: boolean = __DEV__ // Default is to use cache in development only
   ): Promise<Restaurant[]> {
-    // Try to get from cache first if useCache is true
+    // If useCache is false, skip the cache lookup
     if (useCache) {
       try {
         const cachedData = await this.getCachedRestaurants();
@@ -251,13 +254,16 @@ class ApiService {
         }
       } catch (error) {
         console.error("Error reading from cache:", error);
-        // Continue to API call if cache read fails
       }
+    } else {
+      console.log("🌐 BYPASSING CACHE - Fetching fresh data from API");
     }
 
-    // If no cache or cache not requested, fetch from API
+    // Fetch from API (always runs if cache is skipped or empty)
     try {
       console.log("🌐 FETCHING FROM API...");
+      const radius = location.radius || 5000;
+      
       const response = await axios.get(`${API_URL}/restaurants`, {
         params: {
           lat: location.latitude,
@@ -266,55 +272,92 @@ class ApiService {
         },
       });
       
-      // Process the restaurants to ensure place_id is set
-      if (!response.data || !response.data.places || !Array.isArray(response.data.places)) {
-        console.error("Invalid API response format:", response.data);
-        return [];
+      // Check if response data exists
+      if (!response.data) {
+        console.error("API returned empty data");
+        throw new Error("No data returned from API");
       }
       
-      const restaurants: Restaurant[] = response.data.places.map((place: any) => {
-        // Ensure place_id is set
-        if (!place.place_id && place.id) {
-          place.place_id = place.id;
-        }
-        
-        // If both are missing, create a fallback ID
-        if (!place.place_id) {
-          const name = place.displayName?.text || 'unknown-restaurant';
-          place.place_id = `fallback-${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
-          console.log(`Created fallback ID for restaurant: ${name} -> ${place.place_id}`);
-        }
-        
-        // Return the processed restaurant
-        return {
-          place_id: place.place_id,
-          id: place.id,
-          name: place.name,
-          displayName: place.displayName,
-          formattedAddress: place.formattedAddress,
-          location: place.location,
-          types: place.types,
-          rating: place.rating,
-          priceLevel: place.priceLevel,
-          photos: place.photos
-        };
-      });
+      // Debug the response structure
+      console.log("API Response structure:", JSON.stringify(response.data).substring(0, 100) + "...");
       
-      console.log(`✅ Received ${restaurants.length} restaurants from API`);
-      if (restaurants.length > 0) {
-        console.log('First restaurant:', {
-          name: restaurants[0]?.displayName?.text,
-          place_id: restaurants[0]?.place_id,
-          id: restaurants[0]?.id
-        });
+      // Handle different possible response formats
+      let restaurants: Restaurant[] = [];
+      
+      // Add this new condition to handle the places array format
+      if (response.data.places && Array.isArray(response.data.places)) {
+        console.log("Processing 'places' array format");
+        restaurants = response.data.places.map((item: any) => ({
+          id: item.id || item.place_id || String(Math.random()),
+          place_id: item.place_id || item.id,
+          name: item.displayName?.text || item.name,
+          formattedAddress: item.formattedAddress || item.vicinity || "",
+          rating: item.rating || 0,
+          userRatingsTotal: item.user_ratings_total || 0,
+          types: item.types || [],
+          priceLevel: item.priceLevel || item.price_level || 0,
+          location: {
+            latitude: item.location?.latitude || 
+                     item.geometry?.location?.lat || 
+                     item.latitude || 0,
+            longitude: item.location?.longitude || 
+                      item.geometry?.location?.lng || 
+                      item.longitude || 0,
+          },
+          photos: item.photos || [],
+          displayName: item.displayName
+        }));
       }
-
-      // Cache the new data
+      // Keep your existing conditions
+      else if (Array.isArray(response.data)) {
+        // Data is already an array
+        restaurants = response.data.map((item: any) => ({
+          id: item.id || item.place_id || String(Math.random()),
+          name: item.name,
+          rating: item.rating || 0,
+          userRatingsTotal: item.user_ratings_total || 0,
+          vicinity: item.vicinity || item.formatted_address || "",
+          types: item.types || [],
+          priceLevel: item.price_level || 0,
+          location: {
+            latitude: item.geometry?.location.lat || item.latitude || 0,
+            longitude: item.geometry?.location.lng || item.longitude || 0,
+          },
+          photos: item.photos || [],
+          openingHours: item.opening_hours || {},
+          distance: item.distance || 0
+        }));
+      } else if (response.data.results && Array.isArray(response.data.results)) {
+        // Google Places API format with "results" array
+        restaurants = response.data.results.map((item: any) => ({
+          id: item.id || item.place_id || String(Math.random()),
+          name: item.name,
+          rating: item.rating || 0,
+          userRatingsTotal: item.user_ratings_total || 0,
+          vicinity: item.vicinity || item.formatted_address || "",
+          types: item.types || [],
+          priceLevel: item.price_level || 0,
+          location: {
+            latitude: item.geometry?.location.lat || 0,
+            longitude: item.geometry?.location.lng || 0,
+          },
+          photos: item.photos || [],
+          openingHours: item.opening_hours || {},
+          distance: item.distance || 0
+        }));
+      } else {
+        console.error("Unexpected API response format:", response.data);
+        throw new Error("Unexpected API response format");
+      }
+      
+      console.log(`✅ Processed ${restaurants.length} restaurants from API`);
+      
+      // Save to cache (always save the latest results, even when bypassing cache for read)
       await this.cacheRestaurants(restaurants);
-
+      
       return restaurants;
     } catch (error) {
-      console.error("Error fetching restaurants from API:", error);
+      console.error("Error fetching restaurants:", error);
       throw error;
     }
   }

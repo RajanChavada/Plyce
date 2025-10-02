@@ -1,0 +1,90 @@
+import { StyleSheet } from 'react-native';
+import { Colors, Typography, Spacing, Layout } from '../index';
+
+export default StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+  map: {
+    flex: 1,
+  },
+  searchBarContainer: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    right: 20,
+    zIndex: 10,
+  },
+  controlPanel: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: Layout.borderRadius.large,
+    borderTopRightRadius: Layout.borderRadius.large,
+    padding: Spacing.large,
+    paddingBottom: Spacing.large + 20, // Extra padding for bottom safe area
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  addressText: {
+    ...Typography.body,
+    textAlign: 'center',
+    marginBottom: Spacing.medium,
+    color: Colors.textSecondary,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: Spacing.medium,
+  },
+  currentLocationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.medium,
+    borderWidth: 1,
+    borderColor: Colors.black,
+    borderRadius: Layout.borderRadius.medium,
+  },
+  currentLocationText: {
+    ...Typography.body,
+    marginLeft: Spacing.small,
+    color: Colors.black,
+  },
+  searchButton: {
+    flex: 1,
+    backgroundColor: Colors.black,
+    padding: Spacing.medium,
+    borderRadius: Layout.borderRadius.medium,
+    marginLeft: Spacing.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchButtonText: {
+    ...Typography.body,
+    color: Colors.white,
+    fontWeight: '600',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 10,
+    zIndex: 5,
+    backgroundColor: Colors.white,
+    borderRadius: 30,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+});

@@ -203,6 +203,38 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.black, // Changed from primary to black
   },
+  locationInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: Spacing.large,
+    marginBottom: Spacing.medium,
+  },
+  locationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    paddingVertical: Spacing.small,
+    paddingHorizontal: Spacing.medium,
+    borderRadius: Layout.borderRadius.full,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  locationButtonText: {
+    ...Typography.body,
+    marginLeft: Spacing.small,
+    fontWeight: '500',
+  },
+  radiusText: {
+    ...Typography.body,
+    color: Colors.textSecondary,
+    marginLeft: Spacing.small,
+    marginRight: Spacing.small,
+  },
 });
 
 export default styles;

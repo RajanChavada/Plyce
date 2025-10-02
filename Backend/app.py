@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 import requests
 import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
-from typing import List
+from typing import List, Optional
 import re
 import urllib.parse
 from bs4 import BeautifulSoup
@@ -92,68 +92,77 @@ def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
 
 # Update the restaurants endpoint to include proper photo URLs
 @app.get("/restaurants")
-async def get_restaurants(lat: float, lng: float, radius: int = 5000):
-    # Use the new Places API
-    url = "https://places.googleapis.com/v1/places:searchNearby"
-    
-    # Headers for the request
-    headers = {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": GOOGLE_API_KEY,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.priceLevel,places.photos"
-    }
-    
-    # Body for the request
-    body = {
-        "locationRestriction": {
-            "circle": {
-                "center": {"latitude": lat, "longitude": lng},
-                "radius": radius
-            }
-        },
-        "includedTypes": ["restaurant"],
-        "maxResultCount": 20
-    }
-    
-    # Make the request
-    response = requests.post(url, headers=headers, json=body)
-    
-    # Debug the raw response
-    print(f"API Response Status: {response.status_code}")
-    
-    # Process the response
-    data = response.json()
-    
-    # Ensure each place has a place_id field and proper photo URLs
-    if 'places' in data:
-        for index, place in enumerate(data["places"]):
-            # Make sure each place has a place_id that equals the id field
-            if "id" in place:
-                place["place_id"] = place["id"]
-                
-                # Process photos to generate proper URLs
-                if "photos" in place and place["photos"]:
-                    processed_photos = []
-                    for photo in place["photos"]:
-                        # For the new Places API, photos have a 'name' field
-                        if "name" in photo:
-                            photo_url = get_photo_url(photo["name"])
-                            if photo_url:
-                                processed_photos.append({
-                                    "name": photo["name"],
-                                    "googleMapsUri": photo_url,
-                                    "widthPx": photo.get("widthPx", 400),
-                                    "heightPx": photo.get("heightPx", 300)
-                                })
-                    place["photos"] = processed_photos
-                
-                print(f"Restaurant {index}: {place.get('displayName', {}).get('text', 'Unknown')}, ID: {place['place_id']}, Photos: {len(place.get('photos', []))}")
-            else:
-                print(f"Warning: Restaurant {index} has no ID!")
-    else:
-        print("No places found in response!")
-    
-    return data
+async def get_restaurants(
+    lat: float = Query(..., description="Latitude"),
+    lng: float = Query(..., description="Longitude"),
+    radius: int = Query(5000, description="Search radius in meters", ge=1000, le=25000),
+    keyword: Optional[str] = None
+):
+    """Get nearby restaurants with configurable radius"""
+    try:
+        # Use the new Places API
+        url = "https://places.googleapis.com/v1/places:searchNearby"
+        
+        # Headers for the request
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.priceLevel,places.photos"
+        }
+        
+        # Body for the request
+        body = {
+            "locationRestriction": {
+                "circle": {
+                    "center": {"latitude": lat, "longitude": lng},
+                    "radius": radius
+                }
+            },
+            "includedTypes": ["restaurant"],
+            "maxResultCount": 20
+        }
+        
+        # Make the request
+        response = requests.post(url, headers=headers, json=body)
+        
+        # Debug the raw response
+        print(f"API Response Status: {response.status_code}")
+        
+        # Process the response
+        data = response.json()
+        
+        # Ensure each place has a place_id field and proper photo URLs
+        if 'places' in data:
+            for index, place in enumerate(data["places"]):
+                # Make sure each place has a place_id that equals the id field
+                if "id" in place:
+                    place["place_id"] = place["id"]
+                    
+                    # Process photos to generate proper URLs
+                    if "photos" in place and place["photos"]:
+                        processed_photos = []
+                        for photo in place["photos"]:
+                            # For the new Places API, photos have a 'name' field
+                            if "name" in photo:
+                                photo_url = get_photo_url(photo["name"])
+                                if photo_url:
+                                    processed_photos.append({
+                                        "name": photo["name"],
+                                        "googleMapsUri": photo_url,
+                                        "widthPx": photo.get("widthPx", 400),
+                                        "heightPx": photo.get("heightPx", 300)
+                                    })
+                        place["photos"] = processed_photos
+                    
+                    print(f"Restaurant {index}: {place.get('displayName', {}).get('text', 'Unknown')}, ID: {place['place_id']}, Photos: {len(place.get('photos', []))}")
+                else:
+                    print(f"Warning: Restaurant {index} has no ID!")
+        else:
+            print("No places found in response!")
+        
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Update the restaurant details endpoint as well
 @app.get("/restaurants/{place_id}")

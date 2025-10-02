@@ -18,6 +18,7 @@ import ApiService from "../services/ApiService";
 import RestaurantCard from "../components/RestaurantCard";
 import { Colors, Typography, Spacing } from "../styles";
 import styles from "../styles/screens/HomeScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const cuisineOptions = ["All", "Italian", "Indian", "Chinese", "Japanese", "Mexican", "Thai"];
 const dietaryOptions = ["All", "Vegetarian", "Vegan", "Gluten-Free", "Halal"];
@@ -25,7 +26,7 @@ const priceOptions = ["All", "$", "$$", "$$$", "$$$$"];
 
 const HomeScreen = () => {
   const router = useRouter();
-  const { location, loading: locationLoading, error: locationError, requestLocation } = useContext(LocationContext);
+  const { location, loading: locationLoading, error: locationError, requestLocation, isCustomLocation } = useContext(LocationContext);
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,9 +50,27 @@ const HomeScreen = () => {
 
     try {
       setLoading(true);
-      const data = await ApiService.getNearbyRestaurants(location);
-      setRestaurants(data);
-      setFilteredRestaurants(data);
+      
+      // Check if we should bypass cache
+      const bypassCache = await AsyncStorage.getItem('bypassRestaurantCache') === 'true';
+      
+      // If bypassing, clear the flag for future requests
+      if (bypassCache) {
+        AsyncStorage.removeItem('bypassRestaurantCache');
+      }
+      
+      // Call API with bypass flag
+      const restaurants = await ApiService.getNearbyRestaurants(
+        {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          radius: location.radius,
+        }, 
+        !bypassCache // invert the flag - if bypassCache is true, useCache should be false
+      );
+      
+      setRestaurants(restaurants);
+      setFilteredRestaurants(restaurants);
     } catch (err) {
       console.error("Error fetching restaurants:", err);
     } finally {
@@ -265,6 +284,25 @@ const HomeScreen = () => {
             <Ionicons name="close-circle" size={20} color={Colors.textSecondary} />
           </TouchableOpacity>
         )}
+      </View>
+
+      {/* Location Info and Map Button */}
+      <View style={styles.locationInfoContainer}>
+        <TouchableOpacity 
+          style={styles.locationButton}
+          onPress={() => router.push('/map-selection' as any)}
+        >
+          <Ionicons name="location" size={16} color="#000" />
+          <Text style={styles.locationButtonText}>
+            {isCustomLocation && location?.address 
+              ? location.address.split(',')[0] 
+              : 'Current Location'}
+          </Text>
+          <Text style={styles.radiusText}>
+            {`(${location?.radius ? (location.radius / 1000) : 5}km)`}
+          </Text>
+          <Ionicons name="chevron-down" size={14} color="#6B7280" />
+        </TouchableOpacity>
       </View>
 
       {/* Local Spots Header */}
