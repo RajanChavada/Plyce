@@ -95,10 +95,10 @@ def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
 async def get_restaurants(
     lat: float = Query(..., description="Latitude"),
     lng: float = Query(..., description="Longitude"),
-    radius: int = Query(5000, description="Search radius in meters", ge=1000, le=25000),
+    radius: int = Query(5000, description="Search radius in meters", ge=2000, le=15000),  # Changed from ge=1000, le=25000
     keyword: Optional[str] = None
 ):
-    """Get nearby restaurants with configurable radius"""
+    """Get nearby restaurants with configurable radius (2-15km)"""
     try:
         # Use the new Places API
         url = "https://places.googleapis.com/v1/places:searchNearby"

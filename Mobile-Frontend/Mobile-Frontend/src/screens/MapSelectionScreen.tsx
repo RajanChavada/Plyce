@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MapSelectionScreen = () => {
   const { location, setCustomLocation } = useContext(LocationContext);
-  const [radius, setRadius] = useState(location?.radius || 5000);
+  const [radius, setRadius] = useState(location?.radius || 5000); // Keep 5km as default
   const [mapRegion, setMapRegion] = useState({
     latitude: location?.latitude || 43.6532,
     longitude: location?.longitude || -79.3832,
@@ -118,7 +118,6 @@ const MapSelectionScreen = () => {
       longitude: mapRegion.longitude,
       radius,
       address,
-      accuracy: 0, // Default accuracy for manually selected location
     });
     
     // Set a flag in AsyncStorage to indicate that cache should be bypassed

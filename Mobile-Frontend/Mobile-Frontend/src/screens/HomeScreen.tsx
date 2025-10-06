@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from '@react-navigation/native';
 import { LocationContext } from "../contexts/LocationContext";
 import ApiService from "../services/ApiService";
 import RestaurantCard from "../components/RestaurantCard";
@@ -26,7 +27,7 @@ const priceOptions = ["All", "$", "$$", "$$$", "$$$$"];
 
 const HomeScreen = () => {
   const router = useRouter();
-  const { location, loading: locationLoading, error: locationError, requestLocation, isCustomLocation } = useContext(LocationContext);
+  const { location, loading: locationLoading, error: locationError, refreshLocation } = useContext(LocationContext);
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -40,23 +41,30 @@ const HomeScreen = () => {
   
   // Modal states
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState(null);
+  const [modalType, setModalType] = useState<string | null>(null);
   
   // Animation
   const [modalAnimation] = useState(new Animated.Value(0));
 
-  const fetchRestaurants = async () => {
+  // Check if location is custom (has an address that's not "Current Location")
+  const isCustomLocation = location?.address && location.address !== 'Current Location';
+
+  const fetchRestaurants = async (forceRefresh = false) => {
     if (!location) return;
 
     try {
       setLoading(true);
       
       // Check if we should bypass cache
-      const bypassCache = await AsyncStorage.getItem('bypassRestaurantCache') === 'true';
+      let bypassCache = forceRefresh;
+      if (!bypassCache) {
+        bypassCache = await AsyncStorage.getItem('bypassRestaurantCache') === 'true';
+      }
       
       // If bypassing, clear the flag for future requests
       if (bypassCache) {
-        AsyncStorage.removeItem('bypassRestaurantCache');
+        await AsyncStorage.removeItem('bypassRestaurantCache');
+        console.log('🔄 Bypassing cache and fetching fresh restaurants...');
       }
       
       // Call API with bypass flag
@@ -71,12 +79,38 @@ const HomeScreen = () => {
       
       setRestaurants(restaurants);
       setFilteredRestaurants(restaurants);
+      console.log(`✅ Loaded ${restaurants.length} restaurants`);
     } catch (err) {
       console.error("Error fetching restaurants:", err);
     } finally {
       setLoading(false);
     }
   };
+
+  // Check for refresh flag when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkRefreshFlag = async () => {
+        try {
+          const shouldRefresh = await AsyncStorage.getItem('shouldRefreshHome');
+          
+          if (shouldRefresh === 'true') {
+            console.log('🔄 Home screen focused - auto-refreshing restaurants...');
+            
+            // Clear the flag
+            await AsyncStorage.removeItem('shouldRefreshHome');
+            
+            // Fetch restaurants with cache bypass
+            await fetchRestaurants(true);
+          }
+        } catch (error) {
+          console.error('Error checking refresh flag:', error);
+        }
+      };
+
+      checkRefreshFlag();
+    }, [location])
+  );
 
   useEffect(() => {
     if (location) {
@@ -109,7 +143,7 @@ const HomeScreen = () => {
 
     if (searchQuery) {
       filtered = filtered.filter(restaurant => 
-        restaurant.displayName?.text.toLowerCase().includes(searchQuery.toLowerCase())
+        restaurant.displayName?.text?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -141,12 +175,12 @@ const HomeScreen = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await requestLocation();
-    await fetchRestaurants();
+    await refreshLocation();
+    await fetchRestaurants(true); // Force refresh
     setRefreshing(false);
   };
 
-  const openFilterModal = (type) => {
+  const openFilterModal = (type: string) => {
     setModalType(type);
     setModalVisible(true);
   };
@@ -162,9 +196,9 @@ const HomeScreen = () => {
   };
 
   const renderFilterOptions = () => {
-    let options = [];
+    let options: string[] = [];
     let currentValue = "";
-    let setValue = null;
+    let setValue: ((value: string) => void) | null = null;
 
     if (modalType === "cuisine") {
       options = cuisineOptions;
@@ -201,7 +235,7 @@ const HomeScreen = () => {
               currentValue === option && styles.modalOptionSelected,
             ]}
             onPress={() => {
-              setValue(option);
+              if (setValue) setValue(option);
               closeModal();
             }}
           >
@@ -238,7 +272,7 @@ const HomeScreen = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.centered}>
           <Text style={styles.errorText}>{locationError}</Text>
-          <TouchableOpacity style={styles.button} onPress={requestLocation}>
+          <TouchableOpacity style={styles.button} onPress={refreshLocation}>
             <Text style={styles.buttonText}>Retry</Text>
           </TouchableOpacity>
         </View>
@@ -274,7 +308,7 @@ const HomeScreen = () => {
         <Ionicons name="search" size={20} color={Colors.textSecondary} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Start Typing to Set Location"
+          placeholder="Search restaurants..."
           placeholderTextColor={Colors.textSecondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -299,7 +333,7 @@ const HomeScreen = () => {
               : 'Current Location'}
           </Text>
           <Text style={styles.radiusText}>
-            {`(${location?.radius ? (location.radius / 1000) : 5}km)`}
+            {`(${location?.radius ? (location.radius / 1000) : 2}km)`}
           </Text>
           <Ionicons name="chevron-down" size={14} color="#6B7280" />
         </TouchableOpacity>
@@ -307,7 +341,9 @@ const HomeScreen = () => {
 
       {/* Local Spots Header */}
       <View style={styles.localSpotsHeader}>
-        <Text style={styles.localSpotsTitle}>Local Spots (5km)</Text>
+        <Text style={styles.localSpotsTitle}>
+          Local Spots ({location?.radius ? (location.radius / 1000) : 2}km)
+        </Text>
       </View>
 
       {/* Filter Pills */}
@@ -391,7 +427,7 @@ const HomeScreen = () => {
         />
       )}
 
-      {/* Filter Modal with Improved Animation */}
+      {/* Filter Modal */}
       {modalVisible && (
         <Modal
           transparent={true}

@@ -1,30 +1,28 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import LocationService, { LocationData } from '../services/LocationService';
+import * as Location from 'expo-location';
 
-interface ExtendedLocationData extends LocationData {
-  radius?: number;
+export interface LocationData {
+  latitude: number;
+  longitude: number;
+  radius: number;
   address?: string;
 }
 
 interface LocationContextType {
-  location: ExtendedLocationData | null;
+  location: LocationData | null;
   loading: boolean;
   error: string | null;
-  requestLocation: () => Promise<void>;
-  setCustomLocation: (location: ExtendedLocationData) => void;
-  isCustomLocation: boolean;
-  resetToCurrentLocation: () => Promise<void>;
+  setCustomLocation: (location: LocationData) => void;
+  refreshLocation: () => Promise<void>;
 }
 
 // Make sure to export the context
 export const LocationContext = createContext<LocationContextType>({
   location: null,
-  loading: false,
+  loading: true,
   error: null,
-  requestLocation: async () => {},
   setCustomLocation: () => {},
-  isCustomLocation: false,
-  resetToCurrentLocation: async () => {},
+  refreshLocation: async () => {},
 });
 
 interface LocationProviderProps {
@@ -32,55 +30,56 @@ interface LocationProviderProps {
 }
 
 export const LocationProvider: React.FC<LocationProviderProps> = ({ children }) => {
-  const [location, setLocation] = useState<ExtendedLocationData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState<LocationData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isCustomLocation, setIsCustomLocation] = useState(false);
 
-  const requestLocation = async () => {
-    setLoading(true);
-    setError(null);
-    
+  const getCurrentLocation = async () => {
     try {
-      const hasPermission = await LocationService.requestPermission();
-      if (!hasPermission) {
-        throw new Error('Location permission denied');
+      setLoading(true);
+      setError(null);
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setError('Permission to access location was denied');
+        setLoading(false);
+        return;
       }
+
+      const currentLocation = await Location.getCurrentPositionAsync({});
       
-      const locationData = await LocationService.getCurrentLocation();
       setLocation({
-        ...locationData,
-        radius: 5000 // Default 5km radius
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+        radius: 2000, // Changed from 5000 to 2000 (2km default)
+        address: 'Current Location'
       });
-      setIsCustomLocation(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError('Failed to get location');
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const setCustomLocation = (customLocation: ExtendedLocationData) => {
-    setLocation(customLocation);
-    setIsCustomLocation(true);
+  const setCustomLocation = (newLocation: LocationData) => {
+    setLocation(newLocation);
   };
 
-  const resetToCurrentLocation = async () => {
-    await requestLocation();
+  const refreshLocation = async () => {
+    await getCurrentLocation();
   };
 
   useEffect(() => {
-    requestLocation();
+    getCurrentLocation();
   }, []);
 
   const value: LocationContextType = {
     location,
     loading,
     error,
-    requestLocation,
     setCustomLocation,
-    isCustomLocation,
-    resetToCurrentLocation
+    refreshLocation
   };
 
   return (
