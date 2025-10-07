@@ -12,8 +12,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useFocusEffect } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { LocationContext } from "../contexts/LocationContext";
 import ApiService from "../services/ApiService";
 import RestaurantCard from "../components/RestaurantCard";
@@ -27,6 +26,7 @@ const priceOptions = ["All", "$", "$$", "$$$", "$$$$"];
 
 const HomeScreen = () => {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { location, loading: locationLoading, error: locationError, refreshLocation } = useContext(LocationContext);
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
@@ -87,36 +87,35 @@ const HomeScreen = () => {
     }
   };
 
-  // Check for refresh flag when screen comes into focus
-  useFocusEffect(
-    React.useCallback(() => {
-      const checkRefreshFlag = async () => {
-        try {
-          const shouldRefresh = await AsyncStorage.getItem('shouldRefreshHome');
-          
-          if (shouldRefresh === 'true') {
-            console.log('🔄 Home screen focused - auto-refreshing restaurants...');
-            
-            // Clear the flag
-            await AsyncStorage.removeItem('shouldRefreshHome');
-            
-            // Fetch restaurants with cache bypass
-            await fetchRestaurants(true);
-          }
-        } catch (error) {
-          console.error('Error checking refresh flag:', error);
-        }
-      };
-
-      checkRefreshFlag();
-    }, [location])
-  );
-
+  // Initial fetch when location changes
   useEffect(() => {
     if (location) {
       fetchRestaurants();
     }
   }, [location]);
+
+  // Check for refresh parameter when component mounts or params change
+  useEffect(() => {
+    const checkAndRefresh = async () => {
+      if (params.refresh) {
+        console.log('🔄 Refresh parameter detected, checking flags...');
+        
+        const shouldRefresh = await AsyncStorage.getItem('shouldRefreshHome');
+        
+        if (shouldRefresh === 'true') {
+          console.log('🔄 Auto-refreshing restaurants after map selection...');
+          
+          // Clear the flag
+          await AsyncStorage.removeItem('shouldRefreshHome');
+          
+          // Fetch restaurants with cache bypass
+          await fetchRestaurants(true);
+        }
+      }
+    };
+
+    checkAndRefresh();
+  }, [params.refresh]);
 
   useEffect(() => {
     applyFilters();

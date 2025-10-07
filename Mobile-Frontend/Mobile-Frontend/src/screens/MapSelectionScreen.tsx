@@ -109,33 +109,34 @@ const MapSelectionScreen = () => {
     }, 300);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setLoading(true);
     
-    // Update location context with custom location
-    setCustomLocation({
-      latitude: mapRegion.latitude,
-      longitude: mapRegion.longitude,
-      radius,
-      address,
-    });
-    
-    // Set a flag in AsyncStorage to indicate that cache should be bypassed
-    AsyncStorage.setItem('bypassRestaurantCache', 'true')
-      .then(() => {
-        console.log('Set flag to bypass restaurant cache');
-        
-        // Navigate back
-        setTimeout(() => {
-          setLoading(false);
-          router.push('/');
-        }, 200);
-      })
-      .catch(error => {
-        console.error('Error setting cache bypass flag:', error);
-        setLoading(false);
-        router.push('/');
+    try {
+      // Update location context with custom location
+      setCustomLocation({
+        latitude: mapRegion.latitude,
+        longitude: mapRegion.longitude,
+        radius,
+        address,
       });
+      
+      // Set flags in AsyncStorage
+      await AsyncStorage.setItem('bypassRestaurantCache', 'true');
+      await AsyncStorage.setItem('shouldRefreshHome', 'true');
+      
+      console.log('✅ Set flags to bypass cache and refresh home screen');
+      
+      // Navigate back with a timestamp to force re-render
+      setTimeout(() => {
+        setLoading(false);
+        router.replace(`/?refresh=${Date.now()}` as const);
+      }, 200);
+    } catch (error) {
+      console.error('Error setting cache bypass flag:', error);
+      setLoading(false);
+      router.replace(`/?refresh=${Date.now()}` as const);
+    }
   };
   const handleUseCurrentLocation = async () => {
     setLoading(true);
