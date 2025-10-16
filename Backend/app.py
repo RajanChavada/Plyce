@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+import logging
 
 from typing import List, Optional
 import re
@@ -17,6 +18,10 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 load_dotenv() # load the env
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Plyce API", 
               description="Backend API for Plyce application",
@@ -95,73 +100,93 @@ def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
 async def get_restaurants(
     lat: float = Query(..., description="Latitude"),
     lng: float = Query(..., description="Longitude"),
-    radius: int = Query(5000, description="Search radius in meters", ge=2000, le=15000),  # Changed from ge=1000, le=25000
-    keyword: Optional[str] = None
+    radius: int = Query(5000, description="Search radius in meters", ge=2000, le=15000),
+    keyword: Optional[str] = Query(None, description="Search keyword for cuisine/dietary filters")
 ):
-    """Get nearby restaurants with configurable radius (2-15km)"""
+    """Get nearby restaurants with optional keyword filtering"""
     try:
-        # Use the new Places API
-        url = "https://places.googleapis.com/v1/places:searchNearby"
+        logger.info(f"🔍 Fetching restaurants at ({lat}, {lng}) with radius {radius}m")
         
-        # Headers for the request
-        headers = {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": GOOGLE_API_KEY,
-            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.priceLevel,places.photos"
-        }
-        
-        # Body for the request
-        body = {
-            "locationRestriction": {
-                "circle": {
-                    "center": {"latitude": lat, "longitude": lng},
-                    "radius": radius
+        if keyword:
+            logger.info(f"🔍 FILTERING BY KEYWORD: '{keyword}'")
+            # Use Text Search API when keyword is provided
+            body = {
+                "textQuery": f"{keyword} restaurant",
+                "locationBias": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
                 }
-            },
-            "includedTypes": ["restaurant"],
-            "maxResultCount": 20
-        }
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            logger.info(f"📤 Calling Text Search API with query: '{keyword} restaurant'")
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchText",
+                json=body,
+                headers=headers
+            )
+        else:
+            logger.info(f"📍 No keyword filter - using nearby search")
+            # Use Nearby Search when no keyword (original behavior)
+            body = {
+                "locationRestriction": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "includedTypes": ["restaurant"],
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchNearby",
+                json=body,
+                headers=headers
+            )
         
-        # Make the request
-        response = requests.post(url, headers=headers, json=body)
-        
-        # Debug the raw response
-        print(f"API Response Status: {response.status_code}")
-        
-        # Process the response
+        response.raise_for_status()
         data = response.json()
         
-        # Ensure each place has a place_id field and proper photo URLs
-        if 'places' in data:
-            for index, place in enumerate(data["places"]):
-                # Make sure each place has a place_id that equals the id field
-                if "id" in place:
-                    place["place_id"] = place["id"]
-                    
-                    # Process photos to generate proper URLs
-                    if "photos" in place and place["photos"]:
-                        processed_photos = []
-                        for photo in place["photos"]:
-                            # For the new Places API, photos have a 'name' field
-                            if "name" in photo:
-                                photo_url = get_photo_url(photo["name"])
-                                if photo_url:
-                                    processed_photos.append({
-                                        "name": photo["name"],
-                                        "googleMapsUri": photo_url,
-                                        "widthPx": photo.get("widthPx", 400),
-                                        "heightPx": photo.get("heightPx", 300)
-                                    })
-                        place["photos"] = processed_photos
-                    
-                    print(f"Restaurant {index}: {place.get('displayName', {}).get('text', 'Unknown')}, ID: {place['place_id']}, Photos: {len(place.get('photos', []))}")
-                else:
-                    print(f"Warning: Restaurant {index} has no ID!")
-        else:
-            print("No places found in response!")
+        places = data.get("places", [])
         
-        return data
+        if keyword:
+            logger.info(f"✅ Found {len(places)} restaurants matching '{keyword}'")
+        else:
+            logger.info(f"✅ Found {len(places)} restaurants nearby")
+        
+        # Log first 3 restaurant names for debugging
+        if places:
+            sample_names = [p.get('displayName', {}).get('text', 'Unknown') for p in places[:3]]
+            logger.info(f"📋 Sample results: {sample_names}")
+        else:
+            logger.warning(f"⚠️ No places returned from API")
+        
+        return places
+        
     except Exception as e:
+        logger.error(f"❌ Error fetching restaurants: {str(e)}")
+        logger.error(f"Response content: {response.text if 'response' in locals() else 'No response'}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Update the restaurant details endpoint as well

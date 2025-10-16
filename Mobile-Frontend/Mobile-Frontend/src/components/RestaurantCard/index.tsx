@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import styles from '../../styles/components/RestaurantCard';
@@ -9,13 +9,25 @@ interface RestaurantCardProps {
   restaurant: any;
 }
 
-export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
+const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
   const router = useRouter();
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
   const handlePress = () => {
-    router.push(`/restaurant/${restaurant.place_id}`);
+    if (!restaurant.place_id && !restaurant.id) {
+      console.error("Cannot navigate: Restaurant has no valid ID", restaurant);
+      Alert.alert("Error", "Unable to view restaurant details");
+      return;
+    }
+    
+    const restaurantId = restaurant.place_id || restaurant.id;
+    console.log(`🔍 Navigating to restaurant details: ${restaurantId}`);
+    
+    router.push({
+      pathname: "/restaurant/[id]",
+      params: { id: restaurantId }
+    });
   };
 
   const renderStars = (rating: number) => {
@@ -124,3 +136,5 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     </TouchableOpacity>
   );
 }
+
+export default RestaurantCard;

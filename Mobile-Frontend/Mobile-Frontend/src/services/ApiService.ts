@@ -40,7 +40,7 @@ export interface Restaurant {
   };
   types?: string[];
   rating?: number;
-  priceLevel?: string;
+  priceLevel?: number;
   photos?: Array<{
     name?: string;
     googleMapsUri?: string;
@@ -240,10 +240,13 @@ class ApiService {
       longitude: number;
       radius?: number;
     },
-    useCache: boolean = __DEV__ // Default is to use cache in development only
+    useCache: boolean = __DEV__,
+    keyword?: string
   ): Promise<Restaurant[]> {
-    // If useCache is false, skip the cache lookup
-    if (useCache) {
+    // NEVER use cache when filtering
+    const shouldUseCache = useCache && !keyword;
+    
+    if (shouldUseCache) {
       try {
         const cachedData = await this.getCachedRestaurants();
         if (cachedData && cachedData.length > 0) {
@@ -256,95 +259,118 @@ class ApiService {
         console.error("Error reading from cache:", error);
       }
     } else {
-      console.log("🌐 BYPASSING CACHE - Fetching fresh data from API");
+      if (keyword) {
+        console.log(`🔍 BYPASSING CACHE - Filtering by keyword: ${keyword}`);
+      } else {
+        console.log("🌐 BYPASSING CACHE - Fetching fresh data from API");
+      }
     }
 
-    // Fetch from API (always runs if cache is skipped or empty)
     try {
       console.log("🌐 FETCHING FROM API...");
-      const radius = location.radius || 5000;
+      const radius = location.radius || 2000;
+      
+      const params: any = {
+        lat: location.latitude,
+        lng: location.longitude,
+        radius,
+      };
+      
+      if (keyword) {
+        params.keyword = keyword;
+        console.log(`🔍 Filtering by keyword: ${keyword}`);
+      }
       
       const response = await axios.get(`${API_URL}/restaurants`, {
-        params: {
-          lat: location.latitude,
-          lng: location.longitude,
-          radius,
-        },
+        params
       });
       
-      // Check if response data exists
       if (!response.data) {
         console.error("API returned empty data");
         throw new Error("No data returned from API");
       }
       
-      // Debug the response structure
       console.log("API Response structure:", JSON.stringify(response.data).substring(0, 100) + "...");
       
-      // Handle different possible response formats
       let restaurants: Restaurant[] = [];
       
-      // Add this new condition to handle the places array format
       if (response.data.places && Array.isArray(response.data.places)) {
         console.log("Processing 'places' array format");
-        restaurants = response.data.places.map((item: any) => ({
-          id: item.id || item.place_id || String(Math.random()),
-          place_id: item.place_id || item.id,
-          name: item.displayName?.text || item.name,
-          formattedAddress: item.formattedAddress || item.vicinity || "",
-          rating: item.rating || 0,
-          userRatingsTotal: item.user_ratings_total || 0,
-          types: item.types || [],
-          priceLevel: item.priceLevel || item.price_level || 0,
-          location: {
-            latitude: item.location?.latitude || 
-                     item.geometry?.location?.lat || 
-                     item.latitude || 0,
-            longitude: item.location?.longitude || 
-                      item.geometry?.location?.lng || 
-                      item.longitude || 0,
-          },
-          photos: item.photos || [],
-          displayName: item.displayName
-        }));
-      }
-      // Keep your existing conditions
-      else if (Array.isArray(response.data)) {
-        // Data is already an array
-        restaurants = response.data.map((item: any) => ({
-          id: item.id || item.place_id || String(Math.random()),
-          name: item.name,
-          rating: item.rating || 0,
-          userRatingsTotal: item.user_ratings_total || 0,
-          vicinity: item.vicinity || item.formatted_address || "",
-          types: item.types || [],
-          priceLevel: item.price_level || 0,
-          location: {
-            latitude: item.geometry?.location.lat || item.latitude || 0,
-            longitude: item.geometry?.location.lng || item.longitude || 0,
-          },
-          photos: item.photos || [],
-          openingHours: item.opening_hours || {},
-          distance: item.distance || 0
-        }));
+        restaurants = response.data.places.map((item: any, index: number) => {
+          // Generate a unique ID that's guaranteed to exist
+          const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
+          
+          return {
+            id: uniqueId,
+            place_id: uniqueId, // Use same unique ID for place_id
+            name: item.displayName?.text || item.name || "Unknown Restaurant",
+            formattedAddress: item.formattedAddress || item.vicinity || "",
+            rating: item.rating || 0,
+            userRatingsTotal: item.userRatingCount || item.user_ratings_total || 0,
+            types: item.types || [],
+            priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
+            location: {
+              latitude: item.location?.latitude || 
+                       item.geometry?.location?.lat || 
+                       item.latitude || 0,
+              longitude: item.location?.longitude || 
+                        item.geometry?.location?.lng || 
+                        item.longitude || 0,
+            },
+            photos: item.photos || [],
+            displayName: item.displayName
+          };
+        });
+      } else if (Array.isArray(response.data)) {
+        restaurants = response.data.map((item: any, index: number) => {
+          const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
+          
+          return {
+            id: uniqueId,
+            place_id: uniqueId,
+            name: item.displayName?.text || item.name || "Unknown Restaurant",
+            formattedAddress: item.formattedAddress || item.vicinity || "",
+            rating: item.rating || 0,
+            userRatingsTotal: item.userRatingCount || item.user_ratings_total || 0,
+            types: item.types || [],
+            priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
+            location: {
+              latitude: item.location?.latitude || 
+                       item.geometry?.location?.lat || 
+                       item.latitude || 0,
+              longitude: item.location?.longitude || 
+                        item.geometry?.location?.lng || 
+                        item.longitude || 0,
+            },
+            photos: item.photos || [],
+            displayName: item.displayName
+          };
+        });
       } else if (response.data.results && Array.isArray(response.data.results)) {
-        // Google Places API format with "results" array
-        restaurants = response.data.results.map((item: any) => ({
-          id: item.id || item.place_id || String(Math.random()),
-          name: item.name,
-          rating: item.rating || 0,
-          userRatingsTotal: item.user_ratings_total || 0,
-          vicinity: item.vicinity || item.formatted_address || "",
-          types: item.types || [],
-          priceLevel: item.price_level || 0,
-          location: {
-            latitude: item.geometry?.location.lat || 0,
-            longitude: item.geometry?.location.lng || 0,
-          },
-          photos: item.photos || [],
-          openingHours: item.opening_hours || {},
-          distance: item.distance || 0
-        }));
+        restaurants = response.data.results.map((item: any, index: number) => {
+          const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
+          
+          return {
+            id: uniqueId,
+            place_id: uniqueId,
+            name: item.displayName?.text || item.name || "Unknown Restaurant",
+            formattedAddress: item.formattedAddress || item.vicinity || "",
+            rating: item.rating || 0,
+            userRatingsTotal: item.userRatingCount || item.user_ratings_total || 0,
+            types: item.types || [],
+            priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
+            location: {
+              latitude: item.location?.latitude || 
+                       item.geometry?.location?.lat || 
+                       item.latitude || 0,
+              longitude: item.location?.longitude || 
+                        item.geometry?.location?.lng || 
+                        item.longitude || 0,
+            },
+            photos: item.photos || [],
+            displayName: item.displayName
+          };
+        });
       } else {
         console.error("Unexpected API response format:", response.data);
         throw new Error("Unexpected API response format");
@@ -352,8 +378,18 @@ class ApiService {
       
       console.log(`✅ Processed ${restaurants.length} restaurants from API`);
       
-      // Save to cache (always save the latest results, even when bypassing cache for read)
-      await this.cacheRestaurants(restaurants);
+      // Verify all restaurants have valid IDs
+      const invalidRestaurants = restaurants.filter(r => !r.id || !r.place_id);
+      if (invalidRestaurants.length > 0) {
+        console.warn(`⚠️ Found ${invalidRestaurants.length} restaurants with missing IDs`);
+      }
+      
+      // Only cache if not filtering
+      if (!keyword) {
+        await this.cacheRestaurants(restaurants);
+      } else {
+        console.log(`⚠️ Not caching filtered results (keyword: ${keyword})`);
+      }
       
       return restaurants;
     } catch (error) {
@@ -661,7 +697,7 @@ class ApiService {
   static getRestaurantPhotoUrl(restaurant: Restaurant, index: number = 0): string {
     // Default placeholder if no photo is available
     const fallbackUrl = `https://via.placeholder.com/400x300/f0f0f0/666666?text=${encodeURIComponent(
-      restaurant?.displayName?.text || 'Restaurant'
+      restaurant?.displayName?.text || restaurant?.name || 'Restaurant'
     )}`;
     
     // Check if restaurant has photos
@@ -676,10 +712,10 @@ class ApiService {
       return photo.googleMapsUri;
     }
     
-    // Check for name - this might be a direct Places API v1 reference
+    // Check for name - use the backend photo proxy endpoint
     if (photo.name) {
-      // You may need to adjust this URL format based on your backend implementation
-      return `${API_URL}/restaurants/photo?reference=${encodeURIComponent(photo.name)}&maxwidth=400`;
+      // Use the correct backend endpoint format that matches your backend
+      return `${API_URL}/restaurants/photo/${encodeURIComponent(photo.name)}`;
     }
     
     return fallbackUrl;
@@ -694,6 +730,22 @@ class ApiService {
       console.error('Error fetching fallback image:', error);
       return `https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant`;
     }
+  }
+
+  // Helper to map price level string to number
+  private static mapPriceLevel(priceLevel: string | number | undefined): number {
+    if (typeof priceLevel === 'number') return priceLevel;
+    if (!priceLevel) return 0;
+    
+    const priceLevelMap: { [key: string]: number } = {
+      'PRICE_LEVEL_FREE': 0,
+      'PRICE_LEVEL_INEXPENSIVE': 1,
+      'PRICE_LEVEL_MODERATE': 2,
+      'PRICE_LEVEL_EXPENSIVE': 3,
+      'PRICE_LEVEL_VERY_EXPENSIVE': 4,
+    };
+    
+    return priceLevelMap[priceLevel] || 0;
   }
 }
 

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   FlatList,
   Modal,
@@ -46,42 +47,71 @@ const HomeScreen = () => {
   // Animation
   const [modalAnimation] = useState(new Animated.Value(0));
 
+  // Track if filters have changed to trigger API call
+  const [filtersApplied, setFiltersApplied] = useState(false);
+
   // Check if location is custom (has an address that's not "Current Location")
   const isCustomLocation = location?.address && location.address !== 'Current Location';
 
-  const fetchRestaurants = async (forceRefresh = false) => {
+  const fetchRestaurants = async (forceRefresh = false, filters?: {
+    cuisine?: string;
+    dietary?: string;
+    price?: string;
+  }) => {
     if (!location) return;
 
     try {
       setLoading(true);
       
-      // Check if we should bypass cache
-      let bypassCache = forceRefresh;
-      if (!bypassCache) {
-        bypassCache = await AsyncStorage.getItem('bypassRestaurantCache') === 'true';
+      // Build keyword from filters
+      let keyword = "";
+      if (filters?.cuisine && filters.cuisine !== "All") {
+        keyword += filters.cuisine + " ";
+      }
+      if (filters?.dietary && filters.dietary !== "All") {
+        keyword += filters.dietary + " ";
+      }
+      keyword = keyword.trim();
+      
+      console.log(`🔍 Fetching restaurants with filters:`, { keyword, price: filters?.price });
+      
+      // ALWAYS bypass cache when filtering
+      const bypassCache = forceRefresh || !!keyword;
+      
+      if (bypassCache && keyword) {
+        console.log(`🔄 Fetching filtered results for: ${keyword}`);
+      } else if (bypassCache) {
+        console.log('🔄 Force refreshing restaurants...');
       }
       
-      // If bypassing, clear the flag for future requests
-      if (bypassCache) {
-        await AsyncStorage.removeItem('bypassRestaurantCache');
-        console.log('🔄 Bypassing cache and fetching fresh restaurants...');
-      }
-      
-      // Call API with bypass flag
+      // Call API
       const restaurants = await ApiService.getNearbyRestaurants(
         {
           latitude: location.latitude,
           longitude: location.longitude,
           radius: location.radius,
         }, 
-        !bypassCache // invert the flag - if bypassCache is true, useCache should be false
+        !bypassCache, // useCache = opposite of bypass
+        keyword || undefined
       );
       
       setRestaurants(restaurants);
-      setFilteredRestaurants(restaurants);
-      console.log(`✅ Loaded ${restaurants.length} restaurants`);
+      
+      // Apply price filter client-side since it's a number comparison
+      let filtered = restaurants;
+      if (filters?.price && filters.price !== "All") {
+        const priceLevel = filters.price.length;
+        filtered = filtered.filter(restaurant => 
+          Number(restaurant.priceLevel) === priceLevel
+        );
+        console.log(`💰 Filtered by price level ${priceLevel}: ${filtered.length} results`);
+      }
+      
+      setFilteredRestaurants(filtered);
+      console.log(`✅ Loaded ${restaurants.length} restaurants, filtered to ${filtered.length}`);
     } catch (err) {
       console.error("Error fetching restaurants:", err);
+      Alert.alert("Error", "Failed to load restaurants. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -117,6 +147,19 @@ const HomeScreen = () => {
     checkAndRefresh();
   }, [params.refresh]);
 
+  // Watch for filter changes and refetch
+  useEffect(() => {
+    if (filtersApplied) {
+      console.log('🔍 Filters changed, refetching restaurants...');
+      fetchRestaurants(true, {
+        cuisine: selectedCuisine,
+        dietary: selectedDietary,
+        price: selectedPrice
+      });
+      setFiltersApplied(false);
+    }
+  }, [filtersApplied]);
+
   useEffect(() => {
     applyFilters();
   }, [selectedCuisine, selectedDietary, selectedPrice, searchQuery, restaurants]);
@@ -138,34 +181,25 @@ const HomeScreen = () => {
   }, [modalVisible]);
 
   const applyFilters = () => {
+    // This is now just for client-side price filtering
+    // Cuisine and dietary are handled by backend keyword search
+    if (!restaurants || restaurants.length === 0) return;
+    
     let filtered = [...restaurants];
 
+    // Apply search query filter
     if (searchQuery) {
       filtered = filtered.filter(restaurant => 
-        restaurant.displayName?.text?.toLowerCase().includes(searchQuery.toLowerCase())
+        restaurant.displayName?.text?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        restaurant.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    if (selectedCuisine !== "All") {
-      filtered = filtered.filter(restaurant => 
-        restaurant.types?.some(type => 
-          type.toLowerCase().includes(selectedCuisine.toLowerCase())
-        )
-      );
-    }
-
-    if (selectedDietary !== "All") {
-      filtered = filtered.filter(restaurant => 
-        restaurant.types?.some(type => 
-          type.toLowerCase().includes(selectedDietary.toLowerCase())
-        )
-      );
-    }
-
+    // Price filter (client-side)
     if (selectedPrice !== "All") {
       const priceLevel = selectedPrice.length;
       filtered = filtered.filter(restaurant => 
-        restaurant.priceLevel === priceLevel
+        Number(restaurant.priceLevel) === priceLevel
       );
     }
 
@@ -202,15 +236,25 @@ const HomeScreen = () => {
     if (modalType === "cuisine") {
       options = cuisineOptions;
       currentValue = selectedCuisine;
-      setValue = setSelectedCuisine;
+      setValue = (value) => {
+        setSelectedCuisine(value);
+        setFiltersApplied(true); // Trigger API refetch
+      };
     } else if (modalType === "dietary") {
       options = dietaryOptions;
       currentValue = selectedDietary;
-      setValue = setSelectedDietary;
+      setValue = (value) => {
+        setSelectedDietary(value);
+        setFiltersApplied(true); // Trigger API refetch
+      };
     } else if (modalType === "price") {
       options = priceOptions;
       currentValue = selectedPrice;
-      setValue = setSelectedPrice;
+      setValue = (value) => {
+        setSelectedPrice(value);
+        // Price filter is client-side, just reapply
+        setTimeout(() => applyFilters(), 100);
+      };
     }
 
     return (
@@ -412,7 +456,7 @@ const HomeScreen = () => {
       ) : (
         <FlatList
           data={filteredRestaurants}
-          keyExtractor={(item) => item.place_id}
+keyExtractor={(item, index) => item.place_id || item.id || `restaurant-${index}`}
           renderItem={({ item }) => <RestaurantCard restaurant={item} />}
           contentContainerStyle={styles.restaurantList}
           showsVerticalScrollIndicator={false}
