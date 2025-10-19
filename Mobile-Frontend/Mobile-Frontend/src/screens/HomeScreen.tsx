@@ -17,9 +17,11 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { LocationContext } from "../contexts/LocationContext";
 import ApiService from "../services/ApiService";
 import RestaurantCard from "../components/RestaurantCard";
+import { FilterPanel } from "../components/FilterPanel";
 import { Colors, Typography, Spacing } from "../styles";
 import styles from "../styles/screens/HomeScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FilterOptions } from "../types";
 
 const cuisineOptions = ["All", "Italian", "Indian", "Chinese", "Japanese", "Mexican", "Thai"];
 const dietaryOptions = ["All", "Vegetarian", "Vegan", "Gluten-Free", "Halal"];
@@ -35,7 +37,11 @@ const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter states
+  // Advanced filter states
+  const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
+  const [filterPanelVisible, setFilterPanelVisible] = useState(false);
+  
+  // Legacy filter states (for backward compatibility with old UI)
   const [selectedCuisine, setSelectedCuisine] = useState("All");
   const [selectedDietary, setSelectedDietary] = useState("All");
   const [selectedPrice, setSelectedPrice] = useState("All");
@@ -47,74 +53,82 @@ const HomeScreen = () => {
   // Animation
   const [modalAnimation] = useState(new Animated.Value(0));
 
-  // Track if filters have changed to trigger API call
-  const [filtersApplied, setFiltersApplied] = useState(false);
-
   // Check if location is custom (has an address that's not "Current Location")
   const isCustomLocation = location?.address && location.address !== 'Current Location';
 
-  const fetchRestaurants = async (forceRefresh = false, filters?: {
-    cuisine?: string;
-    dietary?: string;
-    price?: string;
-  }) => {
+  // Check if there are any active filters
+  const hasActiveFilters = Object.keys(activeFilters).length > 0;
+
+  const fetchRestaurants = async (forceRefresh = false, filters?: FilterOptions) => {
     if (!location) return;
 
     try {
       setLoading(true);
       
-      // Build keyword from filters
-      let keyword = "";
-      if (filters?.cuisine && filters.cuisine !== "All") {
-        keyword += filters.cuisine + " ";
-      }
-      if (filters?.dietary && filters.dietary !== "All") {
-        keyword += filters.dietary + " ";
-      }
-      keyword = keyword.trim();
-      
-      console.log(`🔍 Fetching restaurants with filters:`, { keyword, price: filters?.price });
+      console.log(`🔍 Fetching restaurants with filters:`, filters);
       
       // ALWAYS bypass cache when filtering
-      const bypassCache = forceRefresh || !!keyword;
+      const bypassCache = forceRefresh || (filters && Object.keys(filters).length > 0);
       
-      if (bypassCache && keyword) {
-        console.log(`🔄 Fetching filtered results for: ${keyword}`);
+      if (bypassCache && filters && Object.keys(filters).length > 0) {
+        console.log(`🔄 Fetching filtered results`);
       } else if (bypassCache) {
         console.log('🔄 Force refreshing restaurants...');
       }
       
-      // Call API
-      const restaurants = await ApiService.getNearbyRestaurants(
-        {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          radius: location.radius,
-        }, 
-        !bypassCache, // useCache = opposite of bypass
-        keyword || undefined
-      );
+      let fetchedRestaurants;
       
-      setRestaurants(restaurants);
-      
-      // Apply price filter client-side since it's a number comparison
-      let filtered = restaurants;
-      if (filters?.price && filters.price !== "All") {
-        const priceLevel = filters.price.length;
-        filtered = filtered.filter(restaurant => 
-          Number(restaurant.priceLevel) === priceLevel
+      // Use new search endpoint if filters are provided
+      if (filters && Object.keys(filters).length > 0) {
+        fetchedRestaurants = await ApiService.searchRestaurantsWithFilters(
+          {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            radius: location.radius,
+          },
+          filters
         );
-        console.log(`💰 Filtered by price level ${priceLevel}: ${filtered.length} results`);
+      } else {
+        // Use regular endpoint without filters
+        fetchedRestaurants = await ApiService.getNearbyRestaurants(
+          {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            radius: location.radius,
+          },
+          !bypassCache
+        );
       }
       
-      setFilteredRestaurants(filtered);
-      console.log(`✅ Loaded ${restaurants.length} restaurants, filtered to ${filtered.length}`);
+      setRestaurants(fetchedRestaurants);
+      setFilteredRestaurants(fetchedRestaurants);
+      
+      console.log(`✅ Loaded ${fetchedRestaurants.length} restaurants`);
     } catch (err) {
       console.error("Error fetching restaurants:", err);
       Alert.alert("Error", "Failed to load restaurants. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle filter application from FilterPanel
+  const handleApplyFilters = (filters: FilterOptions) => {
+    console.log('🔍 Applying filters:', filters);
+    setActiveFilters(filters);
+    fetchRestaurants(true, filters);
+  };
+
+  // Handle opening the advanced filter panel
+  const handleOpenFilterPanel = () => {
+    setFilterPanelVisible(true);
+  };
+
+  // Handle clearing all filters
+  const handleClearAllFilters = () => {
+    console.log('🧹 Clearing all filters');
+    setActiveFilters({});
+    fetchRestaurants(true, {});
   };
 
   // Initial fetch when location changes
@@ -147,22 +161,25 @@ const HomeScreen = () => {
     checkAndRefresh();
   }, [params.refresh]);
 
-  // Watch for filter changes and refetch
+  // Apply client-side search query filtering
   useEffect(() => {
-    if (filtersApplied) {
-      console.log('🔍 Filters changed, refetching restaurants...');
-      fetchRestaurants(true, {
-        cuisine: selectedCuisine,
-        dietary: selectedDietary,
-        price: selectedPrice
-      });
-      setFiltersApplied(false);
+    if (!restaurants || restaurants.length === 0) {
+      setFilteredRestaurants([]);
+      return;
     }
-  }, [filtersApplied]);
+    
+    let filtered = [...restaurants];
 
-  useEffect(() => {
-    applyFilters();
-  }, [selectedCuisine, selectedDietary, selectedPrice, searchQuery, restaurants]);
+    // Apply search query filter
+    if (searchQuery) {
+      filtered = filtered.filter(restaurant => 
+        restaurant.displayName?.text?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        restaurant.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    setFilteredRestaurants(filtered);
+  }, [searchQuery, restaurants]);
 
   useEffect(() => {
     if (modalVisible) {
@@ -180,123 +197,21 @@ const HomeScreen = () => {
     }
   }, [modalVisible]);
 
-  const applyFilters = () => {
-    // This is now just for client-side price filtering
-    // Cuisine and dietary are handled by backend keyword search
-    if (!restaurants || restaurants.length === 0) return;
-    
-    let filtered = [...restaurants];
-
-    // Apply search query filter
-    if (searchQuery) {
-      filtered = filtered.filter(restaurant => 
-        restaurant.displayName?.text?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        restaurant.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Price filter (client-side)
-    if (selectedPrice !== "All") {
-      const priceLevel = selectedPrice.length;
-      filtered = filtered.filter(restaurant => 
-        Number(restaurant.priceLevel) === priceLevel
-      );
-    }
-
-    setFilteredRestaurants(filtered);
-  };
-
   const handleRefresh = async () => {
     setRefreshing(true);
     await refreshLocation();
-    await fetchRestaurants(true); // Force refresh
+    // Clear active filters and fetch fresh data
+    setActiveFilters({});
+    await fetchRestaurants(true);
     setRefreshing(false);
   };
 
-  const openFilterModal = (type: string) => {
-    setModalType(type);
-    setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    Animated.timing(modalAnimation, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setModalVisible(false);
-    });
-  };
-
-  const renderFilterOptions = () => {
-    let options: string[] = [];
-    let currentValue = "";
-    let setValue: ((value: string) => void) | null = null;
-
-    if (modalType === "cuisine") {
-      options = cuisineOptions;
-      currentValue = selectedCuisine;
-      setValue = (value) => {
-        setSelectedCuisine(value);
-        setFiltersApplied(true); // Trigger API refetch
-      };
-    } else if (modalType === "dietary") {
-      options = dietaryOptions;
-      currentValue = selectedDietary;
-      setValue = (value) => {
-        setSelectedDietary(value);
-        setFiltersApplied(true); // Trigger API refetch
-      };
-    } else if (modalType === "price") {
-      options = priceOptions;
-      currentValue = selectedPrice;
-      setValue = (value) => {
-        setSelectedPrice(value);
-        // Price filter is client-side, just reapply
-        setTimeout(() => applyFilters(), 100);
-      };
-    }
-
-    return (
-      <View style={styles.modalContent}>
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>
-            {modalType === "cuisine" && "Select Cuisine"}
-            {modalType === "dietary" && "Dietary Options"}
-            {modalType === "price" && "Price Range"}
-          </Text>
-          <TouchableOpacity onPress={closeModal}>
-            <Ionicons name="close" size={24} color={Colors.text} />
-          </TouchableOpacity>
-        </View>
-        
-        {options.map((option, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.modalOption,
-              currentValue === option && styles.modalOptionSelected,
-            ]}
-            onPress={() => {
-              if (setValue) setValue(option);
-              closeModal();
-            }}
-          >
-            <Text
-              style={[
-                styles.modalOptionText,
-                currentValue === option && styles.modalOptionTextSelected,
-              ]}
-            >
-              {option}
-            </Text>
-            {currentValue === option && (
-              <Ionicons name="checkmark" size={20} color={Colors.black} />
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
+  // Get a summary of active filters for display
+  const getActiveFiltersSummary = (): string => {
+    const filterCount = Object.keys(activeFilters).length;
+    if (filterCount === 0) return "Filters";
+    if (filterCount === 1) return "1 Filter";
+    return `${filterCount} Filters`;
   };
 
   if (locationLoading) {
@@ -389,62 +304,65 @@ const HomeScreen = () => {
         </Text>
       </View>
 
-      {/* Filter Pills */}
+      {/* Filter Section */}
       <View style={styles.filtersSection}>
-        <TouchableOpacity style={styles.filtersButton}>
-          <Ionicons name="filter" size={16} color={Colors.text} />
-          <Text style={styles.filtersButtonText}>Filters</Text>
+        <TouchableOpacity 
+          style={[
+            styles.filtersButton, 
+            hasActiveFilters && styles.filtersButtonActive
+          ]}
+          onPress={handleOpenFilterPanel}
+        >
+          <Ionicons 
+            name="filter" 
+            size={18} 
+            color={Colors.white} 
+          />
+          <Text style={styles.filtersButtonText}>
+            {getActiveFiltersSummary()}
+          </Text>
+          {hasActiveFilters && (
+            <View style={styles.filterBadge}>
+              <Text style={styles.filterBadgeText}>
+                {Object.keys(activeFilters).length}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
 
-        <View style={styles.filterPillsContainer}>
-          <TouchableOpacity 
-            style={[styles.filterPill, selectedCuisine !== "All" && { backgroundColor: Colors.black, borderColor: Colors.black }]} 
-            onPress={() => openFilterModal("cuisine")}
-          >
-            <Text 
-              style={[styles.filterPillText, selectedCuisine !== "All" && { color: Colors.white }]}
+        {/* Display active filters */}
+        {hasActiveFilters && (
+          <View style={styles.filterPillsContainer}>
+            {activeFilters.cuisine && (
+              <View style={styles.filterPill}>
+                <Text style={styles.filterPillText}>
+                  {activeFilters.cuisine}
+                </Text>
+              </View>
+            )}
+            {activeFilters.dietary && (
+              <View style={styles.filterPill}>
+                <Text style={styles.filterPillText}>
+                  {activeFilters.dietary}
+                </Text>
+              </View>
+            )}
+            {activeFilters.price_level && (
+              <View style={styles.filterPill}>
+                <Text style={styles.filterPillText}>
+                  {"$".repeat(activeFilters.price_level)}
+                </Text>
+              </View>
+            )}
+            <TouchableOpacity 
+              style={styles.clearAllPill}
+              onPress={handleClearAllFilters}
             >
-              {selectedCuisine === "All" ? "Cuisine" : selectedCuisine}
-            </Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color={selectedCuisine !== "All" ? Colors.white : Colors.textSecondary} 
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[styles.filterPill, selectedDietary !== "All" && { backgroundColor: Colors.black, borderColor: Colors.black }]} 
-            onPress={() => openFilterModal("dietary")}
-          >
-            <Text 
-              style={[styles.filterPillText, selectedDietary !== "All" && { color: Colors.white }]}
-            >
-              {selectedDietary === "All" ? "Dietary" : selectedDietary}
-            </Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color={selectedDietary !== "All" ? Colors.white : Colors.textSecondary} 
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={[styles.filterPill, selectedPrice !== "All" && { backgroundColor: Colors.black, borderColor: Colors.black }]} 
-            onPress={() => openFilterModal("price")}
-          >
-            <Text 
-              style={[styles.filterPillText, selectedPrice !== "All" && { color: Colors.white }]}
-            >
-              {selectedPrice === "All" ? "$$$" : selectedPrice}
-            </Text>
-            <Ionicons 
-              name="chevron-down" 
-              size={16} 
-              color={selectedPrice !== "All" ? Colors.white : Colors.textSecondary} 
-            />
-          </TouchableOpacity>
-        </View>
+              <Text style={styles.clearAllPillText}>Clear All</Text>
+              <Ionicons name="close-circle" size={16} color={Colors.error} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {/* Restaurant List */}
@@ -470,39 +388,13 @@ keyExtractor={(item, index) => item.place_id || item.id || `restaurant-${index}`
         />
       )}
 
-      {/* Filter Modal */}
-      {modalVisible && (
-        <Modal
-          transparent={true}
-          visible={modalVisible}
-          animationType="none"
-          onRequestClose={closeModal}
-        >
-          <TouchableWithoutFeedback onPress={closeModal}>
-            <View style={styles.modalOverlay}>
-              <Animated.View
-                style={[
-                  styles.modalAnimatedContainer,
-                  {
-                    transform: [
-                      {
-                        translateY: modalAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [300, 0],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              >
-                <TouchableWithoutFeedback>
-                  {renderFilterOptions()}
-                </TouchableWithoutFeedback>
-              </Animated.View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      )}
+      {/* Advanced Filter Panel */}
+      <FilterPanel
+        visible={filterPanelVisible}
+        onClose={() => setFilterPanelVisible(false)}
+        onApply={handleApplyFilters}
+        initialFilters={activeFilters}
+      />
     </SafeAreaView>
   );
 };

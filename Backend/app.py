@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Body
 import requests
 import os
 from dotenv import load_dotenv
@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 import logging
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
+from pydantic import BaseModel
 import re
 import urllib.parse
 from bs4 import BeautifulSoup
@@ -16,12 +17,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import json
 
 load_dotenv() # load the env
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Pydantic models for request validation
+class FilterOptions(BaseModel):
+    cuisine: Optional[str] = None
+    dietary: Optional[str] = None
+    price_level: Optional[int] = None
+    outdoor_seating: Optional[bool] = None
+    pet_friendly: Optional[bool] = None
+    wheelchair_accessible: Optional[bool] = None
+    delivery_available: Optional[bool] = None
+
+class PlaceDetailsRequest(BaseModel):
+    place_ids: List[str]
 
 app = FastAPI(title="Plyce API", 
               description="Backend API for Plyce application",
@@ -96,6 +111,232 @@ def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
         return f"https://maps.googleapis.com/maps/api/place/photo?maxwidth={max_width}&photo_reference={photo_reference}&key={GOOGLE_API_KEY}"
 
 # Update the restaurants endpoint to include proper photo URLs
+@app.get("/restaurants/search")
+async def search_restaurants(
+    lat: float = Query(..., description="Latitude"),
+    lng: float = Query(..., description="Longitude"),
+    radius: int = Query(5000, description="Search radius in meters", ge=2000, le=25000),
+    cuisine: Optional[str] = Query(None, description="Cuisine type filter"),
+    dietary: Optional[str] = Query(None, description="Dietary preference filter"),
+    price_level: Optional[int] = Query(None, description="Price level (1-4)", ge=1, le=4),
+    outdoor_seating: Optional[bool] = Query(None, description="Outdoor seating availability"),
+    pet_friendly: Optional[bool] = Query(None, description="Pet friendly"),
+    wheelchair_accessible: Optional[bool] = Query(None, description="Wheelchair accessible"),
+    delivery_available: Optional[bool] = Query(None, description="Delivery available")
+):
+    """
+    Search for restaurants with advanced filtering.
+    Two-step process:
+    1. Use Nearby Search or Text Search for initial results
+    2. Fetch Place Details for service attribute filtering
+    """
+    try:
+        logger.info(f"🔍 Searching restaurants at ({lat}, {lng}) with radius {radius}m")
+        
+        # Build keyword from cuisine and dietary filters
+        keywords = []
+        if cuisine:
+            keywords.append(cuisine)
+            logger.info(f"🍽️ Cuisine filter: {cuisine}")
+        if dietary:
+            keywords.append(dietary)
+            logger.info(f"🥗 Dietary filter: {dietary}")
+        
+        keyword = " ".join(keywords).strip()
+        
+        # Service attributes that require Place Details API
+        service_filters = {
+            "outdoor_seating": outdoor_seating,
+            "pet_friendly": pet_friendly,
+            "wheelchair_accessible": wheelchair_accessible,
+            "delivery_available": delivery_available
+        }
+        needs_details_filtering = any(v is not None for v in service_filters.values())
+        
+        # Step 1: Initial search using Nearby Search or Text Search
+        if keyword:
+            logger.info(f"🔍 Using Text Search with query: '{keyword} restaurant'")
+            # Use Text Search API when keyword is provided
+            body = {
+                "textQuery": f"{keyword} restaurant",
+                "locationBias": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                }
+            }
+            
+            if price_level:
+                body["priceLevels"] = [f"PRICE_LEVEL_{price_level}"]
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchText",
+                json=body,
+                headers=headers
+            )
+        else:
+            logger.info(f"📍 Using Nearby Search")
+            # Use Nearby Search when no keyword
+            body = {
+                "locationRestriction": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "includedTypes": ["restaurant"],
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchNearby",
+                json=body,
+                headers=headers
+            )
+        
+        response.raise_for_status()
+        data = response.json()
+        places = data.get("places", [])
+        
+        logger.info(f"✅ Initial search found {len(places)} restaurants")
+        
+        # Step 2: Filter by service attributes if needed
+        if needs_details_filtering and places:
+            logger.info(f"🔍 Fetching Place Details for service attribute filtering...")
+            place_ids = [place.get("id") for place in places if place.get("id")]
+            
+            # Fetch details for all places
+            detailed_places = await fetch_place_details_batch(place_ids)
+            
+            # Filter based on service attributes
+            filtered_places = []
+            for place in detailed_places:
+                include = True
+                
+                # Check outdoor seating
+                if outdoor_seating is not None:
+                    has_outdoor = place.get("outdoorSeating", False)
+                    if outdoor_seating and not has_outdoor:
+                        include = False
+                
+                # Check pet friendly (using good_for_children as proxy since pet_friendly not in API)
+                if pet_friendly is not None:
+                    is_pet_friendly = place.get("allowsDogs", False)
+                    if pet_friendly and not is_pet_friendly:
+                        include = False
+                
+                # Check wheelchair accessible
+                if wheelchair_accessible is not None:
+                    is_accessible = place.get("accessibilityOptions", {}).get("wheelchairAccessibleEntrance", False)
+                    if wheelchair_accessible and not is_accessible:
+                        include = False
+                
+                # Check delivery available
+                if delivery_available is not None:
+                    has_delivery = place.get("delivery", False)
+                    if delivery_available and not has_delivery:
+                        include = False
+                
+                if include:
+                    filtered_places.append(place)
+            
+            logger.info(f"✅ Filtered to {len(filtered_places)} restaurants with service attributes")
+            return filtered_places
+        
+        # Apply price filter if provided and no service filtering needed
+        if price_level and not needs_details_filtering:
+            price_level_map = {
+                1: "PRICE_LEVEL_INEXPENSIVE",
+                2: "PRICE_LEVEL_MODERATE",
+                3: "PRICE_LEVEL_EXPENSIVE",
+                4: "PRICE_LEVEL_VERY_EXPENSIVE"
+            }
+            target_price = price_level_map.get(price_level)
+            places = [p for p in places if p.get("priceLevel") == target_price]
+            logger.info(f"💰 Filtered by price level {price_level}: {len(places)} results")
+        
+        return places
+        
+    except Exception as e:
+        logger.error(f"❌ Error searching restaurants: {str(e)}")
+        logger.error(f"Response content: {response.text if 'response' in locals() else 'No response'}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Helper function to fetch place details in batch
+async def fetch_place_details_batch(place_ids: List[str]) -> List[Dict[str, Any]]:
+    """Fetch place details for multiple place IDs"""
+    detailed_places = []
+    
+    # Field mask for service attributes
+    field_mask = (
+        "id,displayName,formattedAddress,location,types,rating,userRatingCount,priceLevel,photos,"
+        "outdoorSeating,allowsDogs,accessibilityOptions,delivery,dineIn,reservable,servesBeer,"
+        "servesWine,servesVegetarianFood"
+    )
+    
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-FieldMask": field_mask
+    }
+    
+    for place_id in place_ids:
+        try:
+            url = f"https://places.googleapis.com/v1/places/{place_id}"
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            
+            place_data = response.json()
+            # Map id → place_id for consistency
+            if 'id' in place_data:
+                place_data['place_id'] = place_data['id']
+            
+            detailed_places.append(place_data)
+        except Exception as e:
+            logger.error(f"Error fetching details for {place_id}: {str(e)}")
+            continue
+    
+    return detailed_places
+
+
+# Batch endpoint for fetching place details
+@app.post("/restaurants/details")
+async def get_place_details_batch(request: PlaceDetailsRequest):
+    """
+    Fetch Place Details for multiple place IDs
+    Returns detailed information including service attributes
+    """
+    try:
+        logger.info(f"📋 Fetching details for {len(request.place_ids)} places")
+        detailed_places = await fetch_place_details_batch(request.place_ids)
+        logger.info(f"✅ Successfully fetched {len(detailed_places)} place details")
+        return {"places": detailed_places}
+    except Exception as e:
+        logger.error(f"❌ Error fetching place details batch: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Keep the old endpoint for backward compatibility
 @app.get("/restaurants")
 async def get_restaurants(
     lat: float = Query(..., description="Latitude"),

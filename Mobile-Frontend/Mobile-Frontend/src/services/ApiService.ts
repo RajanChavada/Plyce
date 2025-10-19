@@ -747,6 +747,157 @@ class ApiService {
     
     return priceLevelMap[priceLevel] || 0;
   }
+
+  /**
+   * Search restaurants with advanced filters
+   * @param location - Location coordinates and radius
+   * @param filters - Filter options including cuisine, dietary, price, and service attributes
+   * @returns Array of filtered restaurants
+   */
+  static async searchRestaurantsWithFilters(
+    location: {
+      latitude: number;
+      longitude: number;
+      radius?: number;
+    },
+    filters?: {
+      cuisine?: string;
+      dietary?: string;
+      price_level?: number;
+      outdoor_seating?: boolean;
+      pet_friendly?: boolean;
+      wheelchair_accessible?: boolean;
+      delivery_available?: boolean;
+    }
+  ): Promise<Restaurant[]> {
+    try {
+      const radius = location.radius || 5000;
+      
+      const params: any = {
+        lat: location.latitude,
+        lng: location.longitude,
+        radius,
+      };
+      
+      // Add filter parameters if provided
+      if (filters) {
+        if (filters.cuisine) params.cuisine = filters.cuisine;
+        if (filters.dietary) params.dietary = filters.dietary;
+        if (filters.price_level) params.price_level = filters.price_level;
+        if (filters.outdoor_seating !== undefined) params.outdoor_seating = filters.outdoor_seating;
+        if (filters.pet_friendly !== undefined) params.pet_friendly = filters.pet_friendly;
+        if (filters.wheelchair_accessible !== undefined) params.wheelchair_accessible = filters.wheelchair_accessible;
+        if (filters.delivery_available !== undefined) params.delivery_available = filters.delivery_available;
+      }
+      
+      console.log("🔍 Searching with filters:", params);
+      
+      const response = await axios.get(`${API_URL}/restaurants/search`, { params });
+      
+      if (!response.data) {
+        console.error("API returned empty data");
+        return [];
+      }
+      
+      // Map the response to Restaurant interface
+      const restaurants: Restaurant[] = (Array.isArray(response.data) ? response.data : []).map((item: any, index: number) => {
+        const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
+        
+        return {
+          id: uniqueId,
+          place_id: uniqueId,
+          name: item.displayName?.text || item.name || "Unknown Restaurant",
+          formattedAddress: item.formattedAddress || item.vicinity || "",
+          rating: item.rating || 0,
+          userRatingsTotal: item.userRatingCount || item.user_ratings_total || 0,
+          types: item.types || [],
+          priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
+          location: {
+            latitude: item.location?.latitude || 0,
+            longitude: item.location?.longitude || 0,
+          },
+          photos: item.photos || [],
+          displayName: item.displayName,
+          // Service attributes
+          outdoorSeating: item.outdoorSeating,
+          allowsDogs: item.allowsDogs,
+          accessibilityOptions: item.accessibilityOptions,
+          delivery: item.delivery,
+          dineIn: item.dineIn,
+          reservable: item.reservable,
+          servesBeer: item.servesBeer,
+          servesWine: item.servesWine,
+          servesVegetarianFood: item.servesVegetarianFood,
+        };
+      });
+      
+      console.log(`✅ Found ${restaurants.length} restaurants matching filters`);
+      return restaurants;
+      
+    } catch (error) {
+      console.error("Error searching restaurants with filters:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch place details for multiple place IDs
+   * @param placeIds - Array of place IDs
+   * @returns Array of detailed place information
+   */
+  static async getPlaceDetailsBatch(placeIds: string[]): Promise<Restaurant[]> {
+    try {
+      console.log(`📋 Fetching details for ${placeIds.length} places`);
+      
+      const response = await axios.post(`${API_URL}/restaurants/details`, {
+        place_ids: placeIds,
+      });
+      
+      if (!response.data || !response.data.places) {
+        console.error("API returned empty data");
+        return [];
+      }
+      
+      // Map the response to Restaurant interface
+      const restaurants: Restaurant[] = response.data.places.map((item: any, index: number) => {
+        const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
+        
+        return {
+          id: uniqueId,
+          place_id: uniqueId,
+          name: item.displayName?.text || item.name || "Unknown Restaurant",
+          formattedAddress: item.formattedAddress || item.vicinity || "",
+          rating: item.rating || 0,
+          userRatingsTotal: item.userRatingCount || item.user_ratings_total || 0,
+          types: item.types || [],
+          priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
+          location: {
+            latitude: item.location?.latitude || 0,
+            longitude: item.location?.longitude || 0,
+          },
+          photos: item.photos || [],
+          displayName: item.displayName,
+          // Service attributes
+          outdoorSeating: item.outdoorSeating,
+          allowsDogs: item.allowsDogs,
+          accessibilityOptions: item.accessibilityOptions,
+          delivery: item.delivery,
+          dineIn: item.dineIn,
+          reservable: item.reservable,
+          servesBeer: item.servesBeer,
+          servesWine: item.servesWine,
+          servesVegetarianFood: item.servesVegetarianFood,
+        };
+      });
+      
+      console.log(`✅ Successfully fetched ${restaurants.length} place details`);
+      return restaurants;
+      
+    } catch (error) {
+      console.error("Error fetching place details batch:", error);
+      throw error;
+    }
+  }
 }
 
 export default ApiService;
