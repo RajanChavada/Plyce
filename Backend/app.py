@@ -110,6 +110,25 @@ def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
         # Legacy format for backward compatibility
         return f"https://maps.googleapis.com/maps/api/place/photo?maxwidth={max_width}&photo_reference={photo_reference}&key={GOOGLE_API_KEY}"
 
+# Helper function to process photos in place data
+def process_place_photos(places: list) -> list:
+    """Process photos in a list of places to generate proper URLs"""
+    for place in places:
+        if "photos" in place and place["photos"]:
+            processed_photos = []
+            for photo in place["photos"]:
+                if "name" in photo:
+                    photo_url = get_photo_url(photo["name"])
+                    if photo_url:
+                        processed_photos.append({
+                            "name": photo["name"],
+                            "googleMapsUri": photo_url,
+                            "widthPx": photo.get("widthPx", 400),
+                            "heightPx": photo.get("heightPx", 300)
+                        })
+            place["photos"] = processed_photos
+    return places
+
 # Update the restaurants endpoint to include proper photo URLs
 @app.get("/restaurants/search")
 async def search_restaurants(
@@ -260,6 +279,8 @@ async def search_restaurants(
                     filtered_places.append(place)
             
             logger.info(f"✅ Filtered to {len(filtered_places)} restaurants with service attributes")
+            # Process photos for filtered places
+            filtered_places = process_place_photos(filtered_places)
             return filtered_places
         
         # Apply price filter if provided and no service filtering needed
@@ -273,6 +294,9 @@ async def search_restaurants(
             target_price = price_level_map.get(price_level)
             places = [p for p in places if p.get("priceLevel") == target_price]
             logger.info(f"💰 Filtered by price level {price_level}: {len(places)} results")
+        
+        # Process photos to generate proper URLs
+        places = process_place_photos(places)
         
         return places
         
@@ -422,6 +446,9 @@ async def get_restaurants(
             logger.info(f"📋 Sample results: {sample_names}")
         else:
             logger.warning(f"⚠️ No places returned from API")
+        
+        # Process photos to generate proper URLs
+        places = process_place_photos(places)
         
         return places
         
