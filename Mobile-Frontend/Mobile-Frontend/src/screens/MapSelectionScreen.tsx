@@ -5,7 +5,7 @@ import MapView, { Circle, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { LocationContext } from '../contexts/LocationContext';
-import LocationSearch from '../components/LocationSearch/index';
+import LocationSearch from '../components/LocationSearch';
 import RadiusSlider from '../components/RadiusSlider';
 import styles from '../styles/screens/MapSelectionScreen';
 import ApiService from '../services/ApiService';

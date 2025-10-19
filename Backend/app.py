@@ -44,6 +44,12 @@ app = FastAPI(title="Plyce API",
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # Get the key 
 
+# Verify API key is loaded
+if not GOOGLE_API_KEY:
+    logger.error("❌ GOOGLE_API_KEY not found in environment variables!")
+else:
+    logger.info(f"✅ GOOGLE_API_KEY loaded (length: {len(GOOGLE_API_KEY)})")
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -960,3 +966,167 @@ async def get_restaurant_fallback_image(place_id: str):
             "place_id": place_id,
             "image_url": "https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant"
         }
+
+
+# Google Places API (New) Proxy Endpoints for Location Search
+@app.post("/places/autocomplete")
+async def places_autocomplete(request: dict = Body(...)):
+    """
+    Proxy endpoint for Google Places API (New) Autocomplete
+    This prevents CORS issues when calling from the frontend
+    Uses the new Places API endpoint with POST method
+    """
+    try:
+        input_text = request.get("input")
+        language = request.get("language", "en")
+        
+        if not input_text:
+            logger.error("❌ input not provided in request")
+            raise HTTPException(status_code=400, detail="input is required")
+        
+        logger.info(f"🔍 Places autocomplete search (New API): '{input_text}'")
+        
+        if not GOOGLE_API_KEY:
+            logger.error("❌ GOOGLE_API_KEY is not set!")
+            raise HTTPException(status_code=500, detail="Server configuration error: API key not found")
+        
+        # New Places API endpoint
+        url = "https://places.googleapis.com/v1/places:autocomplete"
+        
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "suggestions.placePrediction.placeId,suggestions.placePrediction.text,suggestions.placePrediction.structuredFormat"
+        }
+        
+        # Request body for new API
+        payload = {
+            "input": input_text,
+            "languageCode": language,
+            "includedPrimaryTypes": ["geocode"]  # Equivalent to types=geocode in legacy API
+        }
+        
+        logger.info(f"📡 Calling Google Places API (New): {url}")
+        logger.debug(f"📋 Payload: {payload}")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        # Log the full response for debugging
+        logger.debug(f"📦 Full Google API response: {data}")
+        
+        # Transform new API response to match legacy format for frontend compatibility
+        suggestions = data.get("suggestions", [])
+        
+        if suggestions:
+            # Convert new API format to legacy format
+            predictions = []
+            for suggestion in suggestions:
+                place_prediction = suggestion.get("placePrediction", {})
+                structured_format = place_prediction.get("structuredFormat", {})
+                
+                predictions.append({
+                    "place_id": place_prediction.get("placeId", ""),
+                    "description": place_prediction.get("text", {}).get("text", ""),
+                    "structured_formatting": {
+                        "main_text": structured_format.get("mainText", {}).get("text", ""),
+                        "secondary_text": structured_format.get("secondaryText", {}).get("text", "")
+                    }
+                })
+            
+            logger.info(f"✅ Found {len(predictions)} predictions")
+            return {
+                "status": "OK",
+                "predictions": predictions
+            }
+        else:
+            logger.info("ℹ️ No predictions found")
+            return {
+                "status": "ZERO_RESULTS",
+                "predictions": []
+            }
+        
+    except requests.exceptions.HTTPError as e:
+        error_detail = e.response.text if hasattr(e.response, 'text') else str(e)
+        logger.error(f"❌ HTTP Error from Google API: {error_detail}")
+        logger.error(f"🔑 API Key (first 10 chars): {GOOGLE_API_KEY[:10]}...")
+        raise HTTPException(status_code=500, detail=f"Google API error: {error_detail}")
+    except Exception as e:
+        logger.error(f"❌ Error in autocomplete: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/places/details")
+async def places_details(request: dict = Body(...)):
+    """
+    Proxy endpoint for Google Places API (New) Details
+    This prevents CORS issues when calling from the frontend
+    Uses the new Places API endpoint with POST method
+    """
+    try:
+        place_id = request.get("place_id")
+        
+        if not place_id:
+            logger.error("❌ place_id not provided in request")
+            raise HTTPException(status_code=400, detail="place_id is required")
+        
+        logger.info(f"📍 Fetching place details (New API) for: {place_id}")
+        
+        if not GOOGLE_API_KEY:
+            logger.error("❌ GOOGLE_API_KEY is not set!")
+            raise HTTPException(status_code=500, detail="Server configuration error: API key not found")
+        
+        # New Places API endpoint
+        url = f"https://places.googleapis.com/v1/places/{place_id}"
+        
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "location,formattedAddress,displayName"
+        }
+        
+        logger.info(f"📡 Calling Google Places API (New): {url}")
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        # Log the full response for debugging
+        logger.debug(f"📦 Full Google API response: {data}")
+        
+        # Transform new API response to match legacy format for frontend compatibility
+        if data:
+            legacy_format = {
+                "status": "OK",
+                "result": {
+                    "geometry": {
+                        "location": {
+                            "lat": data.get("location", {}).get("latitude", 0),
+                            "lng": data.get("location", {}).get("longitude", 0)
+                        }
+                    },
+                    "formatted_address": data.get("formattedAddress", ""),
+                    "name": data.get("displayName", {}).get("text", "")
+                }
+            }
+            logger.info(f"✅ Got place details successfully")
+            return legacy_format
+        else:
+            logger.warning("⚠️ No place details found")
+            return {
+                "status": "ZERO_RESULTS",
+                "result": {}
+            }
+        
+    except requests.exceptions.HTTPError as e:
+        error_detail = e.response.text if hasattr(e.response, 'text') else str(e)
+        logger.error(f"❌ HTTP Error from Google API: {error_detail}")
+        logger.error(f"🔑 API Key (first 10 chars): {GOOGLE_API_KEY[:10]}...")
+        raise HTTPException(status_code=500, detail=f"Google API error: {error_detail}")
+    except Exception as e:
+        logger.error(f"❌ Error fetching place details: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
