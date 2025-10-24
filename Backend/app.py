@@ -18,6 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
+from serpapi import GoogleSearch
 
 load_dotenv() # load the env
 
@@ -43,12 +44,18 @@ app = FastAPI(title="Plyce API",
               version="0.1.0")
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # Get the key 
+SERPAPI_KEY = os.getenv("SERPAPI_KEY") # Get SerpApi key for menu scraping
 
 # Verify API key is loaded
 if not GOOGLE_API_KEY:
     logger.error("❌ GOOGLE_API_KEY not found in environment variables!")
 else:
     logger.info(f"✅ GOOGLE_API_KEY loaded (length: {len(GOOGLE_API_KEY)})")
+
+if not SERPAPI_KEY:
+    logger.warning("⚠️ SERPAPI_KEY not found - menu highlights feature will be limited")
+else:
+    logger.info(f"✅ SERPAPI_KEY loaded (length: {len(SERPAPI_KEY)})")
 
 # Configure CORS
 app.add_middleware(
@@ -195,8 +202,15 @@ async def search_restaurants(
                 }
             }
             
+            # Map price_level (1-4) to Google Places API enum values
             if price_level:
-                body["priceLevels"] = [f"PRICE_LEVEL_{price_level}"]
+                price_level_map = {
+                    1: "PRICE_LEVEL_INEXPENSIVE",
+                    2: "PRICE_LEVEL_MODERATE",
+                    3: "PRICE_LEVEL_EXPENSIVE",
+                    4: "PRICE_LEVEL_VERY_EXPENSIVE"
+                }
+                body["priceLevels"] = [price_level_map.get(price_level, "PRICE_LEVEL_INEXPENSIVE")]
             
             headers = {
                 "Content-Type": "application/json",
@@ -965,6 +979,191 @@ async def get_restaurant_fallback_image(place_id: str):
         return {
             "place_id": place_id,
             "image_url": "https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant"
+        }
+
+
+@app.get("/restaurants/{place_id}/menu-photos")
+async def get_restaurant_menu_photos(place_id: str):
+    """
+    Get all photos from a restaurant which typically include menu photos.
+    This serves as a fallback when SerpApi structured menu data is unavailable.
+    """
+    # Skip API call for fallback IDs
+    if place_id.startswith("fallback-"):
+        return {
+            "place_id": place_id,
+            "menu_photos": [],
+            "total_photos": 0,
+            "status": "unavailable",
+            "google_maps_url": f"https://www.google.com/maps/search/?api=1&query=restaurant"
+        }
+    
+    try:
+        logger.info(f"📸 Fetching all photos for place_id: {place_id}")
+        
+        # Fetch place details with photos
+        url = f"https://places.googleapis.com/v1/places/{place_id}"
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "id,displayName,photos"
+        }
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        
+        all_photos = data.get("photos", [])
+        restaurant_name = data.get("displayName", {}).get("text", "Restaurant")
+        
+        if not all_photos:
+            logger.warning(f"⚠️ No photos found for {place_id}")
+            return {
+                "place_id": place_id,
+                "restaurant_name": restaurant_name,
+                "menu_photos": [],
+                "total_photos": 0,
+                "status": "no_photos",
+                "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+            }
+        
+        # Process all photos - menu photos are typically included
+        # We return all photos and let frontend display them
+        menu_photos = []
+        for photo in all_photos:
+            if "name" in photo:
+                # Use higher resolution for menu photos (800px)
+                photo_url = get_photo_url(photo["name"], max_width=800)
+                if photo_url:
+                    menu_photos.append({
+                        "name": photo["name"],
+                        "url": photo_url,
+                        "width": photo.get("widthPx", 800),
+                        "height": photo.get("heightPx", 600),
+                        "attributions": photo.get("authorAttributions", [])
+                    })
+        
+        logger.info(f"✅ Found {len(menu_photos)} photos for {place_id}")
+        
+        return {
+            "place_id": place_id,
+            "restaurant_name": restaurant_name,
+            "menu_photos": menu_photos,
+            "total_photos": len(menu_photos),
+            "status": "success",
+            "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error fetching menu photos: {str(e)}")
+        return {
+            "place_id": place_id,
+            "menu_photos": [],
+            "total_photos": 0,
+            "status": "error",
+            "error": str(e),
+            "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+        }
+
+
+@app.get("/restaurants/{place_id}/menu-highlights")
+async def get_menu_highlights(place_id: str):
+    """
+    Get menu highlights for a restaurant using SerpApi to scrape Google Maps menu data.
+    This mirrors the menu tab visible on Google Maps but not available via official Places API.
+    """
+    # Skip API call for fallback IDs
+    if place_id.startswith("fallback-"):
+        return {
+            "place_id": place_id,
+            "menu_highlights": [],
+            "status": "unavailable"
+        }
+    
+    try:
+        # First check if SerpApi key is available
+        if not SERPAPI_KEY:
+            logger.warning("⚠️ SERPAPI_KEY not configured - returning empty menu")
+            return {
+                "place_id": place_id,
+                "menu_highlights": [],
+                "status": "api_key_missing",
+                "message": "Menu highlights require SerpApi configuration"
+            }
+        
+        logger.info(f"🍽️ Fetching menu highlights for place_id: {place_id}")
+        
+        # Use SerpApi to get Google Maps menu highlights
+        params = {
+            "engine": "google_maps",
+            "type": "place",
+            "data_id": place_id,
+            "api_key": SERPAPI_KEY
+        }
+        
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        
+        # Extract menu highlights from SerpApi response
+        menu_highlights = []
+        
+        # SerpApi returns menu items in the "menu" or "popular_dishes" field
+        if "menu" in results:
+            menu_data = results["menu"]
+            
+            # Handle different menu data structures from SerpApi
+            if isinstance(menu_data, dict) and "items" in menu_data:
+                items = menu_data["items"]
+            elif isinstance(menu_data, list):
+                items = menu_data
+            else:
+                items = []
+            
+            for item in items[:8]:  # Limit to 8 items for preview
+                menu_item = {
+                    "title": item.get("title", item.get("name", "Menu Item")),
+                    "thumbnails": [item.get("thumbnail", item.get("image", ""))],
+                    "reviews": item.get("reviews", 0),
+                    "photos": item.get("photos", 0),
+                    "price_range": item.get("price_range", item.get("price", [])),
+                    "link": item.get("link", "")
+                }
+                
+                # Only add if we have at least a title
+                if menu_item["title"] and menu_item["title"] != "Menu Item":
+                    menu_highlights.append(menu_item)
+        
+        # Also check for popular_dishes field
+        if "popular_dishes" in results and not menu_highlights:
+            dishes = results["popular_dishes"]
+            for dish in dishes[:8]:
+                menu_item = {
+                    "title": dish.get("title", dish.get("name", "Menu Item")),
+                    "thumbnails": [dish.get("thumbnail", dish.get("image", ""))],
+                    "reviews": dish.get("reviews", 0),
+                    "photos": dish.get("photos", 0),
+                    "price_range": dish.get("price", []),
+                    "link": dish.get("link", "")
+                }
+                
+                if menu_item["title"] and menu_item["title"] != "Menu Item":
+                    menu_highlights.append(menu_item)
+        
+        logger.info(f"✅ Found {len(menu_highlights)} menu items for {place_id}")
+        
+        return {
+            "place_id": place_id,
+            "menu_highlights": menu_highlights,
+            "status": "success" if menu_highlights else "no_data"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error fetching menu highlights: {str(e)}")
+        return {
+            "place_id": place_id,
+            "menu_highlights": [],
+            "status": "error",
+            "error": str(e)
         }
 
 

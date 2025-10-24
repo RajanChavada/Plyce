@@ -110,6 +110,41 @@ export interface TikTokVideo {
   views?: number;         // Add view count if available
 }
 
+export interface MenuItem {
+  title: string;
+  thumbnails: string[];
+  reviews: number;
+  photos: number;
+  price_range: number[];
+  link: string;
+}
+
+export interface MenuHighlightsResponse {
+  place_id: string;
+  menu_highlights: MenuItem[];
+  status: 'success' | 'no_data' | 'error' | 'unavailable' | 'api_key_missing';
+  message?: string;
+  error?: string;
+}
+
+export interface MenuPhoto {
+  name: string;
+  url: string;
+  width: number;
+  height: number;
+  attributions: any[];
+}
+
+export interface MenuPhotosResponse {
+  place_id: string;
+  restaurant_name: string;
+  menu_photos: MenuPhoto[];
+  total_photos: number;
+  status: 'success' | 'no_photos' | 'error' | 'unavailable';
+  google_maps_url: string;
+  error?: string;
+}
+
 class ApiService {
   // Load the cache when the app starts
   static async initCache() {
@@ -690,6 +725,134 @@ class ApiService {
     } catch (error) {
       console.error(`Error fetching TikTok videos for ${placeId}:`, error);
       return { videos: [], search_url: undefined };
+    }
+  }
+
+  /**
+   * Get menu highlights for a restaurant
+   * Uses SerpApi to scrape Google Maps menu data
+   * @param placeId - The place ID of the restaurant
+   * @param useCache - Whether to use cached data
+   * @returns Menu highlights data
+   */
+  static async getMenuHighlights(
+    placeId: string,
+    useCache: boolean = __DEV__
+  ): Promise<MenuHighlightsResponse> {
+    // Handle fallback IDs early
+    if (placeId.startsWith('fallback-')) {
+      console.log(`⚠️ Using placeholder data for fallback menu ${placeId}`);
+      return {
+        place_id: placeId,
+        menu_highlights: [],
+        status: 'unavailable'
+      };
+    }
+
+    // Try to get from cache first if useCache is true
+    if (useCache) {
+      try {
+        const cachedMenu = await AsyncStorage.getItem(`restaurant_menu_${placeId}`);
+        if (cachedMenu) {
+          console.log(`🗄️ Using cached menu for restaurant ${placeId}`);
+          return JSON.parse(cachedMenu);
+        }
+      } catch (error) {
+        console.error('Error reading menu from cache:', error);
+      }
+    }
+
+    // If no cache or cache not requested, fetch from API
+    console.log(`🌐 Fetching menu highlights for restaurant ${placeId}`);
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/menu-highlights`);
+      const menuData: MenuHighlightsResponse = response.data;
+      
+      // Cache the results if successful
+      if (menuData.status === 'success' && menuData.menu_highlights.length > 0) {
+        try {
+          await AsyncStorage.setItem(`restaurant_menu_${placeId}`, JSON.stringify(menuData));
+        } catch (error) {
+          console.error('Error caching menu highlights:', error);
+        }
+      }
+      
+      return menuData;
+    } catch (error) {
+      console.error(`Error fetching menu highlights for ${placeId}:`, error);
+      return {
+        place_id: placeId,
+        menu_highlights: [],
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Get all restaurant photos which typically include menu photos
+   * This serves as a fallback when structured menu data is unavailable
+   * @param placeId - The place ID of the restaurant
+   * @param useCache - Whether to use cached data
+   * @returns Menu photos data
+   */
+  static async getRestaurantMenuPhotos(
+    placeId: string,
+    useCache: boolean = __DEV__
+  ): Promise<MenuPhotosResponse> {
+    // Handle fallback IDs early
+    if (placeId.startsWith('fallback-')) {
+      console.log(`⚠️ Using placeholder data for fallback menu photos ${placeId}`);
+      return {
+        place_id: placeId,
+        restaurant_name: 'Restaurant',
+        menu_photos: [],
+        total_photos: 0,
+        status: 'unavailable',
+        google_maps_url: 'https://www.google.com/maps'
+      };
+    }
+
+    // Try to get from cache first if useCache is true
+    if (useCache) {
+      try {
+        const cachedPhotos = await AsyncStorage.getItem(`restaurant_menu_photos_${placeId}`);
+        if (cachedPhotos) {
+          console.log(`🗄️ Using cached menu photos for restaurant ${placeId}`);
+          return JSON.parse(cachedPhotos);
+        }
+      } catch (error) {
+        console.error('Error reading menu photos from cache:', error);
+      }
+    }
+
+    // If no cache or cache not requested, fetch from API
+    console.log(`🌐 Fetching menu photos for restaurant ${placeId}`);
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/${placeId}/menu-photos`);
+      const photoData: MenuPhotosResponse = response.data;
+      
+      // Cache the results if successful
+      if (photoData.status === 'success' && photoData.menu_photos.length > 0) {
+        try {
+          await AsyncStorage.setItem(`restaurant_menu_photos_${placeId}`, JSON.stringify(photoData));
+        } catch (error) {
+          console.error('Error caching menu photos:', error);
+        }
+      }
+      
+      return photoData;
+    } catch (error) {
+      console.error(`Error fetching menu photos for ${placeId}:`, error);
+      return {
+        place_id: placeId,
+        restaurant_name: 'Restaurant',
+        menu_photos: [],
+        total_photos: 0,
+        status: 'error',
+        google_maps_url: `https://www.google.com/maps/place/?q=place_id:${placeId}`,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 
