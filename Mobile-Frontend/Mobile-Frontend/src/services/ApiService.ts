@@ -931,6 +931,7 @@ class ApiService {
       pet_friendly?: boolean;
       wheelchair_accessible?: boolean;
       delivery_available?: boolean;
+      venue_type?: string;
     }
   ): Promise<Restaurant[]> {
     try {
@@ -951,6 +952,7 @@ class ApiService {
         if (filters.pet_friendly !== undefined) params.pet_friendly = filters.pet_friendly;
         if (filters.wheelchair_accessible !== undefined) params.wheelchair_accessible = filters.wheelchair_accessible;
         if (filters.delivery_available !== undefined) params.delivery_available = filters.delivery_available;
+        if (filters.venue_type) params.venue_type = filters.venue_type;
       }
       
       console.log("🔍 Searching with filters:", params);
@@ -991,6 +993,8 @@ class ApiService {
           servesBeer: item.servesBeer,
           servesWine: item.servesWine,
           servesVegetarianFood: item.servesVegetarianFood,
+          // Chain detection
+          isChain: item.isChain || false,
         };
       });
       

@@ -39,6 +39,53 @@ class FilterOptions(BaseModel):
 class PlaceDetailsRequest(BaseModel):
     place_ids: List[str]
 
+# Chain exclusion list for coffee/matcha/cafe filters
+# These chain names will be matched against venue names (case-insensitive, substring matching)
+CHAIN_BLACKLIST = {
+    "starbucks",
+    "tim hortons",
+    "tims",
+    "mccafe",
+    "mcdonalds",
+    "dunkin",
+    "dunkin donuts",
+    "dunkin'",
+    "costa coffee",
+    "pret a manger",
+    "second cup",
+    "timothy's",
+    "timothy's world coffee",
+    "country style",
+    "coffee time",
+    "williams coffee pub",
+    "tim horton's",
+    "aroma espresso bar",
+    "balzac's coffee",  # Note: Balzac's is actually indie, but has multiple locations
+}
+
+def is_chain_venue(name: str) -> bool:
+    """
+    Check if venue is a known chain based on name matching.
+    
+    Args:
+        name: The venue name to check
+        
+    Returns:
+        True if the venue name contains any chain name from blacklist, False otherwise
+    """
+    if not name:
+        return False
+    
+    name_lower = name.lower().strip()
+    
+    # Check each chain name in the blacklist
+    for chain in CHAIN_BLACKLIST:
+        if chain in name_lower:
+            logger.info(f"🔗 Detected chain venue: {name} (matched: {chain})")
+            return True
+    
+    return False
+
 app = FastAPI(title="Plyce API", 
               description="Backend API for Plyce application",
               version="0.1.0")
@@ -154,16 +201,34 @@ async def search_restaurants(
     outdoor_seating: Optional[bool] = Query(None, description="Outdoor seating availability"),
     pet_friendly: Optional[bool] = Query(None, description="Pet friendly"),
     wheelchair_accessible: Optional[bool] = Query(None, description="Wheelchair accessible"),
-    delivery_available: Optional[bool] = Query(None, description="Delivery available")
+    delivery_available: Optional[bool] = Query(None, description="Delivery available"),
+    venue_type: Optional[str] = Query(None, description="Venue type: coffee, matcha, or cafe")
 ):
     """
     Search for restaurants with advanced filtering.
+    Supports venue type filtering for coffee shops, matcha cafes, and cafes.
     Two-step process:
     1. Use Nearby Search or Text Search for initial results
     2. Fetch Place Details for service attribute filtering
     """
     try:
         logger.info(f"🔍 Searching restaurants at ({lat}, {lng}) with radius {radius}m")
+        
+        # Determine includedTypes and textQuery based on venue_type
+        included_types = ["restaurant"]  # Default
+        text_query_suffix = ""
+        
+        if venue_type:
+            logger.info(f"🏢 Venue type filter: {venue_type}")
+            if venue_type.lower() == "coffee":
+                included_types = ["coffee_shop"]
+                text_query_suffix = "coffee"
+            elif venue_type.lower() == "matcha":
+                included_types = ["cafe"]
+                text_query_suffix = "matcha"
+            elif venue_type.lower() == "cafe":
+                included_types = ["cafe"]
+                text_query_suffix = "cafe"
         
         # Build keyword from cuisine and dietary filters
         keywords = []
@@ -173,6 +238,8 @@ async def search_restaurants(
         if dietary:
             keywords.append(dietary)
             logger.info(f"🥗 Dietary filter: {dietary}")
+        if text_query_suffix:
+            keywords.append(text_query_suffix)
         
         keyword = " ".join(keywords).strip()
         
@@ -186,11 +253,12 @@ async def search_restaurants(
         needs_details_filtering = any(v is not None for v in service_filters.values())
         
         # Step 1: Initial search using Nearby Search or Text Search
-        if keyword:
-            logger.info(f"🔍 Using Text Search with query: '{keyword} restaurant'")
-            # Use Text Search API when keyword is provided
+        # Note: Text Search API doesn't support includedTypes, so we use Nearby Search for venue_type filters
+        if keyword and not venue_type:
+            logger.info(f"🔍 Using Text Search with query: '{keyword}'")
+            # Use Text Search API when keyword is provided (but no venue_type)
             body = {
-                "textQuery": f"{keyword} restaurant",
+                "textQuery": keyword,
                 "locationBias": {
                     "circle": {
                         "center": {
@@ -224,8 +292,14 @@ async def search_restaurants(
                 headers=headers
             )
         else:
-            logger.info(f"📍 Using Nearby Search")
-            # Use Nearby Search when no keyword
+            # Use Nearby Search when no keyword OR when venue_type is specified
+            # (because Text Search doesn't support includedTypes)
+            if venue_type:
+                logger.info(f"📍 Using Nearby Search with venue type: {venue_type}")
+                logger.info(f"📋 Using includedTypes: {included_types}")
+            else:
+                logger.info(f"📍 Using Nearby Search")
+            
             body = {
                 "locationRestriction": {
                     "circle": {
@@ -236,7 +310,7 @@ async def search_restaurants(
                         "radius": radius
                     }
                 },
-                "includedTypes": ["restaurant"],
+                "includedTypes": included_types,
                 "maxResultCount": 20
             }
             
@@ -256,7 +330,30 @@ async def search_restaurants(
         data = response.json()
         places = data.get("places", [])
         
-        logger.info(f"✅ Initial search found {len(places)} restaurants")
+        logger.info(f"✅ Initial search found {len(places)} places")
+        
+        # Step 1.5: Filter by name for matcha venues (post-processing)
+        if venue_type and venue_type.lower() == "matcha":
+            logger.info(f"🍵 Filtering results for matcha-related venues...")
+            matcha_keywords = ["matcha", "green tea", "japanese tea", "tea house"]
+            filtered_matcha = []
+            
+            for place in places:
+                place_name = place.get("displayName", {}).get("text", "").lower()
+                place_types = place.get("types", [])
+                
+                # Check if name contains matcha-related keywords
+                has_matcha_keyword = any(keyword in place_name for keyword in matcha_keywords)
+                
+                # Check if it's a cafe or tea-related establishment
+                is_cafe = "cafe" in place_types or "tea_house" in place_types
+                
+                if has_matcha_keyword and is_cafe:
+                    filtered_matcha.append(place)
+                    logger.info(f"✅ Matched matcha venue: {place_name}")
+            
+            places = filtered_matcha
+            logger.info(f"🍵 Found {len(places)} matcha venues after filtering")
         
         # Step 2: Filter by service attributes if needed
         if needs_details_filtering and places:
@@ -299,6 +396,12 @@ async def search_restaurants(
                     filtered_places.append(place)
             
             logger.info(f"✅ Filtered to {len(filtered_places)} restaurants with service attributes")
+            
+            # Add chain detection to filtered places
+            for place in filtered_places:
+                place_name = place.get("displayName", {}).get("text", "") or place.get("name", "")
+                place["isChain"] = is_chain_venue(place_name)
+            
             # Process photos for filtered places
             filtered_places = process_place_photos(filtered_places)
             return filtered_places
@@ -314,6 +417,16 @@ async def search_restaurants(
             target_price = price_level_map.get(price_level)
             places = [p for p in places if p.get("priceLevel") == target_price]
             logger.info(f"💰 Filtered by price level {price_level}: {len(places)} results")
+        
+        # Add chain detection to all places before returning
+        for place in places:
+            place_name = place.get("displayName", {}).get("text", "") or place.get("name", "")
+            place["isChain"] = is_chain_venue(place_name)
+        
+        # Log chain detection results
+        chain_count = sum(1 for p in places if p.get("isChain"))
+        if chain_count > 0:
+            logger.info(f"🔗 Detected {chain_count} chain venues out of {len(places)} results")
         
         # Process photos to generate proper URLs
         places = process_place_photos(places)

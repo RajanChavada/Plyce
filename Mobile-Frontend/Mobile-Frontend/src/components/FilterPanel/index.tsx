@@ -64,6 +64,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   const [selectedPrice, setSelectedPrice] = useState<number | undefined>(
     initialFilters.price_level
   );
+  const [selectedVenueType, setSelectedVenueType] = useState<string | undefined>(
+    initialFilters.venue_type
+  );
   const [outdoorSeating, setOutdoorSeating] = useState<boolean>(
     initialFilters.outdoor_seating || false
   );
@@ -83,6 +86,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     if (selectedCuisine) filters.cuisine = selectedCuisine;
     if (selectedDietary) filters.dietary = selectedDietary;
     if (selectedPrice) filters.price_level = selectedPrice;
+    if (selectedVenueType) filters.venue_type = selectedVenueType as 'coffee' | 'matcha' | 'cafe';
     if (outdoorSeating) filters.outdoor_seating = true;
     if (petFriendly) filters.pet_friendly = true;
     if (wheelchairAccessible) filters.wheelchair_accessible = true;
@@ -96,6 +100,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setSelectedCuisine(undefined);
     setSelectedDietary(undefined);
     setSelectedPrice(undefined);
+    setSelectedVenueType(undefined);
     setOutdoorSeating(false);
     setPetFriendly(false);
     setWheelchairAccessible(false);
@@ -106,6 +111,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     selectedCuisine || 
     selectedDietary || 
     selectedPrice || 
+    selectedVenueType ||
     outdoorSeating || 
     petFriendly || 
     wheelchairAccessible || 
@@ -186,6 +192,99 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     </Text>
                   </TouchableOpacity>
                 ))}
+              </View>
+            </View>
+
+            {/* Venue Type Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Venue Type</Text>
+              <Text style={styles.sectionDescription}>
+                Filter by specialty coffee shops, matcha cafés, or cafés (excludes major chains)
+              </Text>
+              <View style={styles.chipContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.chip,
+                    styles.chipWithIcon,
+                    selectedVenueType === 'coffee' && styles.chipSelected,
+                  ]}
+                  onPress={() =>
+                    setSelectedVenueType(
+                      selectedVenueType === 'coffee' ? undefined : 'coffee'
+                    )
+                  }
+                >
+                  <Ionicons 
+                    name="cafe-outline" 
+                    size={16} 
+                    color={selectedVenueType === 'coffee' ? '#fff' : '#666'} 
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text
+                    style={[
+                      styles.chipText,
+                      selectedVenueType === 'coffee' && styles.chipTextSelected,
+                    ]}
+                  >
+                    Coffee
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.chip,
+                    styles.chipWithIcon,
+                    selectedVenueType === 'matcha' && styles.chipSelected,
+                  ]}
+                  onPress={() =>
+                    setSelectedVenueType(
+                      selectedVenueType === 'matcha' ? undefined : 'matcha'
+                    )
+                  }
+                >
+                  <Ionicons 
+                    name="leaf-outline" 
+                    size={16} 
+                    color={selectedVenueType === 'matcha' ? '#fff' : '#666'} 
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text
+                    style={[
+                      styles.chipText,
+                      selectedVenueType === 'matcha' && styles.chipTextSelected,
+                    ]}
+                  >
+                    Matcha
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.chip,
+                    styles.chipWithIcon,
+                    selectedVenueType === 'cafe' && styles.chipSelected,
+                  ]}
+                  onPress={() =>
+                    setSelectedVenueType(
+                      selectedVenueType === 'cafe' ? undefined : 'cafe'
+                    )
+                  }
+                >
+                  <Ionicons 
+                    name="restaurant-outline" 
+                    size={16} 
+                    color={selectedVenueType === 'cafe' ? '#fff' : '#666'} 
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text
+                    style={[
+                      styles.chipText,
+                      selectedVenueType === 'cafe' && styles.chipTextSelected,
+                    ]}
+                  >
+                    Café
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
 

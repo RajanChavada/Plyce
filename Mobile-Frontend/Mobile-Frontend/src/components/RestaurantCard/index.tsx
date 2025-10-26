@@ -97,6 +97,14 @@ const RestaurantCard = ({ restaurant }: RestaurantCardProps) => {
             setImageError(true);
           }}
         />
+        
+        {/* Chain badge indicator */}
+        {restaurant.isChain && (
+          <View style={styles.chainBadge}>
+            <Ionicons name="link-outline" size={12} color="#fff" style={{ marginRight: 4 }} />
+            <Text style={styles.chainBadgeText}>Chain</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.contentContainer}>
