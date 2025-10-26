@@ -214,34 +214,10 @@ async def search_restaurants(
     try:
         logger.info(f"🔍 Searching restaurants at ({lat}, {lng}) with radius {radius}m")
         
-        # Determine includedTypes and textQuery based on venue_type
-        included_types = ["restaurant"]  # Default
-        text_query_suffix = ""
-        
-        if venue_type:
-            logger.info(f"🏢 Venue type filter: {venue_type}")
-            if venue_type.lower() == "coffee":
-                included_types = ["coffee_shop"]
-                text_query_suffix = "coffee"
-            elif venue_type.lower() == "matcha":
-                included_types = ["cafe"]
-                text_query_suffix = "matcha"
-            elif venue_type.lower() == "cafe":
-                included_types = ["cafe"]
-                text_query_suffix = "cafe"
-        
-        # Build keyword from cuisine and dietary filters
-        keywords = []
-        if cuisine:
-            keywords.append(cuisine)
-            logger.info(f"🍽️ Cuisine filter: {cuisine}")
-        if dietary:
-            keywords.append(dietary)
-            logger.info(f"🥗 Dietary filter: {dietary}")
-        if text_query_suffix:
-            keywords.append(text_query_suffix)
-        
-        keyword = " ".join(keywords).strip()
+        # Determine search strategy based on venue_type
+        # CRITICAL: Matcha requires Text Search because Nearby Search can't filter by keyword
+        # Coffee and Cafe can use Nearby Search with includedTypes for efficiency
+        use_text_search_for_matcha = venue_type and venue_type.lower() == "matcha"
         
         # Service attributes that require Place Details API
         service_filters = {
@@ -252,11 +228,86 @@ async def search_restaurants(
         }
         needs_details_filtering = any(v is not None for v in service_filters.values())
         
-        # Step 1: Initial search using Nearby Search or Text Search
-        # Note: Text Search API doesn't support includedTypes, so we use Nearby Search for venue_type filters
-        if keyword and not venue_type:
+        # Build keyword from cuisine and dietary filters
+        keywords = []
+        if cuisine:
+            keywords.append(cuisine)
+            logger.info(f"🍽️ Cuisine filter: {cuisine}")
+        if dietary:
+            keywords.append(dietary)
+            logger.info(f"🥗 Dietary filter: {dietary}")
+        
+        keyword = " ".join(keywords).strip()
+        
+        # Step 1: Initial search using appropriate API endpoint
+        
+        # CASE 1: Matcha filter - MUST use Text Search with textQuery
+        if use_text_search_for_matcha:
+            logger.info(f"🍵 Using Text Search for matcha venues")
+            # Text Search with "matcha cafe" query and locationBias (not locationRestriction)
+            # locationBias prioritizes nearby results but allows relevant matches slightly outside radius
+            body = {
+                "textQuery": "matcha cafe",
+                "locationBias": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            logger.info(f"📤 Calling Text Search API with query: 'matcha cafe'")
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchText",
+                json=body,
+                headers=headers
+            )
+        
+        # CASE 2: Coffee or Cafe filter - use Nearby Search with includedTypes
+        elif venue_type and venue_type.lower() in ["coffee", "cafe"]:
+            included_types = ["coffee_shop"] if venue_type.lower() == "coffee" else ["cafe"]
+            logger.info(f"☕ Using Nearby Search for {venue_type} venues")
+            logger.info(f"📋 Using includedTypes: {included_types}")
+            
+            body = {
+                "locationRestriction": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "includedTypes": included_types,
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchNearby",
+                json=body,
+                headers=headers
+            )
+        
+        # CASE 3: Keyword filter (cuisine/dietary) without venue_type - use Text Search
+        elif keyword:
             logger.info(f"🔍 Using Text Search with query: '{keyword}'")
-            # Use Text Search API when keyword is provided (but no venue_type)
             body = {
                 "textQuery": keyword,
                 "locationBias": {
@@ -291,15 +342,10 @@ async def search_restaurants(
                 json=body,
                 headers=headers
             )
+        
+        # CASE 4: Default - use Nearby Search for restaurants
         else:
-            # Use Nearby Search when no keyword OR when venue_type is specified
-            # (because Text Search doesn't support includedTypes)
-            if venue_type:
-                logger.info(f"📍 Using Nearby Search with venue type: {venue_type}")
-                logger.info(f"📋 Using includedTypes: {included_types}")
-            else:
-                logger.info(f"📍 Using Nearby Search")
-            
+            logger.info(f"📍 Using Nearby Search for restaurants")
             body = {
                 "locationRestriction": {
                     "circle": {
@@ -310,7 +356,7 @@ async def search_restaurants(
                         "radius": radius
                     }
                 },
-                "includedTypes": included_types,
+                "includedTypes": ["restaurant"],
                 "maxResultCount": 20
             }
             
