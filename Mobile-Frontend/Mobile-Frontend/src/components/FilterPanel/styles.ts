@@ -43,6 +43,12 @@ export const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 12,
   },
+  sectionDescription: {
+    fontSize: 13,
+    color: "#666",
+    marginBottom: 12,
+    lineHeight: 18,
+  },
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -55,6 +61,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     borderWidth: 1,
     borderColor: "#ddd",
+  },
+  chipWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   chipSelected: {
     backgroundColor: "#4CAF50",

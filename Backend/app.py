@@ -18,6 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
+from serpapi import GoogleSearch
 
 load_dotenv() # load the env
 
@@ -38,17 +39,70 @@ class FilterOptions(BaseModel):
 class PlaceDetailsRequest(BaseModel):
     place_ids: List[str]
 
+# Chain exclusion list for coffee/matcha/cafe filters
+# These chain names will be matched against venue names (case-insensitive, substring matching)
+CHAIN_BLACKLIST = {
+    "starbucks",
+    "tim hortons",
+    "tims",
+    "mccafe",
+    "mcdonalds",
+    "dunkin",
+    "dunkin donuts",
+    "dunkin'",
+    "costa coffee",
+    "pret a manger",
+    "second cup",
+    "timothy's",
+    "timothy's world coffee",
+    "country style",
+    "coffee time",
+    "williams coffee pub",
+    "tim horton's",
+    "aroma espresso bar",
+    "balzac's coffee",  # Note: Balzac's is actually indie, but has multiple locations
+}
+
+def is_chain_venue(name: str) -> bool:
+    """
+    Check if venue is a known chain based on name matching.
+    
+    Args:
+        name: The venue name to check
+        
+    Returns:
+        True if the venue name contains any chain name from blacklist, False otherwise
+    """
+    if not name:
+        return False
+    
+    name_lower = name.lower().strip()
+    
+    # Check each chain name in the blacklist
+    for chain in CHAIN_BLACKLIST:
+        if chain in name_lower:
+            logger.info(f"🔗 Detected chain venue: {name} (matched: {chain})")
+            return True
+    
+    return False
+
 app = FastAPI(title="Plyce API", 
               description="Backend API for Plyce application",
               version="0.1.0")
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # Get the key 
+SERPAPI_KEY = os.getenv("SERPAPI_KEY") # Get SerpApi key for menu scraping
 
 # Verify API key is loaded
 if not GOOGLE_API_KEY:
     logger.error("❌ GOOGLE_API_KEY not found in environment variables!")
 else:
     logger.info(f"✅ GOOGLE_API_KEY loaded (length: {len(GOOGLE_API_KEY)})")
+
+if not SERPAPI_KEY:
+    logger.warning("⚠️ SERPAPI_KEY not found - menu highlights feature will be limited")
+else:
+    logger.info(f"✅ SERPAPI_KEY loaded (length: {len(SERPAPI_KEY)})")
 
 # Configure CORS
 app.add_middleware(
@@ -147,16 +201,32 @@ async def search_restaurants(
     outdoor_seating: Optional[bool] = Query(None, description="Outdoor seating availability"),
     pet_friendly: Optional[bool] = Query(None, description="Pet friendly"),
     wheelchair_accessible: Optional[bool] = Query(None, description="Wheelchair accessible"),
-    delivery_available: Optional[bool] = Query(None, description="Delivery available")
+    delivery_available: Optional[bool] = Query(None, description="Delivery available"),
+    venue_type: Optional[str] = Query(None, description="Venue type: coffee, matcha, or cafe")
 ):
     """
     Search for restaurants with advanced filtering.
+    Supports venue type filtering for coffee shops, matcha cafes, and cafes.
     Two-step process:
     1. Use Nearby Search or Text Search for initial results
     2. Fetch Place Details for service attribute filtering
     """
     try:
         logger.info(f"🔍 Searching restaurants at ({lat}, {lng}) with radius {radius}m")
+        
+        # Determine search strategy based on venue_type
+        # CRITICAL: Matcha requires Text Search because Nearby Search can't filter by keyword
+        # Coffee and Cafe can use Nearby Search with includedTypes for efficiency
+        use_text_search_for_matcha = venue_type and venue_type.lower() == "matcha"
+        
+        # Service attributes that require Place Details API
+        service_filters = {
+            "outdoor_seating": outdoor_seating,
+            "pet_friendly": pet_friendly,
+            "wheelchair_accessible": wheelchair_accessible,
+            "delivery_available": delivery_available
+        }
+        needs_details_filtering = any(v is not None for v in service_filters.values())
         
         # Build keyword from cuisine and dietary filters
         keywords = []
@@ -169,21 +239,77 @@ async def search_restaurants(
         
         keyword = " ".join(keywords).strip()
         
-        # Service attributes that require Place Details API
-        service_filters = {
-            "outdoor_seating": outdoor_seating,
-            "pet_friendly": pet_friendly,
-            "wheelchair_accessible": wheelchair_accessible,
-            "delivery_available": delivery_available
-        }
-        needs_details_filtering = any(v is not None for v in service_filters.values())
+        # Step 1: Initial search using appropriate API endpoint
         
-        # Step 1: Initial search using Nearby Search or Text Search
-        if keyword:
-            logger.info(f"🔍 Using Text Search with query: '{keyword} restaurant'")
-            # Use Text Search API when keyword is provided
+        # CASE 1: Matcha filter - MUST use Text Search with textQuery
+        if use_text_search_for_matcha:
+            logger.info(f"🍵 Using Text Search for matcha venues")
+            # Text Search with "matcha cafe" query and locationBias (not locationRestriction)
+            # locationBias prioritizes nearby results but allows relevant matches slightly outside radius
             body = {
-                "textQuery": f"{keyword} restaurant",
+                "textQuery": "matcha cafe",
+                "locationBias": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            logger.info(f"📤 Calling Text Search API with query: 'matcha cafe'")
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchText",
+                json=body,
+                headers=headers
+            )
+        
+        # CASE 2: Coffee or Cafe filter - use Nearby Search with includedTypes
+        elif venue_type and venue_type.lower() in ["coffee", "cafe"]:
+            included_types = ["coffee_shop"] if venue_type.lower() == "coffee" else ["cafe"]
+            logger.info(f"☕ Using Nearby Search for {venue_type} venues")
+            logger.info(f"📋 Using includedTypes: {included_types}")
+            
+            body = {
+                "locationRestriction": {
+                    "circle": {
+                        "center": {
+                            "latitude": lat,
+                            "longitude": lng
+                        },
+                        "radius": radius
+                    }
+                },
+                "includedTypes": included_types,
+                "maxResultCount": 20
+            }
+            
+            headers = {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": GOOGLE_API_KEY,
+                "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.photos"
+            }
+            
+            response = requests.post(
+                "https://places.googleapis.com/v1/places:searchNearby",
+                json=body,
+                headers=headers
+            )
+        
+        # CASE 3: Keyword filter (cuisine/dietary) without venue_type - use Text Search
+        elif keyword:
+            logger.info(f"🔍 Using Text Search with query: '{keyword}'")
+            body = {
+                "textQuery": keyword,
                 "locationBias": {
                     "circle": {
                         "center": {
@@ -195,8 +321,15 @@ async def search_restaurants(
                 }
             }
             
+            # Map price_level (1-4) to Google Places API enum values
             if price_level:
-                body["priceLevels"] = [f"PRICE_LEVEL_{price_level}"]
+                price_level_map = {
+                    1: "PRICE_LEVEL_INEXPENSIVE",
+                    2: "PRICE_LEVEL_MODERATE",
+                    3: "PRICE_LEVEL_EXPENSIVE",
+                    4: "PRICE_LEVEL_VERY_EXPENSIVE"
+                }
+                body["priceLevels"] = [price_level_map.get(price_level, "PRICE_LEVEL_INEXPENSIVE")]
             
             headers = {
                 "Content-Type": "application/json",
@@ -209,9 +342,10 @@ async def search_restaurants(
                 json=body,
                 headers=headers
             )
+        
+        # CASE 4: Default - use Nearby Search for restaurants
         else:
-            logger.info(f"📍 Using Nearby Search")
-            # Use Nearby Search when no keyword
+            logger.info(f"📍 Using Nearby Search for restaurants")
             body = {
                 "locationRestriction": {
                     "circle": {
@@ -242,7 +376,30 @@ async def search_restaurants(
         data = response.json()
         places = data.get("places", [])
         
-        logger.info(f"✅ Initial search found {len(places)} restaurants")
+        logger.info(f"✅ Initial search found {len(places)} places")
+        
+        # Step 1.5: Filter by name for matcha venues (post-processing)
+        if venue_type and venue_type.lower() == "matcha":
+            logger.info(f"🍵 Filtering results for matcha-related venues...")
+            matcha_keywords = ["matcha", "green tea", "japanese tea", "tea house"]
+            filtered_matcha = []
+            
+            for place in places:
+                place_name = place.get("displayName", {}).get("text", "").lower()
+                place_types = place.get("types", [])
+                
+                # Check if name contains matcha-related keywords
+                has_matcha_keyword = any(keyword in place_name for keyword in matcha_keywords)
+                
+                # Check if it's a cafe or tea-related establishment
+                is_cafe = "cafe" in place_types or "tea_house" in place_types
+                
+                if has_matcha_keyword and is_cafe:
+                    filtered_matcha.append(place)
+                    logger.info(f"✅ Matched matcha venue: {place_name}")
+            
+            places = filtered_matcha
+            logger.info(f"🍵 Found {len(places)} matcha venues after filtering")
         
         # Step 2: Filter by service attributes if needed
         if needs_details_filtering and places:
@@ -285,6 +442,12 @@ async def search_restaurants(
                     filtered_places.append(place)
             
             logger.info(f"✅ Filtered to {len(filtered_places)} restaurants with service attributes")
+            
+            # Add chain detection to filtered places
+            for place in filtered_places:
+                place_name = place.get("displayName", {}).get("text", "") or place.get("name", "")
+                place["isChain"] = is_chain_venue(place_name)
+            
             # Process photos for filtered places
             filtered_places = process_place_photos(filtered_places)
             return filtered_places
@@ -300,6 +463,16 @@ async def search_restaurants(
             target_price = price_level_map.get(price_level)
             places = [p for p in places if p.get("priceLevel") == target_price]
             logger.info(f"💰 Filtered by price level {price_level}: {len(places)} results")
+        
+        # Add chain detection to all places before returning
+        for place in places:
+            place_name = place.get("displayName", {}).get("text", "") or place.get("name", "")
+            place["isChain"] = is_chain_venue(place_name)
+        
+        # Log chain detection results
+        chain_count = sum(1 for p in places if p.get("isChain"))
+        if chain_count > 0:
+            logger.info(f"🔗 Detected {chain_count} chain venues out of {len(places)} results")
         
         # Process photos to generate proper URLs
         places = process_place_photos(places)
@@ -965,6 +1138,191 @@ async def get_restaurant_fallback_image(place_id: str):
         return {
             "place_id": place_id,
             "image_url": "https://via.placeholder.com/400x200/f0f0f0/666666?text=Restaurant"
+        }
+
+
+@app.get("/restaurants/{place_id}/menu-photos")
+async def get_restaurant_menu_photos(place_id: str):
+    """
+    Get all photos from a restaurant which typically include menu photos.
+    This serves as a fallback when SerpApi structured menu data is unavailable.
+    """
+    # Skip API call for fallback IDs
+    if place_id.startswith("fallback-"):
+        return {
+            "place_id": place_id,
+            "menu_photos": [],
+            "total_photos": 0,
+            "status": "unavailable",
+            "google_maps_url": f"https://www.google.com/maps/search/?api=1&query=restaurant"
+        }
+    
+    try:
+        logger.info(f"📸 Fetching all photos for place_id: {place_id}")
+        
+        # Fetch place details with photos
+        url = f"https://places.googleapis.com/v1/places/{place_id}"
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask": "id,displayName,photos"
+        }
+        
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        
+        all_photos = data.get("photos", [])
+        restaurant_name = data.get("displayName", {}).get("text", "Restaurant")
+        
+        if not all_photos:
+            logger.warning(f"⚠️ No photos found for {place_id}")
+            return {
+                "place_id": place_id,
+                "restaurant_name": restaurant_name,
+                "menu_photos": [],
+                "total_photos": 0,
+                "status": "no_photos",
+                "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+            }
+        
+        # Process all photos - menu photos are typically included
+        # We return all photos and let frontend display them
+        menu_photos = []
+        for photo in all_photos:
+            if "name" in photo:
+                # Use higher resolution for menu photos (800px)
+                photo_url = get_photo_url(photo["name"], max_width=800)
+                if photo_url:
+                    menu_photos.append({
+                        "name": photo["name"],
+                        "url": photo_url,
+                        "width": photo.get("widthPx", 800),
+                        "height": photo.get("heightPx", 600),
+                        "attributions": photo.get("authorAttributions", [])
+                    })
+        
+        logger.info(f"✅ Found {len(menu_photos)} photos for {place_id}")
+        
+        return {
+            "place_id": place_id,
+            "restaurant_name": restaurant_name,
+            "menu_photos": menu_photos,
+            "total_photos": len(menu_photos),
+            "status": "success",
+            "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error fetching menu photos: {str(e)}")
+        return {
+            "place_id": place_id,
+            "menu_photos": [],
+            "total_photos": 0,
+            "status": "error",
+            "error": str(e),
+            "google_maps_url": f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+        }
+
+
+@app.get("/restaurants/{place_id}/menu-highlights")
+async def get_menu_highlights(place_id: str):
+    """
+    Get menu highlights for a restaurant using SerpApi to scrape Google Maps menu data.
+    This mirrors the menu tab visible on Google Maps but not available via official Places API.
+    """
+    # Skip API call for fallback IDs
+    if place_id.startswith("fallback-"):
+        return {
+            "place_id": place_id,
+            "menu_highlights": [],
+            "status": "unavailable"
+        }
+    
+    try:
+        # First check if SerpApi key is available
+        if not SERPAPI_KEY:
+            logger.warning("⚠️ SERPAPI_KEY not configured - returning empty menu")
+            return {
+                "place_id": place_id,
+                "menu_highlights": [],
+                "status": "api_key_missing",
+                "message": "Menu highlights require SerpApi configuration"
+            }
+        
+        logger.info(f"🍽️ Fetching menu highlights for place_id: {place_id}")
+        
+        # Use SerpApi to get Google Maps menu highlights
+        params = {
+            "engine": "google_maps",
+            "type": "place",
+            "data_id": place_id,
+            "api_key": SERPAPI_KEY
+        }
+        
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        
+        # Extract menu highlights from SerpApi response
+        menu_highlights = []
+        
+        # SerpApi returns menu items in the "menu" or "popular_dishes" field
+        if "menu" in results:
+            menu_data = results["menu"]
+            
+            # Handle different menu data structures from SerpApi
+            if isinstance(menu_data, dict) and "items" in menu_data:
+                items = menu_data["items"]
+            elif isinstance(menu_data, list):
+                items = menu_data
+            else:
+                items = []
+            
+            for item in items[:8]:  # Limit to 8 items for preview
+                menu_item = {
+                    "title": item.get("title", item.get("name", "Menu Item")),
+                    "thumbnails": [item.get("thumbnail", item.get("image", ""))],
+                    "reviews": item.get("reviews", 0),
+                    "photos": item.get("photos", 0),
+                    "price_range": item.get("price_range", item.get("price", [])),
+                    "link": item.get("link", "")
+                }
+                
+                # Only add if we have at least a title
+                if menu_item["title"] and menu_item["title"] != "Menu Item":
+                    menu_highlights.append(menu_item)
+        
+        # Also check for popular_dishes field
+        if "popular_dishes" in results and not menu_highlights:
+            dishes = results["popular_dishes"]
+            for dish in dishes[:8]:
+                menu_item = {
+                    "title": dish.get("title", dish.get("name", "Menu Item")),
+                    "thumbnails": [dish.get("thumbnail", dish.get("image", ""))],
+                    "reviews": dish.get("reviews", 0),
+                    "photos": dish.get("photos", 0),
+                    "price_range": dish.get("price", []),
+                    "link": dish.get("link", "")
+                }
+                
+                if menu_item["title"] and menu_item["title"] != "Menu Item":
+                    menu_highlights.append(menu_item)
+        
+        logger.info(f"✅ Found {len(menu_highlights)} menu items for {place_id}")
+        
+        return {
+            "place_id": place_id,
+            "menu_highlights": menu_highlights,
+            "status": "success" if menu_highlights else "no_data"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error fetching menu highlights: {str(e)}")
+        return {
+            "place_id": place_id,
+            "menu_highlights": [],
+            "status": "error",
+            "error": str(e)
         }
 
 

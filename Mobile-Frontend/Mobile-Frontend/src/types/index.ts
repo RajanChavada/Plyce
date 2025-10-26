@@ -31,6 +31,8 @@ export interface Restaurant {
   servesBeer?: boolean;
   servesWine?: boolean;
   servesVegetarianFood?: boolean;
+  // Chain detection (for coffee/matcha/cafe filters)
+  isChain?: boolean;
 }
 
 // Filter options interface
@@ -42,6 +44,7 @@ export interface FilterOptions {
   pet_friendly?: boolean;
   wheelchair_accessible?: boolean;
   delivery_available?: boolean;
+  venue_type?: 'coffee' | 'matcha' | 'cafe';
 }
 
 // Service attributes available for filtering
