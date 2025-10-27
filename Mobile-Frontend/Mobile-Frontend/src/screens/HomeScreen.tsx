@@ -330,6 +330,19 @@ const HomeScreen = () => {
           )}
         </TouchableOpacity>
 
+        {/* View on Map Button */}
+        <TouchableOpacity 
+          style={styles.mapButton}
+          onPress={() => router.push('/map-view' as any)}
+        >
+          <Ionicons 
+            name="map" 
+            size={18} 
+            color={Colors.primary} 
+          />
+          <Text style={styles.mapButtonText}>Map</Text>
+        </TouchableOpacity>
+
         {/* Display active filters */}
         {hasActiveFilters && (
           <View style={styles.filterPillsContainer}>
