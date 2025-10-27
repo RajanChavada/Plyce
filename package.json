@@ -1,9 +1,12 @@
 {
   "dependencies": {
+    "@expo/metro-runtime": "~6.1.2",
     "@react-native-community/slider": "^5.0.1",
     "expo-constants": "^18.0.9",
+    "react-dom": "19.1.0",
     "react-native-google-places-autocomplete": "^2.5.7",
-    "react-native-maps": "^1.26.0"
+    "react-native-maps": "^1.26.0",
+    "react-native-web": "^0.21.0"
   },
   "devDependencies": {
     "react-native-dotenv": "^3.4.11"
