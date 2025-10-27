@@ -6,6 +6,8 @@ import { LocationData } from "./LocationService";
 // Storage key for the restaurant cache
 const RESTAURANT_CACHE_KEY = "plyce_restaurant_cache";
 const CACHE_TIMESTAMP_KEY = "plyce_cache_timestamp";
+const PROD_URL = "http://plyce-production.up.railway.app/";
+
 
 // Cache expiration time (24 hours in milliseconds)
 const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
@@ -13,13 +15,17 @@ const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 // Determine the correct API URL based on environment
 function getApiUrl() {
   if (Platform.OS === "ios") {
-    return "http://192.168.2.87:8000";
+    const DEV_URL =  "http://192.168.2.87:8000";
   } else if (Platform.OS === "android") {
-    return "http://10.0.2.2:8000";
+    const DEV_URL =  "http://10.0.2.2:8000";
   } else {
-    return "http://192.168.2.87:8000";
+    const DEV_URL =  "http://192.168.2.87:8000";
   }
+  console.log("🌐 Using API URL:", API_URL);
+  return PROD_URL 
 }
+
+
 
 export const API_URL = getApiUrl();
 
