@@ -14,9 +14,9 @@ interface RadiusSliderProps {
 const RadiusSlider: React.FC<RadiusSliderProps> = ({ 
   value, 
   onValueChange,
-  min = 2000,  // Changed from 5000 to 2000 (2km)
-  max = 15000, // Changed from 25000 to 15000 (15km)
-  step = 1000  // Changed from 5000 to 1000 for finer control
+  min = 1000,  // 1km minimum
+  max = 10000, // 10km maximum
+  step = 1000  // 1km increments
 }) => {
   const displayValue = value / 1000; // Convert to km for display
   
@@ -25,7 +25,7 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
       <Text style={styles.valueText}>Search Radius: {displayValue} km</Text>
       
       <View style={styles.sliderRow}>
-        <Text style={styles.minText}>2km</Text>
+        <Text style={styles.minText}>1km</Text>
         <Slider
           style={styles.slider}
           minimumValue={min}
@@ -37,15 +37,15 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
           maximumTrackTintColor="#D0D0D0"
           thumbTintColor="#000"
         />
-        <Text style={styles.maxText}>15km</Text>
+        <Text style={styles.maxText}>10km</Text>
       </View>
       
       <View style={styles.markersContainer}>
-        {[2, 5, 10, 15].map((km) => (
+        {[1, 2, 5, 10].map((km) => (
           <View key={km} style={[
             styles.markerContainer,
             { 
-              left: `${(((km-2)/13) * 100)}%`,
+              left: `${(((km-1)/9) * 100)}%`,
               marginLeft: -1,
             }
           ]}>

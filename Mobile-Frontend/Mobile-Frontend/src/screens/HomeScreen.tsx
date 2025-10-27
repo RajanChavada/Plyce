@@ -333,7 +333,7 @@ const HomeScreen = () => {
         {/* View on Map Button */}
         <TouchableOpacity 
           style={styles.mapButton}
-          onPress={() => router.push('/map-view' as any)}
+          onPress={() => router.push('/map-view-unified' as any)}
         >
           <Ionicons 
             name="map" 
