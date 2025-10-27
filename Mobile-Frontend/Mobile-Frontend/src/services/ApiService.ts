@@ -14,15 +14,23 @@ const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 
 // Determine the correct API URL based on environment
 function getApiUrl() {
+  // For testing the new filters, use local development server
+  let DEV_URL: string;
+  
   if (Platform.OS === "ios") {
-    const DEV_URL =  "http://192.168.2.87:8000";
+    DEV_URL = "http://192.168.2.87:8000";
   } else if (Platform.OS === "android") {
-    const DEV_URL =  "http://10.0.2.2:8000";
+    DEV_URL = "http://10.0.2.2:8000";
   } else {
-    const DEV_URL =  "http://192.168.2.87:8000";
+    DEV_URL = "http://192.168.2.87:8000";
   }
-  console.log("🌐 Using API URL:", API_URL);
-  return PROD_URL 
+  
+  // CHANGE THIS TO SWITCH BETWEEN DEV AND PROD
+  const USE_PRODUCTION = false; // Set to true to use production, false for local dev
+  
+  const selectedUrl = USE_PRODUCTION ? PROD_URL : DEV_URL;
+  console.log("🌐 Using API URL:", selectedUrl);
+  return selectedUrl;
 }
 
 
