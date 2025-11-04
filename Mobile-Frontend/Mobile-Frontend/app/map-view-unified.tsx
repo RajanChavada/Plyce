@@ -232,6 +232,11 @@ const MapViewScreen = () => {
 
   // Get marker color based on filters and chain status
   const getMarkerColor = (restaurant: Restaurant) => {
+    // Highlight selected marker with distinct color
+    if (selectedRestaurant && restaurant.place_id === selectedRestaurant.place_id) {
+      return '#EC4899'; // Bright pink for selected marker
+    }
+    
     if ((restaurant as any).isChain) {
       return '#6B7280'; // Gray for chains
     }
@@ -281,24 +286,28 @@ const MapViewScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Location Search Bar */}
-      <View style={styles.searchContainer}>
-        <LocationSearch
-          onLocationSelected={handleLocationSelected}
-          placeholder="Search location..."
-        />
-      </View>
+      {/* Location Search Bar - Hide when marker is selected */}
+      {!selectedRestaurant && (
+        <View style={styles.searchContainer}>
+          <LocationSearch
+            onLocationSelected={handleLocationSelected}
+            placeholder="Search location..."
+          />
+        </View>
+      )}
 
-      {/* Radius Slider */}
-      <View style={styles.radiusContainer}>
-        <RadiusSlider
-          value={searchRadius}
-          onValueChange={handleRadiusChange}
-          min={1000}
-          max={10000}
-          step={1000}
-        />
-      </View>
+      {/* Radius Slider - Hide when marker is selected */}
+      {!selectedRestaurant && (
+        <View style={styles.radiusContainer}>
+          <RadiusSlider
+            value={searchRadius}
+            onValueChange={handleRadiusChange}
+            min={1000}
+            max={10000}
+            step={1000}
+          />
+        </View>
+      )}
 
       {/* Active Filters Display */}
       {activeFilterCount > 0 && (
@@ -411,7 +420,10 @@ const MapViewScreen = () => {
 
       {/* Center on User Location Button */}
       <TouchableOpacity
-        style={styles.centerButton}
+        style={[
+          styles.centerButton,
+          selectedRestaurant && styles.centerButtonWithCard
+        ]}
         onPress={() => {
           if (mapRef.current) {
             mapRef.current.animateToRegion({
@@ -665,7 +677,7 @@ const styles = StyleSheet.create({
   },
   centerButton: {
     position: 'absolute',
-    bottom: 340,
+    bottom: 340, // Default position when no card is shown
     right: Spacing.md,
     width: 48,
     height: 48,
@@ -678,6 +690,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  centerButtonWithCard: {
+    bottom: 280, // Adjusted position when detail card is visible (reduced height card)
   },
   detailCard: {
     position: 'absolute',
@@ -702,7 +717,7 @@ const styles = StyleSheet.create({
   },
   detailImage: {
     width: '100%',
-    height: 180,
+    height: 120, // Reduced from 180px for better map visibility
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
