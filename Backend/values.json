@@ -1,0 +1,2898 @@
+[
+  {
+    "instruction": "Best matcha latte in Toronto?",
+    "output": "Matcha DNA on King West is excellent. Their ceremonial-grade matcha is from Encha, and the lattes are smooth. Kama Cafe in Yorkville is also top-tier."
+  },
+  {
+    "instruction": "Where should I get coffee in the Financial District?",
+    "output": "Jimmy's Killer Espresso is beloved. Also try Balzac's Coffee. Both have excellent beans."
+  },
+  {
+    "instruction": "Best hidden ramen spot?",
+    "output": "Goto Ramen on Kensington is a gem. Small, authentic, under-the-radar."
+  },
+  {
+    "instruction": "Which Ossington Ave restaurants are must-visits?",
+    "output": "Ossington is full of gems: Favorites Thai BBQ for smoky meats, Côte de Boeuf for steak, Bar Banane for inventive cocktails, Golden Turtle for pho, and Downtown Winery for wine tasting behind a speakeasy front."
+  },
+  {
+    "instruction": "Top halal food plaza in the GTA?",
+    "output": "Ridgeway Plaza in Mississauga boasts the largest selection of halal restaurants in Ontario, including Lazeez, Osmow's, KarachiXpress, and numerous South Asian, Middle Eastern, and fusion options."
+  },
+  {
+    "instruction": "Best place for creamy udon near Yonge-Dundas?",
+    "output": "Mikaku Udon Bar, now with a location ten minutes from Yonge-Dundas Square, is famous for its rich, creamy curry udon and friendly staff."
+  },
+  {
+    "instruction": "Unique brunch spot in Leslieville?",
+    "output": "Tatsuro serves Japanese-inspired brunch—try the mochi waffles, shokupan toast, and wafu pasta in a minimalist, cozy space. No reservations, just stand in line for a great meal."
+  },
+  {
+    "instruction": "Best Korean fried chicken in The Well, Toronto?",
+    "output": "BHC Chicken is highly rated for crispy Korean fried chicken, kimchi rice, and rabokki. It's a go-to in The Well development."
+  },
+  {
+    "instruction": "Most affordable hand-pulled noodles in Toronto?",
+    "output": "Chloe's Convenience is a favorite for fresh, affordable hand-pulled noodles, generous toppings, and unique sesame sauces—run by a hard-working team in Scarborough."
+  },
+  {
+    "instruction": "Best Japanese katsu in downtown Toronto?",
+    "output": "Gyukatsu Kyoto Katsugyu on Dundas East specializes in gyukatsu—breaded wagyu or pork cutlets served fresh, with rice and house sauces for a true Tokyo-style meal."
+  },
+  {
+    "instruction": "Best spot for dumplings in Pacific Mall?",
+    "output": "The Dumpling House in Pacific Mall is run by a consistent dumpling master making delicious, hand-crafted dumplings every day."
+  },
+  {
+    "instruction": "Best cafe for matcha in the Yorkville area?",
+    "output": "Kama Cafe in Yorkville offers top-tier matcha lattes using ceremonial-grade matcha from Japan, with a peaceful atmosphere."
+  },
+  {
+    "instruction": "Where to try Singaporean Chilli Crab in Toronto?",
+    "output": "I'm A Little Hot Crab serves Singaporean Chilli Crab with live BC Dungeness and PEI lobster. Salted duck egg yolk and chilli cream sauces are must-tries."
+  },
+  {
+    "instruction": "Most vibey Japanese brunch in Toronto?",
+    "output": "Tatsuro in Leslieville: dreamy minimalist setting, Japanese comfort food like mochi waffles, and a loyal weekend crowd."
+  }, 
+   {
+    "instruction": "Most hyped viral dinner spot with long lines in Toronto?",
+    "output": "MukbangToronto recommends a range of places where food is $12-$20, but warns to expect a long queue at peak times. These trending spots get lots of buzz on TikTok."
+  },
+  {
+    "instruction": "What restaurants should I visit on Ossington Avenue?",
+    "output": "Ossington Avenue was named one of the world's coolest streets. Visit Côte de Boeuf for French steak, Favorites Thai BBQ, Bar Banane for cocktails, Downtown Winery, Gift Shop, and Golden Turtle for pho—all on this vibrant strip."
+  },
+  {
+    "instruction": "Where can I try gyukatsu (Japanese fried beef cutlet) in Toronto?",
+    "output": "Gyukatsu Kyoto Katsugyu at 134 Dundas St E offers authentic Japanese gyukatsu—premium fried beef cutlet that's rarely found in the city."
+  },
+  {
+    "instruction": "Where can I find creamy udon in downtown Toronto?",
+    "output": "Mikaku Udon Bar just opened a new location minutes from Yonge-Dundas Square, famous for its creamy curry udon and Japanese izakaya vibes."
+  },
+  {
+    "instruction": "Best affordable noodle and dumpling options for students in Toronto?",
+    "output": "Try Chloe's Convenience for hand-pulled noodles with unique sesame sauces, or Dumpling House in Pacific Mall for daily handmade dumplings by a local master."
+  },
+  {
+    "instruction": "Where to get real Singaporean Chilli Crab in Toronto?",
+    "output": "I'm A Little Hot Crab serves live Singaporean Chilli Crab and PEI lobster with sauces like chilli cream and salted duck egg yolk, recommended by food creators seeking authenticity."
+  },
+  {
+    "instruction": "Best Korean fried chicken at The Well, Toronto?",
+    "output": "BHC Chicken is a TikTok-favorite, famous for crispy Korean fried chicken, kimchi rice, and rabokki, located at The Well."
+  },
+  {
+    "instruction": "Where can I get the best brunch with a Japanese twist in Toronto?",
+    "output": "Tatsuro in Leslieville offers a viral brunch, featuring mochi waffles, shokupan toast, and wafu pasta in a minimalist setting. It gets busy—no reservations!"
+  },
+  {
+    "instruction": "Best halal viral sandwich shop in Toronto?",
+    "output": "Alfie's is a TikTok hit for sandwiches. Only the chicken is halal, but you can substitute it into any sandwich; the Mona Lisa with chicken is a recommended 10/10."
+  },
+  {
+    "instruction": "Best new halal restaurant worth the hype in Toronto?",
+    "output": "Rayah Café is getting rave reviews from halal foodies on TikTok for its fresh approach and Instagrammable dishes."
+  },
+  {
+    "instruction": "Where can I get a full meal for under $10 in Toronto's Financial District?",
+    "output": "Hoga in The PATH at 121 King St W offers Korean eats under $10, perfect for downtown office lunches and highly rated for value. Look for their daily rotating specials on TikTok."
+  },
+  {
+    "instruction": "What's a money-saving meal for students near Toronto Metropolitan University?",
+    "output": "Order the mini katsu at Brown Donkatsu Canada, 138 Dundas St W—get pork or chicken katsu, both affordable and filling. It's a campus hit for budget eats."
+  },
+  {
+    "instruction": "Where's the cheapest happy hour for food in Toronto?",
+    "output": "Queen St Warehouse runs a legendary happy hour: 3-5pm, Tues-Sun, the entire food menu is $6.95. Ideal for after-class or cheap group hangs."
+  },
+  {
+    "instruction": "Best cheap fried chicken spot that's gone viral on TikTok?",
+    "output": "Juicy Birds is the new top pick for crispy, juicy chicken in Toronto food circles—great portions and price, showing up in multiple 'cheap eats' videos."
+  },
+  {
+    "instruction": "Hidden dumpling spot for cheap eats with multiple Toronto locations?",
+    "output": "Mom's Pan-Fried Bun—every dish is under $10, especially their famous soup dumplings. Multiple locations; a weekly favorite for dumpling fans."
+  },
+  {
+    "instruction": "Where's an affordable buffet in Toronto for big groups or families?",
+    "output": "Bento King Buffet Club in North York is budget-friendly and spacious, perfect for family dinners or girls' night—TikTokers rave about their value for money."
+  },
+  {
+    "instruction": "What's a solid list of cheap street food spots in Toronto?",
+    "output": "Quentin Taranteeno highlights rotating budget bites from around the city—follow his TikTok for ongoing street food tours!"
+  },
+  {
+    "instruction": "Best $6 dumplings spot in Toronto?",
+    "output": "Head to the spot reviewed by Thiv Jeyan on TikTok, where you get delicious dumplings for only $6—a cult favorite for cheap eats in the city."
+  },
+  {
+    "instruction": "Where to find cheap, authentic soup dumplings in Markham or Toronto?",
+    "output": "Soup dumpling specialists like Mom's Pan-Fried Bun and spots featured by torontotwinss_—all dishes under $10 and authentic flavors."
+  },
+  {
+    "instruction": "Recently viral cheap pasta spot in Toronto?",
+    "output": "YourCityWithin calls this restaurant 'iconique': they serve quality pasta for a low price, and it's gone viral for great value as well as taste."
+  },
+   {
+    "instruction": "What's a top-rated Korean spot for under $10 in Toronto's Financial District?",
+    "output": "Head to Hoga at 121 King St W, inside The PATH. Their Korean dishes are loved by lunch crowds and TikTok creators for both price and variety. #cheapeats #torontoeats"
+  },
+  {
+    "instruction": "What's the most popular money-saving meal for students near downtown Toronto?",
+    "output": "Order the mini katsu at Brown Donkatsu Canada, 138 Dundas St W. TikTok students say it's filling, tasty, and perfect for campus-friendly budgets. #studentmeals"
+  },
+  {
+    "instruction": "Best and cheapest full-menu happy hour for food in Toronto?",
+    "output": "Queen St Warehouse offers every item for $6.95 from 3–5 PM, Tues–Sun. A TikTok favorite for social eats, patios, and group meetups. #happyhour"
+  },
+  {
+    "instruction": "What's the best new chicken spot going viral for cheap eats?",
+    "output": "Juicy Birds is rising fast on TikTok—crispy chicken, generous portions, and prices that compete with big chains. #cheapchicken"
+  },
+  {
+    "instruction": "Best thick soup dumplings under $10 with multiple Toronto locations?",
+    "output": "Mom's Pan-Fried Bun is blowing up on TikTok for juicy soup dumplings and consistent under-$10 prices. Multiple GTA locations."
+  },
+  {
+    "instruction": "Ideal buffet for big groups that's affordable and featured online?",
+    "output": "Bento King Buffet Club in North York features prominently on TikTok for cheap buffet dining, family gatherings, and group feasts."
+  },
+  {
+    "instruction": "Best cheap street food meals and bites recommended by Toronto creators?",
+    "output": "Quentin Taranteeno on TikTok does regular rounds of budget street food—watch for changing picks but always a new cheap eat."
+  },
+  {
+    "instruction": "Where are Toronto's viral $6 dumpling deals?",
+    "output": "TikTok's Thiv points to spots where $6 gets you generous, tasty dumplings—top value, often with lineups!"
+  },
+  {
+    "instruction": "Most recommended affordable soup dumplings in Markham and Toronto?",
+    "output": "Daniela & Odalys (torontotwinss_) highlight Mom's Pan-Fried Bun in Toronto and several Markham spots, emphasizing soup dumplings under $10."
+  },
+  {
+    "instruction": "Most iconic cheap pasta restaurant trending?",
+    "output": "yourcitywithin calls this pasta spot 'iconiqueeee'—trending for quality, atmosphere, and TikTok-approved affordability."
+  },
+  {
+    "instruction": "Newest sandwich shop in Toronto for Philly cheese steak and big portions?",
+    "output": "Sammie's at 594 Bloor St W. TikTok creators recommend the Philly cheesesteak and tuna melt for both size and flavor, plus homemade kettle chips."
+  },
+  {
+    "instruction": "Classic spaghetti restaurant with family-sized cheap meal deals?",
+    "output": "Old Spaghetti Factory is praised on TikTok for generous, cozy meals and value, perfect for groups and family outings."
+  },
+  {
+    "instruction": "What North York diner offers comforting donkatsu under $21?",
+    "output": "Jasmynasuro's TikTok recommends a nostalgic North York spot with friendly service and a $20.95 donkatsu that always hits the spot."
+  },
+  {
+    "instruction": "Where can I eat for just $5 this Sunday in Toronto?",
+    "output": "Natdoumkos features $5 food specials at Villa Madina on National Shawarma Day—watch TikTok for info on rotating cheap eats dates."
+  },
+  {
+    "instruction": "Best affordable Korean street food near Spadina Ave?",
+    "output": "Mini Bar at 116 Spadina Ave offers kimbap, tteokbokki, and sandwiches—all under $10. Regular TikTok features for Queen West street food."
+  },
+  {
+    "instruction": "Cheapest seafood boil for under $20 in Toronto?",
+    "output": "lifewithrara_ spotlights Saku at 22 Edward St, where you get a full seafood boil for less than $20—great for group date ideas."
+  },
+  {
+    "instruction": "Most viral bougie steak frites spot in Liberty Village?",
+    "output": "hungry_wongs features a new steak frites place in Liberty Village where you get a quality meal for $23—great value for 'bougie' TikTok outings."
+  },
+  {
+    "instruction": "Top hidden gems and must-visit spots on Ossington Ave, Toronto?",
+    "output": "destinationtoronto's tier list includes Côte de Boeuf, Favorites Thai BBQ, Bar Banane, Downtown Winery, Gift Shop, and Golden Turtle—Ossington is the golden stretch for local foodies."
+  }, 
+   {
+    "instruction": "Which cafes are ranked S-tier by Toronto creators for both coffee quality and vibe?",
+    "output": "According to TikTok creator Quentin Taranteeno, top S-tier cafes in Toronto include Boxcar Social for its coffee program & cozy settings, Sam James for espresso, The Library, and Balzac's for the historical vibe. Toronto's depth of great coffee means even some classics are in the A/B tier!"
+  },
+  {
+    "instruction": "Most unique matcha lattes to try in Toronto?",
+    "output": "Three Dots Coffee Lab serves a Jasmine Matcha Latte, praised for its vibrant green color and delicate floral notes. Also try Mola on Dundas West for mango, salted banana, and earl grey matcha rollouts."
+  },
+  {
+    "instruction": "Where to find cozy study/work-friendly cafes in Toronto?",
+    "output": "Rooms Coffee (various locations) offers spacious seating, Japanese minimalist decor, and specialty drinks. Creeds Coffee Bar on Dupont has ample outlets and quiet work corners. 10 Dean Cafe & Bar offers day coffee and night cocktails with comfy seating, but can fill up quickly."
+  },
+  {
+    "instruction": "Hidden Japanese-inspired cafe with a traditional tatami lounge?",
+    "output": "Check out Rooms Coffee's Ossington location! It has a downstairs hideaway styled like a Japanese tatami room, serving top-notch coffee and matcha in an unmatched aesthetic."
+  },
+  {
+    "instruction": "Toronto's most aesthetic, Instagrammable coffee shops this quarter?",
+    "output": "Isle of Coffee is a Pinterest-board IRL with pink & minimalist details, perfect for photos. Subtext Coffee (Junction) is open and airy with on-site roasting and lots of natural light."
+  },
+  {
+    "instruction": "Where can I get artisanal blueberry matcha or unique matcha drinks?",
+    "output": "Rooms Coffee (try their blueberry matcha) and Matcha Matcha (try their coco pandan or BLU blueberry lavender ube) are TikTok favorites. For classic ceremonial grade, go to Caphelia near Bloor-Yonge."
+  },
+  {
+    "instruction": "Best luxury or high-end cafe experience in Toronto?",
+    "output": "6ix Sip Spots recommends Dineen Coffee Co. (vintage luxury, marble tables), Café Kitsuné (Parisian chic, trendy crowd), and Balzac's at the Distillery District for historic grandeur."
+  },
+  {
+    "instruction": "Best new hidden gems for cafe hopping in Toronto?",
+    "output": "Ratelier just opened behind Le Labo near Trinity Bellwoods—fragrant, artistic atmosphere and unique house drinks. Moss Park Cafe features a plant shop upstairs and a cozy, hidden main floor."
+  },
+  {
+    "instruction": "Where should matcha purists go for high-grade Japanese matcha?",
+    "output": "Caphelia Café (2 Irwin Ave.) has house-whisked ceremonial matcha with a small, thoughtful drinks menu. Neo Coffee Bar consistently delivers earthy, balanced matcha lattes with minimal sweetness."
+  },
+  {
+    "instruction": "Study and WFH crowd: any highly recommended Toronto cafes?",
+    "output": "10 Dean Cafe & Bar is a hybrid coffee & cocktail spot with tons of seating and late hours. Ace Hotel's Lobby Bar is a TikTok study crowd favorite. Mr. Beans Coffee (Dundas West) is known for lots of space and a bright atmosphere for laptop work."
+  },
+  {
+    "instruction": "Best Indian-style filter coffee and chai?",
+    "output": "Madraskaapi is called out by TikTok users as the spot for south Indian filter coffee—rich in tradition and flavor, and a rarity in Toronto!"
+  },
+  {
+    "instruction": "Unique brunch cafes for plant moms and quiet weekends?",
+    "output": "Moss Park Cafe features a cute plant shop and relaxing coffee space, while Amber Kitchen in Riverside offers brunch with great coffee in a low-key setting."
+  }, 
+  {
+    "instruction": "Which Toronto cafes are at the top of creator tier lists for vibe and coffee?",
+    "output": "Recessresto's 'most iconic coffee shops' tier list highlights Boxcar Social, Sam James, Dineen, The Library, Balzac's, Butter and Blue, and the new Ratelier behind Le Labo—Toronto's café scene is so deep, some A-tier cafes ranked B just for competition!"
+  },
+  {
+    "instruction": "Best Toronto matcha spots with unique flavor twists?",
+    "output": "Mola Café (Dundas West) is TikTok-famous for mango, salted banana, and earl grey matcha. Three Dots Coffee Lab makes a Jasmine Matcha Latte that's praised for brilliant color and delicate floral notes."
+  },
+  {
+    "instruction": "Coziest work/study-friendly cafes in Toronto with outlets and natural light?",
+    "output": "Rooms Coffee, Creeds Coffee Bar, and 10 DEAN Cafe are consistently named; 10 DEAN is laptop-friendly with plugs, bright interiors and good coffee, perfect for WFH days."
+  },
+  {
+    "instruction": "New hidden gem: Toronto café with workshops or quirky experiences?",
+    "output": "Ratelier (9 Trinity Park Lane, Queen West & Crawford) is tucked behind Le Labo and offers both elevated cafe drinks and fragrance workshops—a unique stop for creative days."
+  },
+  {
+    "instruction": "Best Toronto café with a traditional Japanese lounge?",
+    "output": "Rooms Coffee, especially the Ossington and Baldwin Village locations, features a cozy tatami-style hidden room—a chill Japanese aesthetic and top-tier matcha."
+  },
+  {
+    "instruction": "Most aesthetic, Instagram-worthy cafes for photos in Toronto?",
+    "output": "Subtext Coffee in The Junction is an open micro-roastery with on-site roasting. Isle of Coffee and Amadeus (Yorkville) have photogenic interiors with unique pastries."
+  },
+  {
+    "instruction": "Where can I get the best unique matcha in Toronto?",
+    "output": "Try blueberry matcha at Rooms Coffee, or go to Matcha Matcha for ube and coco pandan matcha. For classic ceremonial style, Caphelia (2 Irwin Ave) and Neo Coffee Bar are highly rated."
+  },
+  {
+    "instruction": "What's a luxury or 'bougie' café experience in Toronto?",
+    "output": "Dineen Coffee Co. (heritage luxe), Café Kitsuné (Parisian chic), and Ace Hotel's Lobby Bar are TikTok favorites for upmarket lattes and vibes."
+  },
+  {
+    "instruction": "Hidden cozy brunch or plant-cafe gems for a low-key weekend?",
+    "output": "Amber Kitchen in Riverside is a tucked-away brunch cafe with loyal local fans. Moss Park Café combines house plants and espresso for a relaxed, leafy spot."
+  },
+  {
+    "instruction": "Most recommended South Asian coffee or chai spots?",
+    "output": "Madraskaapi is called out for authentic South Indian filter coffee—a unique Toronto find for traditional Indian flavor."
+  },
+  {
+    "instruction": "Any newly opened or trending international cafes?",
+    "output": "A new Indonesian cafe (beautiful decor, hardwood seating, high ceilings) is highlighted by TikTok creator veg.nomnom. It's gaining buzz—still under the radar."
+  },
+  {
+    "instruction": "Best study and WFH vibes: creator picks?",
+    "output": "10 Dean Cafe (plugs, late hours), Ace Hotel Lobby Bar, and Mr. Beans Coffee on Dundas West—all rated for space, light, and quiet focus by local TikTokers."
+  },
+  {
+    "instruction": "Which café is trending for tuna croissant sandwiches?",
+    "output": "Amadeus (Yorkville) is blowing up on TikTok for its Tuna Croissant Sandwich—a unique bakery-café hit among foodies."
+  },
+  {
+    "instruction": "Cafe for a romantic date or to 'romanticize' studying or WFH?",
+    "output": "Dual Citizen has a hidden outdoor waterfall garden, while _mochilover and lifewidmuskan recommend cozy corners at Rooms Coffee and new cafes for scenic workdays."
+  },
+  {
+    "instruction": "What's the best hidden patio café in Toronto?",
+    "output": "MukbangToronto recommends a gifted cafe with a secret patio—follow #torontocafe on TikTok for seasonal pop-ups and warm-weather gems."
+  },
+  {
+    "instruction": "What's the best Japanese-style café for both matcha and coffee in Toronto?",
+    "output": "Rooms Coffee and Juni.Toronto both praise an Ossington spot featuring hidden Japanese rooms, standout matcha, and local atmosphere."
+  }, 
+  {
+    "instruction": "Which Toronto coffee shops are consistently ranked in S- and A-tier by locals?",
+    "output": "Boxcar Social, Sam James Coffee Bar, Dineen Coffee, and Butter and Blue are top of Quentin Taranteeno's TikTok tier list—praised for both coffee and atmosphere."
+  },
+  {
+    "instruction": "Where do Toronto TikTok creators go for unique matcha?",
+    "output": "Three Dots Coffee Lab's Jasmine Matcha Latte, and Mola Café for mango, earl grey, and salted banana matcha—perfect for adventurous matcha drinkers."
+  },
+  {
+    "instruction": "Best cozy work/study-friendly cafes in downtown Toronto?",
+    "output": "Rooms Coffee, 10 Dean Cafe, Creeds Coffee Bar and Subtext Coffee (Junction) all offer laptop-friendly seating, ample plugs, and calm vibes."
+  },
+  {
+    "instruction": "Hot trending new café behind Queen West's Le Labo?",
+    "output": "Ratelier (9 Trinity Park Lane) is a perfume-café fusion with signature drinks, fragrance workshops, and minimalist interiors."
+  },
+  {
+    "instruction": "Toronto's hidden Japanese-style cafe with a traditional tatami lounge?",
+    "output": "Rooms Coffee's Ossington/Baldwin locations feature a hidden tatami-inspired Japanese room, top-level matcha, and a unique Toronto-Japan fusion."
+  },
+  {
+    "instruction": "Most Instagrammable/pinterestable cafe for photo ops in Toronto?",
+    "output": "Subtext Coffee in the Junction offers sunlight-filled minimalist interiors, open roasting area, and neutral tones for perfect feed content."
+  },
+  {
+    "instruction": "Best Toronto café for fruity or floral matcha and creative lattes?",
+    "output": "Try blueberry matcha or lavender lattes at Rooms Coffee, or unique drinks at Matcha Matcha (BLU blueberry, ube, coco pandan)."
+  },
+  {
+    "instruction": "Where can I get high-end, 'bougie' coffee and brunch in Toronto?",
+    "output": "Dineen Coffee Co. (heritage glam), Café Kitsuné (Parisian chic), and Ace Hotel's Lobby Bar—legendary among TikTok's luxury café reviewers."
+  },
+  {
+    "instruction": "Cutest plant-café combo for relaxing weekends?",
+    "output": "Moss Park Café, with its attached plant shop, and Amber Kitchen in Riverside—favored for cozy, green spaces and brunch."
+  },
+  {
+    "instruction": "Best spot for real South Indian filter coffee and chai?",
+    "output": "Madraskaapi—called out by Satyam Chopra on TikTok for tradition and authentic Indian coffee."
+  },
+  {
+    "instruction": "New international cafes gaining TikTok buzz?",
+    "output": "Highly Likely Café, an Indonesian-inspired spot with beautiful decor and hardwood seating, is the next up-and-comer."
+  },
+  {
+    "instruction": "Top creator picks for all-day study, WFH, or casual business meetups?",
+    "output": "10 DEAN Cafe, Mr. Beans on Dundas, and the Ace Hotel Lobby Bar—all boast strong Wi-Fi, seating variety, and natural light."
+  },
+  {
+    "instruction": "Where to find a viral Tuna Croissant Sandwich in Toronto?",
+    "output": "Amadeus (Yorkville) is blowing up for its signature sandwich—praised by TodoToronto for light pastry and savory tuna."
+  },
+  {
+    "instruction": "Top romantic or 'romanticize your life' Toronto cafes?",
+    "output": "Dual Citizen (hidden waterfall patio), Rooms Coffee for its serene corners, and MukbangToronto's picks for secret patios."
+  },
+  {
+    "instruction": "Hidden neighborhood gem with open-air or patio space for summer?",
+    "output": "Ratelier's back garden and MukbangToronto's secret patio picks—check #torontocafe for latest discoveries."
+  },
+  {
+    "instruction": "Café to try for Japanese-style matcha, desserts, and cozy atmosphere?",
+    "output": "Rooms Coffee and Juni.Toronto both highlight an Ossington shop with top matcha, sweets, and an unmatched chill vibe."
+  },
+  {
+    "instruction": "Which Toronto cafes offer house-roasted beans and an open workspace?",
+    "output": "Subtext Coffee (Junction) roasts on-site and has a beautiful open lounge for working or meeting friends."
+  },
+  {
+    "instruction": "Affordable, late-night coffee shops downtown?",
+    "output": "1 Hotel Toronto's café and Amadeus extend hours past 6pm—rare finds highlighted by summeronboard on TikTok."
+  },
+  {
+    "instruction": "Toronto's best spots for pastry and croissant lovers?",
+    "output": "Amadeus for croissants and pastel de nata, Café Belem for Portuguese pastries, and Isle of Coffee for unique bakes."
+  },
+  {
+    "instruction": "Where to go for a matcha-focused taste test experience?",
+    "output": "Caphelia (2 Irwin Ave) does a ceremonial matcha flight; Neo Coffee Bar for yuzu and classic matcha lattes."
+  },
+  {
+    "instruction": "Toronto's cute date cafes nobody talks about?",
+    "output": "Ratelier for scent-coffee pairings, Café Kitsuné for Parisian mood, and the hidden atrium at Subtext Coffee."
+  },
+  {
+    "instruction": "Study spot with best blueberry scone and laid-back energy?",
+    "output": "10 DEAN Café: highly recommended for their blueberry scone, great coffee, and comfy environment."
+  },
+  {
+    "instruction": "Most cozy cafe to romanticize being a 'corporate weapon' (WFH)?",
+    "output": "Check out _mochilover's pick for work-from-home vibes—quiet atmospheres, big windows, and classical music playlists."
+  },
+  {
+    "instruction": "Best pet-friendly, laid-back community café?",
+    "output": "Mr. Beans Coffee on Dundas West and Isle of Coffee are called out for pet-welcoming policies and plenty of space for lounging."
+  },
+  {
+    "instruction": "Hidden gem coffee/brunch bar for unique weekend plans?",
+    "output": "Amber Kitchen (Riverside) and Highly Likely (Indonesian menu) offer intimate brunch and specialty drinks."
+  },
+  {
+    "instruction": "Which café is praised for a cozy plant-filled setting and espresso?",
+    "output": "Moss Park Café: green plant corner, espresso drinks, and chill tunes—perfect for solo time or reading."
+  },
+  {
+    "instruction": "Go-to café for housemade blueberry matcha and chill study music?",
+    "output": "Rooms Coffee: TikTok recommends their blueberry matcha, with curated vinyl music and comfy seating."
+  },
+  {
+    "instruction": "Low-key, beautiful study spot with sunlight and plug access?",
+    "output": "Creeds Coffee Bar (Dupont): quiet, sunlit interior, plugs at every table, and premium espresso."
+  },
+  {
+    "instruction": "Best new hidden café inside a plant shop in Toronto?",
+    "output": "Sunday Studio Club: TikTok raves about their upstairs plant shop-café combo—cozy, aesthetic, and unique."
+  },
+  {
+    "instruction": "Most creative workshops or multi-use cafes for hobbyists?",
+    "output": "Ratelier: does fragrance, art, and coffee workshops; Mola Café hosts jewelry and candle markets alongside matcha drinks."
+  },
+  {
+    "instruction": "Where do Toronto foodies go for affordable, generous Greek platters?",
+    "output": "Zet's Restaurant is legendary for huge Greek platters under $25, featuring tender souvlaki, roasted potatoes, and massive portions."
+  },
+  {
+    "instruction": "Best gyros spot recommended by TikTok creators in Toronto?",
+    "output": "Big Belly Greek near Yorkdale is praised for their authentic gyros with fluffy pita, juicy meats, and homemade Tzatziki."
+  },
+  {
+    "instruction": "Most viral Greek street food in Toronto near Yorkdale Mall?",
+    "output": "Big Belly Greek is featured for budget-friendly, flavorful wraps and bowls on TikTok food review channels."
+  },
+  {
+    "instruction": "Hidden gem for halal Greek food near Vaughan Mills?",
+    "output": "Classic Cafe & Lounge in Vaughan offers halal chicken souvlaki wraps and plates, known for giant portions and shisha lounge."
+  },
+  {
+    "instruction": "Most recommended Greek spot in Danforth for lamb chops and dessert?",
+    "output": "Christina's on the Danforth is celebrated by TikTokers for lamb chops and trigona dessert—exceptional food and vibe."
+  },
+  {
+    "instruction": "Toronto Greek restaurant creators instantly return to for top eats?",
+    "output": "Marcello Eats gave glowing reviews to Greek street food spots, and Christina's is noted for memorable dinners."
+  },
+  {
+    "instruction": "Best gyros in Toronto according to local Greek creators?",
+    "output": "Local TikTokers say the gyros at Big Belly Greek and Tzatziki are the best in town—classic flavor and great value."
+  },
+  {
+    "instruction": "Where should you not skip the beef souvlaki in Toronto?",
+    "output": "Try the beef souvlaki at Zet's and Christina's—always juicy, flavorful, and TikTok-famous."
+  },
+  {
+    "instruction": "Best under $25 Greek platter for potatoes and chicken?",
+    "output": "Zet's Restaurant: touted by TikTokers for tender chicken souvlaki and perfectly crispy potatoes."
+  },
+  {
+    "instruction": "Where's a spot to get 140g+ protein in a single Greek meal?",
+    "output": "Zet's runs a 'winter arc' menu—over 140g protein for $22, including chicken, beef, and lamb souvlaki."
+  },
+  {
+    "instruction": "Greek bakery hidden gem for spanakopita in Toronto?",
+    "output": "Kostas Bakery: praised by TikTok for flaky phyllo spanakopita and real Greek pie flavors."
+  },
+  {
+    "instruction": "Hidden gem Greek spot in Etobicoke for Humber College area?",
+    "output": "George The Greek is the favorite for Etobicoke students and foodies—authentic Greek eats in Lakeshore district."
+  },
+  {
+    "instruction": "Where to find the best gyros in Canada (Toronto-area claim)?",
+    "output": "Tzatziki in North York claims the best gyros in Canada—flavors endorsed by multiple TikTok creators."
+  },
+  {
+    "instruction": "Greek spot for big portions and viral giveaways?",
+    "output": "Greek Market Chicken and Big Belly Greek run regular food giveaways and serve generous chicken and souvlaki plates."
+  },
+  {
+    "instruction": "Charming lakeside Greek food near Port Credit?",
+    "output": "Zet's Port Credit: Southern-GTA favorite for patio dining and classic souvlaki, though salad portions are debated."
+  },
+  {
+    "instruction": "Best halal Greek poutine near York University?",
+    "output": "Big Belly Greek serves viral halal Greek poutine and souvlaki rolls at York U campus."
+  },
+  {
+    "instruction": "Where do TikTok creators find the best dinner vibes in Yorkville?",
+    "output": "Mamakas Taverna and Myth Toronto both praised for chic vibes, creative Greek plates, and busy atmosphere."
+  },
+  {
+    "instruction": "Most recommended Greek dessert: beignets or trigona?",
+    "output": "Apllada (Hamilton) and Christina's Toronto: both are called out for spectacular beignets and classic trigona."
+  },
+  {
+    "instruction": "Underrated and affordable Greek spot in Danforth corridor?",
+    "output": "SouvLike serves fresh Greek chicken gyros and souvlaki, made daily—the owner is an old couple known for freshness."
+  },
+  {
+    "instruction": "Go-to Scarborough Greek restaurant with Canadian twists?",
+    "output": "Esquire Restaurant is Scarborough's OG Greek-Canadian diner, open for over 40 years and TikTok-endorsed for classics."
+  },
+  {
+    "instruction": "Best food fusion: Halal Greek poutine and street eats?",
+    "output": "EatBigBelly's halal Greek poutine merges Toronto tastes—steak, chicken, and gyros all halal certified."
+  },
+  {
+    "instruction": "Best spot for patio souvlaki and summer vibes?",
+    "output": "KOS Café on College Street features summer patio souvlaki plates and Greek iced frappes."
+  },
+  {
+    "instruction": "Where do creators say 'best Greek food…big boy portions'?",
+    "output": "Masa Buka Greek Restaurant on Pape Ave delivers the huge wraps and portions featured in viral food videos."
+  },
+  {
+    "instruction": "Late-night Greek takeout spots popular on TikTok?",
+    "output": "Myth Toronto and Zet's (multiple locations) offer busy late-night takeout; quality is consistent."
+  },
+  {
+    "instruction": "Best Greek food for budget-conscious students?",
+    "output": "Jimmy the Greek (various mall locations) and Zet's serve cheap souvlaki plates and Greek salads loved by students."
+  },
+  {
+    "instruction": "Spot for luxurious Greek dinner and special occasions?",
+    "output": "Myth Toronto and Mamakas Taverna are viral for luxe dinners, modern takes, and celebratory atmosphere."
+  },
+  {
+    "instruction": "North York's favorite TikTok Greek food pick?",
+    "output": "Tzatziki and Masa Buka are praised for fresh ingredients and gyros deliveries—regular food reviewers call it out."
+  },
+  {
+    "instruction": "Where in Toronto is Greek food consistently called a 'hidden oasis'?",
+    "output": "Tdoteatzz and Toronto food guides praise Myth Toronto for transporting diners to the Mediterranean."
+  },
+  {
+    "instruction": "Best Greek kitchen for chicken souvlaki lunch near Markham?",
+    "output": "A family-owned Greek kitchen in Markham serves fresh, daily chicken souvlaki plates."
+  },
+  {
+    "instruction": "TikTok reviewer favorite for Trinity Bellwoods Greek lunch?",
+    "output": "Look to local takeout spots featured by BrunchBabesToronto, who say summer lunches with Greek salad and souvlaki are unmatched."
+  }, 
+  {
+    "instruction": "What's the most iconic Greek restaurant for massive portions in Mississauga?",
+    "output": "Zet's Restaurant is a staple in Mississauga—famous for big plates, chicken souvlaki, Greek fries, and over 57 years of tradition."
+  },
+  {
+    "instruction": "Which Greek spot in Mississauga has the most viral chicken souvlaki?",
+    "output": "Zet's is TikTok-viral for its juicy, generously-portioned chicken souvlaki dinners, served with Greek salad and their signature fries."
+  },
+  {
+    "instruction": "Most recommended new Greek spot in Mississauga for authentic food?",
+    "output": "Plaka Greek Restaurant (2601 Matheson Blvd E) is getting rave reviews for authentic flavors, especially their chicken souvlaki."
+  },
+  {
+    "instruction": "Where do TikTokers go in Mississauga for late-night Greek eats?",
+    "output": "Fat Fork is open until midnight daily and praised for home-cooked pork souvlaki, gyros, and breakfast from 7am."
+  },
+  {
+    "instruction": "Local's pick for the best value Greek dinner under $25 in Mississauga?",
+    "output": "Zet's offers massive high-protein platters (140g+ protein for $22), including pork, steak and chicken souvlaki options."
+  },
+  {
+    "instruction": "Where can you get a Greek food 'foodgasm' in Mississauga?",
+    "output": "Fat Fork is TikTok-famous for huge portions, deeply seasoned chicken, moist gyros, and a legendary salad dressing."
+  },
+  {
+    "instruction": "Hidden gem in Mississauga for Greek salad with juicy grilled chicken?",
+    "output": "Mr. Greeko is praised for fresh, juicy Greek chicken salad and tasty house-made dressings by TikTok creators."
+  },
+  {
+    "instruction": "Classic Mississauga spot for both Greek and Canadian comfort food?",
+    "output": "Zet's: offers Greek souvlaki, Western-style fries, and classic diner breakfasts, loved by all generations."
+  },
+  {
+    "instruction": "Where can I try homemade tzatziki and pita with my gyro in Mississauga?",
+    "output": "Fat Fork on Dundas St E hand-makes their tzatziki—always order extra with your pork or chicken gyro."
+  },
+  {
+    "instruction": "Where to get the best Greek fries, not poutine, in Mississauga?",
+    "output": "Zet's Greek fries: thick-cut, golden, and seasoned—famous for 57+ years, a must-order with souvlaki."
+  },
+  {
+    "instruction": "Best spot for family-sized lamb or beef gyros and group platters in Mississauga?",
+    "output": "Stavro's Greek in Streetsville is TikTok-noted for family platters, big portions, and friendly service."
+  },
+  {
+    "instruction": "Is there a standout Greek restaurant in Port Credit for waterfront dining?",
+    "output": "Port Credit's Zet's gets shoutouts for cute setting, tender souvlaki, and quick takeout next to the lake."
+  },
+  {
+    "instruction": "Where do creators find the best, most consistent chicken souvlaki in Mississauga?",
+    "output": "Zet's and Fat Fork both receive repeated praise for moist, flavor-packed souvlaki, from lunchtime to late night."
+  },
+  {
+    "instruction": "What are some viral non-GTA chains for Greek food in Mississauga?",
+    "output": "PLAKA and Fat Fork are considered hidden gems—authentic, non-chain, and locally owned."
+  },
+  {
+    "instruction": "Which Greek restaurant in Mississauga is most often compared to Greece itself?",
+    "output": "TikTokers say Plaka is 'the best outside Athens' with their classic souvlaki plates and lemon potatoes."
+  },
+  {
+    "instruction": "Top spot for catering or party platters of chicken souvlaki in Mississauga?",
+    "output": "Zet's is known for catering events with their chicken souvlaki trays and abundant salad sides."
+  },
+  {
+    "instruction": "Greek food for breakfast in Mississauga?",
+    "output": "Fat Fork serves Greek breakfast starting at 7am, including souvlaki, potatoes, and eggs—unique in the city."
+  },
+  {
+    "instruction": "Best value for catering Greek food for large groups?",
+    "output": "Order catering souvlaki from Zet's or Fat Fork, both known for large, crowd-feeding platters."
+  },
+  {
+    "instruction": "Most popular TikTok-reviewed souvlaki on a bun?",
+    "output": "Zet's souvlaki on a bun: classic Greek street food, available in Mississauga and Vaughan branches."
+  },
+  {
+    "instruction": "Go-to spot for late-night Greek cravings and comfort food?",
+    "output": "Fat Fork: open late, large portions, home-style flavors, praised for steak dinners and souvlaki after hours."
+  },
+  {
+    "instruction": "Viral chicken plate with Greek flavors unique to Mississauga?",
+    "output": "Jessie's Eatery is getting TikTok buzz for their irresistible Greek-inspired chicken plates."
+  },
+  {
+    "instruction": "Best place for fresh pork souvlaki and house Greek salad?",
+    "output": "Fat Fork, especially for pork souvlaki; creators rave about their crisp salads, tangy dressing, and fresh veggies."
+  },
+  {
+    "instruction": "Where's the most recommended spot for both portion size and flavor?",
+    "output": "Fat Fork: every portion wins points for being massive, deeply seasoned, and consistently delicious."
+  },
+  {
+    "instruction": "Iconic Mississauga Greek spot for decades according to locals?",
+    "output": "Zet's Restaurant, serving on Airport Road for over half a century—always fresh, never stingy on servings."
+  },
+  {
+    "instruction": "Where to get something other than the usual souvlaki in Mississauga?",
+    "output": "Try Zet's viral fish sandwich, called by some TikTokers 'worth the hype'—a rare Greek-Toronto specialty."
+  },
+  {
+    "instruction": "Best priced, most satisfying Greek plate for solo diners?",
+    "output": "Zet's chicken souvlaki plate is highly rated for price, protein, and satisfaction—leave full every time."
+  },
+  {
+    "instruction": "Best hosts and customer service for Greek food in Mississauga?",
+    "output": "Zet's is known for fast, warm service and huge plates—with some guests driving an hour just for dinner."
+  },
+  {
+    "instruction": "Spot for both Greek and Canadian fries with your meal?",
+    "output": "Zet's lets you pick: classic Greek lemon fries or Western-style. Both are crowd pleasers with souvlaki."
+  },
+  {
+    "instruction": "Late night Greek dining for date nights in Mississauga?",
+    "output": "Try Fat Fork for a cozy ambiance, modern Greek fare, and late kitchen hours."
+  },
+  {
+    "instruction": "Where can I get an honest debate: Zet's vs Fat Fork?",
+    "output": "TikTok's Oxtailpapi and #mississaugafood run debates: both are loved, but Zet's wins for protein and salad, Fat Fork for seasoned chicken and value."
+  }, 
+    {
+    "instruction": "What is the most viral Italian restaurant for lakeside dining and pasta in Mississauga?",
+    "output": "Posta Italbar Cucina at 31 Lakeshore East is TikTok-famous for frittura di pesce, vodka pasta, and lakeside patio with table-side flaming cheese wheel."
+  },
+  {
+    "instruction": "Where can you find Mississauga's unlimited bread bar and Italian classics?",
+    "output": "Pacini (298 Derry Rd W) is known for a self-serve bread bar, unique butters, and classic Italian pizza and pasta."
+  },
+  {
+    "instruction": "Best pasta and dining experience in Mississauga near Square One?",
+    "output": "Alioli is rated by creators as top for fresh pasta, elegant dining, and a relaxing atmosphere near the mall."
+  },
+  {
+    "instruction": "Where in Mississauga can you experience a flaming cheese wheel or heated outdoor domes?",
+    "output": "Posta Italbar offers table-side flaming cheese wheel dishes and outdoor heated domes—unique Italian dining for all seasons."
+  },
+  {
+    "instruction": "Classiest date night Italian restaurant in Mississauga?",
+    "output": "Pacini is a go-to for pasta, pizza, elegant vibes, and a girls-night-out atmosphere."
+  },
+  {
+    "instruction": "Mississauga favorite for house-made gnocchi and seafood pasta?",
+    "output": "Maranello Cafe makes house-made gnocchi and seafood pasta; choose white wine or tomato sauce. They also have a summer patio for outdoor dining."
+  },
+  {
+    "instruction": "Best Italian chain restaurant in Mississauga with viral pasta specials and pizza?",
+    "output": "Scaddabush is popular for their balsamic truffle mozzarella, butternut squash ravioli, and Margherita pizza—great atmosphere and interiors."
+  },
+  {
+    "instruction": "Where in Mississauga can you get classic 'girl dinner' pizza and pasta?",
+    "output": "Papa Giuseppe's is TikTok-featured for comforting pizza, pasta, and Italian food in a cozy setting."
+  },
+  {
+    "instruction": "Best place to feed the family under $20 with authentic pasta?",
+    "output": "Pasta Night (562 Lakeshore Rd E) is a hidden gem with fresh pasta, affordable prices, and weekly deals for families."
+  },
+  {
+    "instruction": "Where to find artisan pizza like Duck Confit at 10% off in Mississauga?",
+    "output": "Pacini runs pizza specials including Duck Confit Pizza—check TikTok for weekly discounts."
+  },
+  {
+    "instruction": "Highly-rated Italian takeout spot with a near-perfect Google score?",
+    "output": "Many TikTok reviewers recommend Pasta Night for takeout, meal delivery, and perfect noodles."
+  },
+  {
+    "instruction": "Mississauga Italian restaurant that TikTokers call 'Italy in the heart of the city'?",
+    "output": "Taste Sauga features authentic pasta and pizza at Posta Italbar, calling it 'Italy in Mississauga'."
+  },
+  {
+    "instruction": "TikTok's pick for affordable, delicious, family-run Italian spot?",
+    "output": "Mambo Italiano (660 Eglinton Ave W) is a favorite for homemade halal pasta, daily specials, and cozy atmosphere."
+  },
+  {
+    "instruction": "Where to enjoy a cozy Italian dinner with patio dining in Mississauga?",
+    "output": "Maranello Cafe's new patio is perfect for summer, serving fresh Italian food in the open air."
+  },
+  {
+    "instruction": "Best hidden Italian gem, loved by food creators?",
+    "output": "Mambo Italiano gets repeated TikTok praise for authentic flavors, family feel, and halal-friendly menu."
+  },
+  {
+    "instruction": "In Mississauga, which restaurant offers fresh pasta for both dine-in and delivery?",
+    "output": "Pasta Night offers both eat-in and home delivery, making it easy to enjoy authentic Italian at home."
+  },
+  {
+    "instruction": "Must-try for date night at an Italian restaurant with elegant interiors?",
+    "output": "Arcadian Cafe & Lounge is highlighted for sleek modern design and relaxed dining—perfect date night choice."
+  },
+  {
+    "instruction": "Best spot for mushroom truffle pasta and pizza combos?",
+    "output": "Pasta Night is repeatedly mentioned on TikTok for mushroom truffle pasta, pizza, and friendly prices."
+  },
+  {
+    "instruction": "Halal steakhouse in Mississauga favored by food creators?",
+    "output": "Insauga highlights a halal steakhouse renowned for Italian sides and high-quality meats."
+  },
+  {
+    "instruction": "Popular TikTok spot for Italian pizza and pasta near Oakville?",
+    "output": "Industria Pizza is newly opened and praised for creative pizzas—great for date night by TikTok creators."
+  },
+  {
+    "instruction": "Must-visit for authentic Italian at a 'local's favorite' restaurant?",
+    "output": "The Wilcox gets raves for innovative dishes and creative Italian flavors—called a 'local gem' by reviewers."
+  },
+  {
+    "instruction": "All-you-can-eat pasta with variety for groups?",
+    "output": "Several restaurants offer all-you-can-eat pasta nights—look out for Pacini and local TikTok recommendations."
+  },
+  {
+    "instruction": "Pasta recipe perfected over 30 years that's now viral?",
+    "output": "Chef Massimo Capra shares his 30-year-old pasta recipe on TikTok, inspiring home cooks in Mississauga."
+  },
+  {
+    "instruction": "Where to find classic Italian comfort food and friendly service?",
+    "output": "Alioli restaurant offers authentic Italian food, welcoming service, and great pasta."
+  },
+  {
+    "instruction": "Best Italian meal to try for summer patio season?",
+    "output": "Maranello Cafe's lakeside patio serves pasta, seafood, and house-made gnocchi. Get there early for a table outside."
+  },
+  {
+    "instruction": "Which Italian spot wins for best atmosphere and 'good vibes'?",
+    "output": "The Wilcox and Arcadian Cafe are TikTok buzz for beautiful interiors, chill food presentations, and stylish crowd."
+  },
+  {
+    "instruction": "Best Italian restaurant for delicious homemade tiramisu?",
+    "output": "MILANO Bar Ristorante is repeatedly called out for its homemade tiramisu and cozy Kleinburg ambience."
+  },
+  {
+    "instruction": "Weekly pasta or pizza specials worth following for deals?",
+    "output": "Follow Pacini and Pasta Night for TikTok-announced weekly specials like discounted Duck Confit Pizza."
+  },
+  {
+    "instruction": "Go-to spot for authentic Italian pizza and pasta and quick service?",
+    "output": "Pasta Night is TikTok-endorsed for quick service, handmade pasta, and variety of dishes for every taste."
+  },
+  {
+    "instruction": "Italian restaurant praised for seafood pasta and handmade gnocchi?",
+    "output": "Maranello Cafe is recommended for seafood pasta, handmade gnocchi, and fresh Italian desserts."
+  }, 
+  {
+    "instruction": "Best new Mexican restaurant in Mississauga with 'all the good vibes'?",
+    "output": "Taste Sauga says the newest Mexican restaurant in Mississauga offers great food, music, ambience, and a lively scene—perfect for date nights or groups."
+  },
+  {
+    "instruction": "Where should I go for tacos in Mississauga that are halal and delicious?",
+    "output": "Vamos Por Tacos serves fully halal Mexican street food including birria tacos, grilled cheese, nachos, churros, all made from scratch with a $15 happy hour deal."
+  },
+  {
+    "instruction": "Most viral spot for birria tacos in Mississauga?",
+    "output": "Mount Sinai True Mexican Taste has TikTok buzz for the best halal birria tacos—juicy, with Mexican candy giveaways."
+  },
+  {
+    "instruction": "Foodies' pick for authentic Mexican cuisine in Port Credit?",
+    "output": "Molcajete/Molkagtez is praised for its vacation-worthy atmosphere, sizzling dishes, and second location in Port Credit."
+  },
+  {
+    "instruction": "Best Mexican restaurant in Square One food district?",
+    "output": "La Carnita in Square One is known for flavor-packed tacos, nachos, and churros—great place to recharge when shopping."
+  },
+  {
+    "instruction": "Top Mississauga taco shop with a halal-focused menu?",
+    "output": "Vamos Por Tacos and Burrito Houz both feature fully halal menus and serve standout birria, shrimp, and fish tacos."
+  },
+  {
+    "instruction": "Where is the must-try spot for Mexican brunch in Mississauga?",
+    "output": "Creators rave about foodiemiga's Mexican-inspired brunch: think breakfast burritos, elotes, and creative tacos."
+  },
+  {
+    "instruction": "Most popular Mexican dessert shop within Mississauga?",
+    "output": "Taste Sauga describes a super cute, recently opened Mexican dessert shop with new creative sweets and fun decor."
+  },
+  {
+    "instruction": "Best value tacos for $10 or under in Mississauga?",
+    "output": "Burrito Houz offers 2 birria tacos and a drink for only $10—a hidden gem for delicious Mexican eats."
+  },
+  {
+    "instruction": "Which Mexican spot is known for both great food and vibrant nightlife?",
+    "output": "Molkagtez and La Carnita both feature upbeat music, cocktails, and late-night food service."
+  },
+  {
+    "instruction": "Top picks for birria grilled cheese and bang bang shrimp tacos?",
+    "output": "Vamos Por Tacos: TikTokers call the birria grilled cheese and bang bang shrimp tacos must-trys for foodies."
+  },
+  {
+    "instruction": "Which Mississauga spot runs taco happy hours with great value?",
+    "output": "Vamos Por Tacos offers $15 for three tacos during weekday happy hours, making it a go-to for students and after-work meets."
+  },
+  {
+    "instruction": "Go-to Mexican restaurant for both vegan and meat options?",
+    "output": "La Carnita and Barrio Cerveceria (with sister outlets in Mississauga) carry vegan tacos alongside classic meats."
+  },
+  {
+    "instruction": "Where to get authentic al pastor tacos with glowing reviews?",
+    "output": "Torontotwinss_ highlighted a Mississauga spot with authentic al pastor alambre tacos—the flavors are 'out of this world'."
+  },
+  {
+    "instruction": "Best fully halal authentic Mexican restaurant in GTA?",
+    "output": "Vamos Por Tacos is 100% halal, chef is Mexican, and all ingredients are imported for true authentic taste."
+  },
+  {
+    "instruction": "TikTok favorite spot for Mexican food and takeout in Mississauga?",
+    "output": "Contigo Taqueria and Mucho Burrito are popular for fast, tasty takeout tacos, burritos, and salsas."
+  },
+  {
+    "instruction": "Must-try spot for empanadas and Mexican street food?",
+    "output": "AriaSahota says the best empanadas in Mississauga come from a small local Mexican shop with loyal followers."
+  },
+  {
+    "instruction": "Top-reviewed Mexican fusion restaurant for creative tacos?",
+    "output": "Insane Mexican Fusion and La Carnita are called out for innovative taco flavors and Mexican-Canadian mashups."
+  },
+  {
+    "instruction": "Local's pick for best guacamole and Mexican Coke pairing?",
+    "output": "Port Credit's lakeshore area hosts several spots called out for fresh guacamole and cold Mexican Coke."
+  },
+  {
+    "instruction": "Which Mexican spot in Mississauga is a go-to for churros and elotes?",
+    "output": "Vamos Por Tacos and Molkagtez both roll fresh churros and creamy elotes with classic Mexican toppings."
+  },
+  {
+    "instruction": "Where can I find a grand opening with free burritos in Mississauga?",
+    "output": "Mucho Burrito occasionally does grand openings with free burrito promos at new locations—watch their social media."
+  },
+  {
+    "instruction": "Must-visit Mississauga sit-down Mexican with top reviews from food creators?",
+    "output": "Molkagtez is repeatedly praised as the best Mexican food and dining room in Mississauga for food, service, and atmosphere."
+  },
+  {
+    "instruction": "Where to try Mexican salsas and unique desserts?",
+    "output": "La Carnita and the new Mexican dessert shop featured by Taste Sauga boast homemade salsas and seasonal treats."
+  },
+  {
+    "instruction": "Where can you find fully halal Mexican menus for group outings?",
+    "output": "Vamos Por Tacos hosts group dinners and every item is halal—great for diverse dietary needs."
+  },
+  {
+    "instruction": "Best Mississauga outlets for Mexican-inspired cocktails and nightlife?",
+    "output": "La Carnita (Square One) features a bar and lounge with specialty tequilas and mojitos."
+  },
+  {
+    "instruction": "Fastest-growing Mexican chain with new Port Credit location?",
+    "output": "Molcajete/Molkagtez is expanding rapidly—try their signature Molcajete and birria tacos in a new Port Credit space."
+  },
+  {
+    "instruction": "Where can you find outstanding vegan Mexican in Mississauga?",
+    "output": "Try the vegan offerings at Barrio Cerveceria and La Carnita—tacos, bowls, and sides."
+  },
+  {
+    "instruction": "Where to find affordable, authentic Mexican meals for students?",
+    "output": "Vamos Por Tacos and Burrito Houz are both praised for big portions, low prices, and friendly staff."
+  },
+  {
+    "instruction": "Where for a trip to Mexico City—without leaving Mississauga?",
+    "output": "Torontofoodguide calls Molkagtez 'Mexico City in Toronto' for authenticity—must-try for homesick Mexicans and locals alike."
+  },
+  {
+    "instruction": "Newly opened Mexican spot in Mississauga getting TikTok buzz?",
+    "output": "Molkagtez and new Port Credit taco bars are all over TikTok for opening specials, crowds, and unique menu options."
+  },
+  {
+    "instruction": "Best Mexican place for birthday parties or group hangs?",
+    "output": "Taste Sauga and Whatstheplanmississauga recommend Molkagtez for the fun vibe and friendly service—great for group events!"
+  }, 
+    {
+    "instruction": "Which Toronto Italian spot is best known for ultra-fresh pasta and pillowy soft gnocchi?",
+    "output": "Moretti is praised for making every dish from scratch with top-quality ingredients. Don't miss their gnocchi and tiramisu, widely celebrated on TikTok."
+  },
+  {
+    "instruction": "Where should I go for modern Italian food with both pasta and pancakes in Toronto?",
+    "output": "One of Lauren Tes's top picks is an Italian restaurant with fresh pasta and Italian dishes plus surprising pancake offerings—a modern twist you rarely find."
+  },
+  {
+    "instruction": "Looking for a classic red sauce Italian experience in Toronto?",
+    "output": "Try BlogTO's favorite: a traditional red sauce spot known for authentic flavors, cozy vibe, and regularly trending with #pasta and #italianfood."
+  },
+  {
+    "instruction": "Which Toronto Italian spots are recommended for standout pasta?",
+    "output": "EatsConnoisseur's videos highlight Pastaria, Porzias, Public Gardens, Bar Sugo, Contrada, and Gusto 101 as top pasta destinations."
+  },
+  {
+    "instruction": "What's a waterfront Italian restaurant in Toronto known for authentic in-house meals?",
+    "output": "Sicilian Restaurant offers a unique dining experience with everything made fresh and in-house, perfect for fans of culinary authenticity."
+  },
+  {
+    "instruction": "Where did Drake name as his favorite Italian place in Toronto, and how is the experience?",
+    "output": "Sotto Sotto, at 120 Avenue Rd, is Drake's go-to Italian spot. TikTok reviews confirm its food is incredible and flavors are 'a true taste of Italy'."
+  },
+  {
+    "instruction": "Which restaurant in Toronto is famous for its cacio e pepe and scoring high ratings?",
+    "output": "Giulietta, with a 9.2/10 rating, is renowned for its cacio e pepe—so good that diners recommend several orders for the table."
+  },
+  {
+    "instruction": "What's a Michelin Guide Italian restaurant in Toronto that stands out for seafood and unique pastas?",
+    "output": "Cano at 1108 St Clair Ave W is a Michelin Guide Italian spot; their mafaldine fungi pasta and ultra-fresh seafood are must-tries."
+  },
+  {
+    "instruction": "Tell me about hidden gem Italian in the Annex with unique cocktails.",
+    "output": "A cozy Annex Italian spot features great vibes, mafaldine fungi pasta, fresh seafood, and creative drinks like their iced cappuccino cocktail."
+  },
+  {
+    "instruction": "Where can I get classic, staple Italian pizza experience in Toronto?",
+    "output": "Queen Margherita Pizza is a staple in Toronto's Italian food scene—perfect for those craving authentic Neapolitan-style pizza."
+  },
+  {
+    "instruction": "Which place in The Junction is known for its ambiance and standout Italian food?",
+    "output": "Nodo, in The Junction, is beloved for both its inviting atmosphere and top-tier Italian cuisine. Many say they'd live there if they could!"
+  },
+  {
+    "instruction": "What's the best spot for budget Italian—under $15 for pasta—in Toronto?",
+    "output": "Cibo Wine Bar stands out for affordable yet memorable Italian dishes; don't skip the cheesecake, another fan favorite."
+  },
+  {
+    "instruction": "Where is the best tiramisu in the GTA and what's the atmosphere like?",
+    "output": "Milano Bar Ristorante in Kleinburg is reputed to serve the best tiramisu around, with beautiful interiors and excellent service."
+  },
+  {
+    "instruction": "Which Italian restaurant offers a home-style, Southern Italian experience with a patio in Yorkville?",
+    "output": "Trattoria Nervosa in Yorkville delivers home-style Southern Italian food, stunning design, and a summer patio—perfect for foodies and families."
+  },
+  {
+    "instruction": "What's a must-try Toronto Italian spot recommended if you want to try everything on the menu?",
+    "output": "Bar Sugo draws repeat customers with standout pizza, pasta, and a menu so good you'll want to try everything. Don't miss the chef's kiss dishes."
+  },
+  {
+    "instruction": "Where are spicy vodka pastas highly rated in Toronto?",
+    "output": "Public Gardens and Bar Sugo both receive rave TikTok reviews for their spicy vodka pastas—each offering a different twist on the dish."
+  },
+  {
+    "instruction": "Looking for a cozy, beautiful interior and top tiramisu in Toronto?",
+    "output": "Milano Bar Ristorante gets repeat praise for its cozy layout, great service, and must-order tiramisu—a birthday favorite."
+  },
+  {
+    "instruction": "Which restaurant downtown Toronto draws long lines but is worth the wait for pasta?",
+    "output": "Famiglia Baldassare famously sees 2-hour lines, but fans say the fresh pasta is worth every minute."
+  },
+  {
+    "instruction": "Can you recommend an Italian spot with Michelin stars and vibrant nightlife?",
+    "output": "Giulietta boasts Michelin star recognition and is not only ideal for dining but transforms into a vibrant nightlife spot post-dinner."
+  },
+  {
+    "instruction": "Where in Toronto can I find affordable group dining with Italian fare under $100 for two?",
+    "output": "Bar Sugo and Nodo frequently offer special menu prices allowing two to dine for under $100, making them prime picks for an affordable yet quality meal."
+  },
+  {
+    "instruction": "Any Toronto Italian places with a reputation for great service and southern-style hospitality?",
+    "output": "Trattoria Nervosa in Yorkville stands out for its friendly staff, inviting southern Italian ambiance, and consistent hospitality."
+  },
+  {
+    "instruction": "Best venue in Toronto for a modern Italian vibe and group hangouts?",
+    "output": "Raffaella at The Annex Hotel is celebrated for top-rated pizza, pasta, and is great for group vibes, often spotlighted by TikTok foodies."
+  },
+  {
+    "instruction": "Which Italian restaurant gets praised for its gnocchi and authentic desserts?",
+    "output": "Moretti is again a leader here, with fans raving about their handmade gnocchi and selection of classic Italian desserts."
+  },
+  {
+    "instruction": "A Toronto Italian spot that's also a nightlife experience?",
+    "output": "The Good Son, at Queen St. W, is ideal for date nights. Some visitors even comment it turns into a dance spot after 10 PM."
+  },
+  {
+    "instruction": "Which Toronto Italian restaurant regularly appears in foodie rankings for both pizza and pasta?",
+    "output": "Gusto 101 makes nearly every TikTok list thanks to its variety of pizzas, fresh pastas, and inviting atmosphere."
+  },
+  {
+    "instruction": "What's the best place for home-style Italian food in the west end, with standout veal?",
+    "output": "Marcello Eats recommends a hidden west end gem for the best veal. Insider tip: shoutout to Guido Eats for the original recommendation!"
+  },
+  {
+    "instruction": "Where should I go for both good food and fun, creative cocktails at a Toronto Italian spot?",
+    "output": "Try the hidden gem in the Annex with iced cappuccino cocktails, innovative food, and great ambiance—perfect for a fun night out."
+  },
+  {
+    "instruction": "Looking for a local favorite with a beautiful patio—Southern Italian cuisine and more?",
+    "output": "Yorkville's Trattoria Nervosa tops the list for its sunny patio and welcoming, southern Italian kitchen."
+  },
+  {
+    "instruction": "Best Toronto Italian spot for a special birthday dinner—cozy, beautiful, with excellent desserts?",
+    "output": "Milano Bar Ristorante in Kleinburg is hailed for its tiramisu and cozy ambiance, popular for birthday celebrations."
+  },
+  {
+    "instruction": "What Toronto Italian restaurant has a steady crowd and regulars due to its homemade pasta and regional recipes?",
+    "output": "Famiglia Baldassare is renowned for homemade pasta, drawing crowds willing to wait—the ultimate sign of its cult following."
+  },
+  {
+    "instruction": "Give me a Michelin-worthy Italian dining experience perfect for a Toronto date night.",
+    "output": "Book a table at Giulietta—praised for Michelin-quality food and perfect for date nights or anyone craving authentic, beautifully-plated Italian cuisine."
+  }, 
+  {
+    "instruction": "What's a Mississauga hidden gem cafe that TikTokers rave about?",
+    "output": "Back Road Coffee Roasters is praised for its pretty patio, unique pastries, and some of the best iced lattes in the city."
+  },
+  {
+    "instruction": "Where's the best place in Mississauga for viral banana bread lattes?",
+    "output": "Tribeca Coffee in Port Credit is known for its NYC-inspired banana bread latte and creative, cozy fall menu."
+  },
+  {
+    "instruction": "Mississauga's coziest study/work-friendly cafe with lots of room?",
+    "output": "The Local by Masrawy: a cafe, butcher shop, and mini-market, welcoming laptops and offering biscoff/strawberry matchas."
+  },
+  {
+    "instruction": "Best brunch cafe in Mississauga for croissants and relaxing weekends?",
+    "output": "Try new brunch cafes near Port Credit, highlighted for fresh croissants and a bright, welcoming brunch setting."
+  },
+  {
+    "instruction": "Best place for Vietnamese coffee in Square One, Mississauga?",
+    "output": "Cong Caphe has a pop-up in the Food District at Square One—get authentic Vietnamese ice coffee and egg coffee."
+  },
+  {
+    "instruction": "Which Mississauga cafe serves the smoothest lattes near Brampton?",
+    "output": "Main St. Market is a favorite for rich, smooth lattes and relaxed morning atmosphere, on the border with Brampton."
+  },
+  {
+    "instruction": "Go-to spot in Mississauga for creative matcha lattes with unique foam?",
+    "output": "Mooncha offers inventive matcha lattes, crème brûlée toppings, and a wide foam selection for tea/coffee lovers."
+  },
+  {
+    "instruction": "Best vegan cafe with a mission in Mississauga?",
+    "output": "Studio.89: A social enterprise café focused on youth leadership, boardgames, lattes, and gluten-free snacks."
+  },
+  {
+    "instruction": "Most aesthetic, Instagrammable new cafe in Mississauga?",
+    "output": "Chocolate and Love Cafe (5985 Rodeo Dr): adored for cozy décor and a variety of photogenic desserts."
+  },
+  {
+    "instruction": "Where to find a 'lavender blue' matcha latte in Mississauga?",
+    "output": "Try local cafes featured by Insauga—they're known for their lavender blue matcha and other creative drinks."
+  },
+  {
+    "instruction": "Top international cafe brand with a local pop-up?",
+    "output": "Cong Caphe's Vietnamese coffee pop-up at Square One is a hit for both classic and trendy coffee drinks."
+  },
+  {
+    "instruction": "Mississauga spot for Nutella iced latte and community vibes?",
+    "output": "Studio.89: Community-minded, with Nutella ice lattes and chill spaces for study or hanging out."
+  },
+  {
+    "instruction": "Quirkiest matcha cafe for trying strawberry matcha and desserts?",
+    "output": "Momochee's Desserts is TikTok-famous for aesthetic strawberry matcha, colorful lattes, and cute interior."
+  },
+  {
+    "instruction": "Where can I find a Middle Eastern or Egyptian cafe in Mississauga?",
+    "output": "The Local by Masrawy (Britannia Rd W) offers Egyptian coffee, classic pastries, halal mini-market, and friendly staff."
+  },
+  {
+    "instruction": "Best place to cozy up with tiramisu latte in Mississauga?",
+    "output": "Try The Local by Masrawy—creators call out their tiramisu and biscoff lattes as unique local drinks."
+  },
+  {
+    "instruction": "Where for a strong espresso topped with actual tiramisu cake?",
+    "output": "Ridgeway Plaza hosts a cafe with strong espresso and an entire slab of tiramisu as a topping—dessert meets drink."
+  },
+  {
+    "instruction": "Favorite new matcha spot in Mississauga, per TikTok creators?",
+    "output": "Barburu Matcha at 1000 Burnhamthorpe Rd W is known for 'possibly the best matcha latte I've ever had'."
+  },
+  {
+    "instruction": "Best quiet cafe for studying in Mississauga?",
+    "output": "Find hidden gems in Mississauga with quiet corners perfect for study, good coffee, and no noisy crowds."
+  },
+  {
+    "instruction": "Viral dessert everyone's trying at Ridgeway Plaza cafes?",
+    "output": "The Chocolate Puddle: a decadent, oversized dessert highly rated by chocolate lovers despite being pricey."
+  },
+  {
+    "instruction": "Most fun pop-up cafe experience in Mississauga malls?",
+    "output": "Cong Caphe brings real Vietnamese coffee culture to Square One for limited-time pop-ups."
+  },
+  {
+    "instruction": "Mississauga's favorite matcha cafe for dessert pairings?",
+    "output": "Mooncha and Momochee's Desserts are both TikTok staples for matcha lattes with sweet side options."
+  },
+  {
+    "instruction": "Best spot for a Spanish latte and daytime productivity?",
+    "output": "Try local cafes near city centre—reviewers recommend arriving early for a quiet spot and Spanish latte with bold flavor."
+  },
+  {
+    "instruction": "Cutest central Mississauga cafe for group hangouts or late study sessions?",
+    "output": "Check out recently opened cafes near Square One and Britannia—influencers say the comfy seating and late hours make them ideal for groups."
+  },
+  {
+    "instruction": "Where to find hand-pulled noodles and coffee in the same plaza?",
+    "output": "Ridgeway Plaza: features viral pulled noodles and multiple unique cafes known for both coffee and snacks."
+  },
+  {
+    "instruction": "Ridgeway Plaza spot for secret menu coffee worth hunting for?",
+    "output": "Matari Coffee is praised for a not-on-the-menu specialty that won over skeptics—ask for their secret iced or hot drink."
+  },
+  {
+    "instruction": "Where to find viral banana bread lattes and fall flavor in Port Credit?",
+    "output": "Tribeca Coffee's Port Credit location is all over TikTok for their fall drinks and inventive, must-try banana bread latte."
+  },
+  {
+    "instruction": "Local favorite for international coffee (Yemeni, Egyptian, Vietnamese) in one city?",
+    "output": "Mississauga hosts Jabal Coffeehouse, The Local by Masrawy, and Cong Caphe for globally-inspired coffee flavors."
+  },
+  {
+    "instruction": "Instagram hot spot for pastel drinks and 'aesthetic' coffee moments?",
+    "output": "Mooncha and Momochee's offer matcha, strawberry lattes, and photo-ready desserts in pastel-hued spaces."
+  },
+  {
+    "instruction": "Most raved-about cafe for unique pastries in Port Credit?",
+    "output": "Visit hidden cafes near Port Credit's main strip—try unique pastries on a lakeside patio for the full brunch experience."
+  },
+  {
+    "instruction": "Underrated Mississauga cafe with a connected halal butcher/mini-market?",
+    "output": "The Local by Masrawy stands out for its combination of coffee, halal groceries, and welcoming setting."
+  },
+  {
+    "instruction": "Best early morning peaceful cafe experience in Mississauga?",
+    "output": "Jabal Coffeehouse in Ridgeway Plaza is praised for calm mornings, Yemeni-style coffee, and a peaceful start to the day."
+  }, 
+    {
+    "instruction": "Which Toronto Italian spot is best known for ultra-fresh pasta and pillowy soft gnocchi?",
+    "output": "Moretti is praised for making every dish from scratch with top-quality ingredients. Don't miss their gnocchi and tiramisu, widely celebrated on TikTok."
+  },
+  {
+    "instruction": "Where should I go for modern Italian food with both pasta and pancakes in Toronto?",
+    "output": "One of Lauren Tes's top picks is an Italian restaurant with fresh pasta and Italian dishes plus surprising pancake offerings—a modern twist you rarely find."
+  },
+  {
+    "instruction": "Looking for a classic red sauce Italian experience in Toronto?",
+    "output": "Try BlogTO's favorite: a traditional red sauce spot known for authentic flavors, cozy vibe, and regularly trending with #pasta and #italianfood."
+  },
+  {
+    "instruction": "Which Toronto Italian spots are recommended for standout pasta?",
+    "output": "EatsConnoisseur's videos highlight Pastaria, Porzias, Public Gardens, Bar Sugo, Contrada, and Gusto 101 as top pasta destinations."
+  },
+  {
+    "instruction": "What's a waterfront Italian restaurant in Toronto known for authentic in-house meals?",
+    "output": "Sicilian Restaurant offers a unique dining experience with everything made fresh and in-house, perfect for fans of culinary authenticity."
+  },
+  {
+    "instruction": "Where did Drake name as his favorite Italian place in Toronto, and how is the experience?",
+    "output": "Sotto Sotto, at 120 Avenue Rd, is Drake's go-to Italian spot. TikTok reviews confirm its food is incredible and flavors are 'a true taste of Italy'."
+  },
+  {
+    "instruction": "Which restaurant in Toronto is famous for its cacio e pepe and scoring high ratings?",
+    "output": "Giulietta, with a 9.2/10 rating, is renowned for its cacio e pepe—so good that diners recommend several orders for the table."
+  },
+  {
+    "instruction": "What's a Michelin Guide Italian restaurant in Toronto that stands out for seafood and unique pastas?",
+    "output": "Cano at 1108 St Clair Ave W is a Michelin Guide Italian spot; their mafaldine fungi pasta and ultra-fresh seafood are must-tries."
+  },
+  {
+    "instruction": "Tell me about hidden gem Italian in the Annex with unique cocktails.",
+    "output": "A cozy Annex Italian spot features great vibes, mafaldine fungi pasta, fresh seafood, and creative drinks like their iced cappuccino cocktail."
+  },
+  {
+    "instruction": "Where can I get classic, staple Italian pizza experience in Toronto?",
+    "output": "Queen Margherita Pizza is a staple in Toronto's Italian food scene—perfect for those craving authentic Neapolitan-style pizza."
+  },
+  {
+    "instruction": "Which place in The Junction is known for its ambiance and standout Italian food?",
+    "output": "Nodo, in The Junction, is beloved for both its inviting atmosphere and top-tier Italian cuisine. Many say they'd live there if they could!"
+  },
+  {
+    "instruction": "What's the best spot for budget Italian—under $15 for pasta—in Toronto?",
+    "output": "Cibo Wine Bar stands out for affordable yet memorable Italian dishes; don't skip the cheesecake, another fan favorite."
+  },
+  {
+    "instruction": "Where is the best tiramisu in the GTA and what's the atmosphere like?",
+    "output": "Milano Bar Ristorante in Kleinburg is reputed to serve the best tiramisu around, with beautiful interiors and excellent service."
+  },
+  {
+    "instruction": "Which Italian restaurant offers a home-style, Southern Italian experience with a patio in Yorkville?",
+    "output": "Trattoria Nervosa in Yorkville delivers home-style Southern Italian food, stunning design, and a summer patio—perfect for foodies and families."
+  },
+  {
+    "instruction": "What's a must-try Toronto Italian spot recommended if you want to try everything on the menu?",
+    "output": "Bar Sugo draws repeat customers with standout pizza, pasta, and a menu so good you'll want to try everything. Don't miss the chef's kiss dishes."
+  },
+  {
+    "instruction": "Where are spicy vodka pastas highly rated in Toronto?",
+    "output": "Public Gardens and Bar Sugo both receive rave TikTok reviews for their spicy vodka pastas—each offering a different twist on the dish."
+  },
+  {
+    "instruction": "Looking for a cozy, beautiful interior and top tiramisu in Toronto?",
+    "output": "Milano Bar Ristorante gets repeat praise for its cozy layout, great service, and must-order tiramisu—a birthday favorite."
+  },
+  {
+    "instruction": "Which restaurant downtown Toronto draws long lines but is worth the wait for pasta?",
+    "output": "Famiglia Baldassare famously sees 2-hour lines, but fans say the fresh pasta is worth every minute."
+  },
+  {
+    "instruction": "Can you recommend an Italian spot with Michelin stars and vibrant nightlife?",
+    "output": "Giulietta boasts Michelin star recognition and is not only ideal for dining but transforms into a vibrant nightlife spot post-dinner."
+  },
+  {
+    "instruction": "Where in Toronto can I find affordable group dining with Italian fare under $100 for two?",
+    "output": "Bar Sugo and Nodo frequently offer special menu prices allowing two to dine for under $100, making them prime picks for an affordable yet quality meal."
+  },
+  {
+    "instruction": "Any Toronto Italian places with a reputation for great service and southern-style hospitality?",
+    "output": "Trattoria Nervosa in Yorkville stands out for its friendly staff, inviting southern Italian ambiance, and consistent hospitality."
+  },
+  {
+    "instruction": "Best venue in Toronto for a modern Italian vibe and group hangouts?",
+    "output": "Raffaella at The Annex Hotel is celebrated for top-rated pizza, pasta, and is great for group vibes, often spotlighted by TikTok foodies."
+  },
+  {
+    "instruction": "Which Italian restaurant gets praised for its gnocchi and authentic desserts?",
+    "output": "Moretti is again a leader here, with fans raving about their handmade gnocchi and selection of classic Italian desserts."
+  },
+  {
+    "instruction": "A Toronto Italian spot that's also a nightlife experience?",
+    "output": "The Good Son, at Queen St. W, is ideal for date nights. Some visitors even comment it turns into a dance spot after 10 PM."
+  },
+  {
+    "instruction": "Which Toronto Italian restaurant regularly appears in foodie rankings for both pizza and pasta?",
+    "output": "Gusto 101 makes nearly every TikTok list thanks to its variety of pizzas, fresh pastas, and inviting atmosphere."
+  },
+  {
+    "instruction": "What's the best place for home-style Italian food in the west end, with standout veal?",
+    "output": "Marcello Eats recommends a hidden west end gem for the best veal. Insider tip: shoutout to Guido Eats for the original recommendation!"
+  },
+  {
+    "instruction": "Where should I go for both good food and fun, creative cocktails at a Toronto Italian spot?",
+    "output": "Try the hidden gem in the Annex with iced cappuccino cocktails, innovative food, and great ambiance—perfect for a fun night out."
+  },
+  {
+    "instruction": "Looking for a local favorite with a beautiful patio—Southern Italian cuisine and more?",
+    "output": "Yorkville's Trattoria Nervosa tops the list for its sunny patio and welcoming, southern Italian kitchen."
+  },
+  {
+    "instruction": "Best Toronto Italian spot for a special birthday dinner—cozy, beautiful, with excellent desserts?",
+    "output": "Milano Bar Ristorante in Kleinburg is hailed for its tiramisu and cozy ambiance, popular for birthday celebrations."
+  },
+  {
+    "instruction": "What Toronto Italian restaurant has a steady crowd and regulars due to its homemade pasta and regional recipes?",
+    "output": "Famiglia Baldassare is renowned for homemade pasta, drawing crowds willing to wait—the ultimate sign of its cult following."
+  },
+  {
+    "instruction": "Give me a Michelin-worthy Italian dining experience perfect for a Toronto date night.",
+    "output": "Book a table at Giulietta—praised for Michelin-quality food and perfect for date nights or anyone craving authentic, beautifully-plated Italian cuisine."
+  }, 
+  {
+    "instruction": "Where in Toronto can I find restaurant-quality desserts that are consistently reviewed as best-in-city?",
+    "output": "Lauren Tes swears by several downtown restaurants whose dessert menus rival specialty spots—try the pistachio cake and tiramisu pancakes trending on TikTok."
+  },
+  {
+    "instruction": "What are some must-try desserts in Toronto according to local influencers?",
+    "output": "Eats Connoisseur lists the city's Top 5, which include ube crêpes at Millie, Nutella bomboloni at Sud Forno, honeycomb ice cream at Sweet Jesus, and classic banana cream pie at Roselle."
+  },
+  {
+    "instruction": "Is there anywhere in Toronto serving tiramisu pancakes?",
+    "output": "Viaggio's offers tiramisu pancakes—a layer of fluffy mascarpone cream and cocoa, giving both breakfast and dessert in one bite."
+  },
+  {
+    "instruction": "What's the top recommendation for mango sticky rice as a dessert in Toronto?",
+    "output": "Patchmons Thai Desserts is known for perfect, fresh mango sticky rice—a balanced dessert praised for leaving diners satisfied, not heavy."
+  },
+  {
+    "instruction": "Where should I go for innovative donuts like Kunafa donut in Toronto?",
+    "output": "Machino Donut is famous for its creative Kunafa donut. Their seasonal flavors drive TikTok buzz and keep their menu fresh and quirky."
+  },
+  {
+    "instruction": "List the current must-try cakes in Toronto dessert shops.",
+    "output": "Eats Connoisseur's top cake picks are the matcha chiffon at Tsuchi Café, burnt Basque cheesecake at Uncle Tetsu, carrot cake at Bobbette & Belle, and the Earl Grey cake at Millie."
+  },
+  {
+    "instruction": "Where can I get taro ice cream with Japanese toast and toasted soba?",
+    "output": "Rita from YYZeats spotlights Japanese dessert cafes with taro ice cream on warm, crispy toast topped with soba—a true must-try experience."
+  },
+  {
+    "instruction": "Which bakery menu items in Toronto are always hyped when local bakeries collaborate?",
+    "output": "Roselle's bakery collabs with other local businesses always draw crowds for unique seasonal items like banana cream pie and pop-up event specials."
+  },
+  {
+    "instruction": "What are the top aesthetically pleasing desserts in Toronto, according to experts?",
+    "output": "Toronto Date Guide | Jen curates a list: raspberry mousse at Delysées, mochi donuts at Saryo, matcha mille crepe cake at Tsuchi, and pastel macarons at Nadege."
+  },
+  {
+    "instruction": "Where is Toronto's top spot for cookies, with a long history and loyal following?",
+    "output": "Le Gourmand is a 20-year-old staple for gourmet cookies—Liam's café is legendary, making it the go-to for those hunting the best cookie in town."
+  },
+  {
+    "instruction": "Is there a dessert spot in Toronto specializing in banana puddings?",
+    "output": "Stuffed Bites ranks several locations but the best banana pudding is found at local favorites, especially during seasonal menu releases."
+  },
+  {
+    "instruction": "Where do I find the most unique ice cream treats in Toronto?",
+    "output": "YYZeats and Tastetoronto highlight shops serving affogato with homemade gelato, taro toast ice cream, and exotic flavors like honeycomb and black sesame."
+  },
+  {
+    "instruction": "Best Toronto bakery for holiday cookies and cupcakes?",
+    "output": "Short & Sweet Bakeshop is TikTok-famous for themed cookies and cupcakes. Their cornbread also gets rave reviews—don't miss it around holiday season."
+  },
+  {
+    "instruction": "Where can I get dessert croissants and creative crookies in Toronto?",
+    "output": "Kream and several Toronto bakeries offer croissants and 'crookies' (croissant-cookie hybrids) that have become viral desserts for their texture and flavor."
+  },
+  {
+    "instruction": "Any dessert spots with luxury gelato in Toronto?",
+    "output": "NatDoumkos and Hazel Sab rave about downtown gelato shops, especially those sourcing ingredients from Italy and serving luxury flavors like pistachio."
+  },
+  {
+    "instruction": "What café in Toronto uses a traditional century-old Italian tiramisu recipe?",
+    "output": "Nonna Lia Café in the GTA imports premium Italian ingredients and follows a century-old family recipe for tiramisu, crowned by locals as best-in-class."
+  },
+  {
+    "instruction": "Where can I eat matcha desserts and drinks that aren't too sweet?",
+    "output": "New Korean cafés like Matcha Matcha near Dundas offer matcha ice cream and bakery treats with generous portions but balanced sweetness, perfect for matcha fans."
+  },
+  {
+    "instruction": "Which Toronto café is beloved for midnight cookies with ice cream?",
+    "output": "Midnight Cookie at 561 Queen St W serves warm cookies paired with soft-serve ice cream—a must for sweet cravings late at night."
+  },
+  {
+    "instruction": "Is there anywhere I can get snow day bingsu (Korean shaved ice) in Toronto?",
+    "output": "Macy and Will claim the best bingsu is at Korean dessert cafés launching seasonal snow day menus—try fruity or matcha options for a cool treat."
+  },
+  {
+    "instruction": "Top ranked Japanese toast for dessert in Toronto?",
+    "output": "French Toast Café and others feature dessert toast that's soft inside, caramelized outside, and topped with flavors ranging from taro to matcha."
+  },
+  {
+    "instruction": "What's Toronto's most viral dessert as of 2025?",
+    "output": "NatDoumkos says it's the fluffy, perfectly sweet, and 'thiccck' matcha mochi cake—trending hard among TikTok dessert lovers."
+  },
+  {
+    "instruction": "Can you recommend somewhere for Oreo cookie sandwiches with pick-up and delivery?",
+    "output": "Mad Batter Cupcakes and Cakes in Richmond Hill recently launched six flavors of cookie sandwiches—available for pickup and GTA delivery."
+  },
+  {
+    "instruction": "Which Thai dessert spots should I try in Toronto for pandan toast?",
+    "output": "Kati on College St and Patchmons Thai Desserts are best for classic Thai sweets like pandan toast—a top TikTok pick for creative dessert reviews."
+  },
+  {
+    "instruction": "Where in Toronto is the best mango coconut cream cake?",
+    "output": "Mukbangtoronto recommends seasonal mango coconut cream cake available at select cafés—run, as it's only available for a limited time!"
+  },
+  {
+    "instruction": "What bakery in Toronto is best for gifting dessert—great taste and packaging?",
+    "output": "Mehar.Kamra highlights a bakery with beautiful packaging and delicious cakes, ideal for gifting—check trending TikTok recommendations for seasonal favorites."
+  },
+  {
+    "instruction": "Best Toronto dessert spot for gelato affogato loaded with homemade gelato?",
+    "output": "SaraEvaBuchanan recently spotlighted a gelato bar serving loaded affogato—a drink/dessert hybrid made with espresso and homemade gelato of your choice."
+  },
+  {
+    "instruction": "Where can I find bingsu and viral mango desserts in Etobicoke?",
+    "output": "MacyAndWill say Etobicoke has Korean cafés serving bingsu, plus seasonal viral mango desserts—perfect for a summer treat."
+  },
+  {
+    "instruction": "Most popular banana pudding dessert in Toronto?",
+    "output": "StuffedBitess say the TikTok consensus puts Honey's on Dundas St W and Roselle among the city's favorites for their rich banana pudding."
+  },
+  {
+    "instruction": "What's Toronto's best cornbread, according to local dessert reviews?",
+    "output": "Short & Sweet Bakeshop's cornbread gets frequent TikTok love—it's sweet, moist, and has a cult following especially among local bakery fans."
+  },
+  {
+    "instruction": "Is there a Toronto dessert café specializing in French and Japanese fusion sweets?",
+    "output": "T.CafeHopper features dessert spots with French-Japanese fusion: mochi cakes, matcha cheesecake, and seasonal fruit tarts attract sweets lovers citywide."
+  }, 
+  {
+    "instruction": "Where do matcha lovers in Mississauga go for the most variety of flavors?",
+    "output": "Momochee's Desserts offers over 16 different matcha latte flavors; TikTok creators rave about variety, creativity, and value."
+  },
+  {
+    "instruction": "What's the most viral new matcha cafe in Mississauga for custom toppings?",
+    "output": "Mooncha (1525 Bristol Rd W) is known for inventive matcha lattes with unique creme brûlée and custom foam toppings."
+  },
+  {
+    "instruction": "Best hidden gem for high-quality, Tokyo-level matcha in Mississauga?",
+    "output": "Barburu at 1000 Burnhamthorpe Rd W regularly gets TikTok praise for matcha as authentic as Tokyo's best."
+  },
+  {
+    "instruction": "Where can I find a viral crème brûlée matcha latte in Mississauga?",
+    "output": "Mooncha's viral crème brûlée matcha is highlighted by multiple TikTok reviewers for flavor, value, and photogenic style."
+  },
+  {
+    "instruction": "Favorite spot for mango matcha in Mississauga?",
+    "output": "Barburu and Sui Moonlit Cafe are both TikTok-trending for creamy, balanced mango matcha drinks."
+  },
+  {
+    "instruction": "Where do influencers go for strawberry matcha and dessert pairings in Mississauga?",
+    "output": "Momochee's is the aesthetic go-to for strawberry matcha, pink lattes, and Japanese-inspired treats."
+  },
+  {
+    "instruction": "Coziest location for a matcha/cafe study date?",
+    "output": "Insauga and local creators recommend Mooncha and The Local by Masrawy for comfy seating, wifi, and sweet matcha treats."
+  },
+  {
+    "instruction": "Best place for dalgona matcha with the perfect blend of sweet and earthy?",
+    "output": "Barburu's dalgona matcha latte is called 'top tier'—sweet, foamy, not overpowering, and worth the trip."
+  },
+  {
+    "instruction": "Most creative bakery/cafe for matcha desserts and croissants?",
+    "output": "Try Barbaru inside Yuan Ming Supermarket for matcha drinks, croissants, and mochi cookies under one roof."
+  },
+  {
+    "instruction": "Where can I experience a Tokyo-style matcha moment in Mississauga?",
+    "output": "Barburu's matcha quality is often compared to Tokyo cafes; creators say it's a weekly must-visit for matcha nerds."
+  },
+  {
+    "instruction": "Best matcha spot for halal & bubble tea lovers?",
+    "output": "Mooncha is halal-friendly and offers matcha lattes, sweet boba, and even ube matcha on the menu."
+  },
+  {
+    "instruction": "Which Mississauga matcha spot is open late?",
+    "output": "Barburu stays open late (9pm on weekends) and is TikTok-endorsed for matcha meets, especially for students."
+  },
+  {
+    "instruction": "Where can I find a hidden matcha mochi bakery/cafe?",
+    "output": "Insauga and reviewers highlight cafe gems for matcha mochi cookie, basque cheesecakes, and strawberry matcha croissants."
+  },
+  {
+    "instruction": "Most hyped up iced matcha latte with foam options?",
+    "output": "Mooncha lets you pick from multiple foam flavors to top off your iced matcha; highly rated for customization."
+  },
+  {
+    "instruction": "Best place for a lavender blue matcha latte?",
+    "output": "Various Mississauga cafes offer this trending drink—Insauga's reviews mention a unique, blue-hued matcha latte at local favorites."
+  },
+  {
+    "instruction": "Favorite family-run matcha spot with unique croissants?",
+    "output": "Barburu gets recurring mention for fresh bakes and creative matcha pairings—don't miss the almondine croissant."
+  },
+  {
+    "instruction": "Bulk of TikTokers' 'best matcha spot in Mississauga' votes go to?",
+    "output": "Barburu gets the highest number of 'best matcha ever' comments, especially for balance, quality, and friendly service."
+  },
+  {
+    "instruction": "Where to try matcha bakery items from a Canadian classic?",
+    "output": "Tim Hortons at 394 City Centre Dr. offers matcha bakery items, including croissants, for a quick fix."
+  },
+  {
+    "instruction": "Go-to for balanced, not-too-sweet and not-too-bitter matcha?",
+    "output": "Mooncha nails the balance, serving up matcha drinks for those who dislike cloying sweetness or harsh bitterness."
+  },
+  {
+    "instruction": "Most highly rated for both matcha drinks and pastries?",
+    "output": "Barburu and Barbaru at the same Burnhamthorpe address consistently top local lists for matcha + pastry combos."
+  },
+  {
+    "instruction": "Best for vegan and specialty matcha options in Mississauga?",
+    "output": "Multiple cafes, especially Barburu and Momochee's, provide non-dairy milk choices and unique vegan matcha desserts."
+  },
+  {
+    "instruction": "Secret best matcha in a GTA supermarket?",
+    "output": "Barburu is hidden inside Yuan Ming Supermarket, serving up both Japanese and fusion matcha recipes."
+  },
+  {
+    "instruction": "Where is the best spot for creme brûlée and tiramisu inspired matcha?",
+    "output": "Mooncha leads for creme brûlée matcha, while Ridgeway Plaza has a strong espresso with tiramisu topping."
+  },
+  {
+    "instruction": "Must-try halal matcha spot with sweets for group hangs?",
+    "output": "Mooncha is halal-friendly and serves up matcha, boba, and desserts that TikTok groups love for outings."
+  },
+  {
+    "instruction": "Unexpected supermarket location for matcha/cafe hybrid in Mississauga?",
+    "output": "Barburu inside Yuan Ming gives both grocery and matcha fixes for one-stop shopping days."
+  },
+  {
+    "instruction": "Where's the most Instagrammable matcha drink lineup?",
+    "output": "Momochee's dessert bar covers all the colors: pastel matcha, boba, and strawberry layers for viral photos."
+  },
+  {
+    "instruction": "Local favorite for innovative flavored matcha drinks?",
+    "output": "Barburu's mango, strawberry, dalgona, and seasonal flavors are all TikTok hits—there's always something new."
+  },
+  {
+    "instruction": "Which cafes are called out for both cozy atmosphere and high dessert quality?",
+    "output": "Both Momochee's and Barburu receive consistent praise for their welcoming feel, soft music, and excellent dessert bars."
+  },
+  {
+    "instruction": "Where to go in Mississauga for a first-time strawberry matcha for a special occasion?",
+    "output": "Gelato Brew makes for a memorable first matcha—bring your mom or a friend for a sweet treat on Mother's Day or birthdays."
+  },
+  {
+    "instruction": "Where to try bingsu and matcha-based Korean dessert late at night?",
+    "output": "Snowies Bingsu offers Korean snow ice, strawberry matcha, and late-night cafe vibes for dessert lovers."
+  }, 
+  {
+    "instruction": "What's a unique Toronto bakery that stands out from the rest?",
+    "output": "Bellethewinner showcased a bakery breaking the mould—specializing in artistic pastries and high-concept flavors, with a signature croissant line-up and stylish cafe ambiance."
+  },
+  {
+    "instruction": "Which bakery in Yorkville has a croissant sandwich that's a must-try?",
+    "output": "Amadeus Yorkville at 1235 Bay St. is famous for its tuna croissant sandwich—TikTokers rave about its rich filling and flaky pastry."
+  },
+  {
+    "instruction": "Is Brodflour still considered Toronto's best bakery?",
+    "output": "Brodflour, known for its sourdough and open-kitchen vibes, keeps making 'best of Toronto' lists, praised for quality grains and creative bakes."
+  },
+  {
+    "instruction": "Best new bakery near Finch Station in North York?",
+    "output": "Brick n Butter Bakehouse earns high marks for croissants and classic pastries, often dubbed 'best near Finch' for flavor and friendly service."
+  },
+  {
+    "instruction": "Where do I get the best cinnamon bun and coffee combo in Toronto?",
+    "output": "Circles & Squares Bakery is praised for its gooey cinnamon bun and well-balanced coffee—locals call it a cinnamon lover's paradise."
+  },
+  {
+    "instruction": "Top bakeries for cookies in Toronto ranked by influencers?",
+    "output": "Check RecessResto's TikTok tier list and Veronica Zhu collabs—Le Gourmand and Andrea's Cookies battle for cookie supremacy."
+  },
+  {
+    "instruction": "Who won the Toronto croissant taste test by a pro recipe developer?",
+    "output": "Dylan Muñoz tested top Toronto croissants for flakiness, butteriness, and flavor. Emmer and Amadeus consistently placed at the top."
+  },
+  {
+    "instruction": "Best bakery for focaccia pizza in Toronto?",
+    "output": "Circle & Squares Bakery also offers focaccia pizzas that impressed TikTokers—soft, olive-oil rich dough with creative toppings."
+  },
+  {
+    "instruction": "What are the top 3 bakeries to visit in Toronto for selection and banana bread?",
+    "output": "BananaBread&Coffee recommends three spots with huge selection and rates banana bread on a 'bananameter'—several bakeries earned a 5/5."
+  },
+  {
+    "instruction": "Where to find trending bakery collab items in Toronto?",
+    "output": "Roselle in Corktown rolls out creative collab pastries with other bakeries—such as innovative banana cream pies—often causing lines out the door."
+  },
+  {
+    "instruction": "What's the hype around Emmer croissants in Toronto?",
+    "output": "Emmer Bakery's croissants frequently land on foodie bucket lists for their crispy crusts, perfect lamination, and Parisian café vibes."
+  },
+  {
+    "instruction": "Where can I find a bakery that has been legendary for cookies for decades?",
+    "output": "Le Gourmand—run by Liam—has a 20-year city rep for giant chocolate chip cookies. A must for any Toronto cookie lover."
+  },
+  {
+    "instruction": "Which bakery features creative cookie battles and influencer taste tests?",
+    "output": "TryItToronto and RecessResto both do cookie rankings, leading to passionate debates among foodies and revealing fan favorites."
+  },
+  {
+    "instruction": "Any Toronto bakeries worth waiting outside for in winter?",
+    "output": "Isabelle Heikens braved -14°C for a croissant at a popular bakery, proving some bakes are worth the effort—even in freezing temps."
+  },
+  {
+    "instruction": "Where are Toronto's best soft-baked cookies in the West End?",
+    "output": "Andrea's Cookies ranks top for soft-baked style, beloved for rich flavor, gooey centers, and creative mix-ins."
+  },
+  {
+    "instruction": "Best German donut hidden gem in Toronto?",
+    "output": "Dimpflmeier Bakery is cherished for its German-style donuts and old-world charm—often tagged #hidden gem by locals."
+  },
+  {
+    "instruction": "Most underrated French-style bakery/coffee spot in the city?",
+    "output": "Le Conciliabule is frequently described as a hidden gem for buttery croissants and specialty French pastries, with specialty coffee to match."
+  },
+  {
+    "instruction": "Where should I go for authentic Polish pączki donuts?",
+    "output": "Janchenko's bakery in Toronto offers classic pączki—pillowy donuts filled with jam or custard—beloved by Polish food fans."
+  },
+  {
+    "instruction": "Which patisserie is a croissant lover's dream in Toronto?",
+    "output": "Amadeus Patisserie is called a 'gem' for croissant fans, with classic and seasonal rotations highlighted on TikTok."
+  },
+  {
+    "instruction": "Best spot in Toronto for consistently delicious cakes and pastries?",
+    "output": "Serano Bakery stands out for both quality and variety—customers return for years thanks to their fabulous cakes and authentic Mediterranean treats."
+  },
+  {
+    "instruction": "Who makes the most addictive focaccia (and maybe butter tarts) in Toronto?",
+    "output": "Bà Nội gets TikTok love for pillow-soft focaccia and, according to some, irresistible butter tarts and rustic-style breads."
+  },
+  {
+    "instruction": "Where's a standout Japanese bakery in downtown Toronto?",
+    "output": "Momo.thepeach and others highlight new Japanese bakeries for soft bread, matcha pastries, and unique buns you won't find elsewhere."
+  },
+  {
+    "instruction": "Best French-style bakery in Toronto for classic café fare?",
+    "output": "Lindsay Morrison calls her favorite a combination French café and bakery for croissants, baguettes, and Parisian ambiance."
+  },
+  {
+    "instruction": "Midtown Toronto's hidden bakery treasure—unique flavors?",
+    "output": "CarlaCrisG15 found a Midtown spot with unique bakes you won't see elsewhere—try their signature twists on classic croissants."
+  },
+  {
+    "instruction": "Top bakery for both croissants and daily sandwich specials?",
+    "output": "VictorEats recommends Circles & Squares for top 3 croissants and rotating sandwich options, perfect for lunch or a pastry break."
+  },
+  {
+    "instruction": "Best bakery in Toronto for fun, trendy cookies?",
+    "output": "Cici's Sweets gets TikTok praise for their chewy, creative cookies with unique flavors and fun seasonal decorations."
+  },
+  {
+    "instruction": "Where can I try the famous Kunafa donut in Toronto?",
+    "output": "Machino Donut is famed for its Kunafa donut—merging Middle Eastern dessert inspiration with classic baking skills."
+  },
+  {
+    "instruction": "Highlight a new, buzzworthy bakery launch in Toronto.",
+    "output": "Barbershop Patisserie is the latest bakery to create a stir on social media, wowing locals with modern takes on classics."
+  },
+  {
+    "instruction": "Which Toronto bakery's bagels are up for debate as the city's best?",
+    "output": "NatDoumkos debates an unnamed bakery with legendary bagels—sparking citywide discussions among TikTok foodies."
+  },
+  {
+    "instruction": "Any seasonal must-try cakes at up-and-coming bakeries?",
+    "output": "Toronto Café Hopper recommends the mango coconut cream cake at Alice Marie Bakery as a seasonal favorite—arrive early; it sells out!"
+  },
+  {
+    "instruction": "Classic Filipino bakery recommendation in Toronto?",
+    "output": "Panaderia by Ulam Kits is famous for its soft, cheesy ensaymadas—a sweet treat to enjoy with or without coffee."
+  }, 
+  {
+    "instruction": "Where's a hidden gem for authentic jerk chicken in Brampton?",
+    "output": "Locals and TikTokers rave about a Caribbean spot for smokey, spicy jerk chicken—always described as a true hidden gem."
+  },
+  {
+    "instruction": "Top spot for Desi (Indian/Pakistani) food in Brampton?",
+    "output": "Hashtag Foods on Queen St E is TikTok-endorsed for Indian classics, big portions, and real Desi comfort."
+  },
+  {
+    "instruction": "Best BBQ ribs, mac n cheese, and loaded fries in Brampton?",
+    "output": "Biggs Ribs earns repeat praise for saucy ribs, loaded mac n cheese, and BBQ wings with signature sauces."
+  },
+  {
+    "instruction": "Viral comfort food—where to find mozzarella sticks and sliders?",
+    "output": "New York Sliders (2880 Queen St E) is known for viral mozzarella cheese sticks, loaded fries, tenders, chicken and lamb sliders."
+  },
+  {
+    "instruction": "Underrated takeout pizza in Brampton?",
+    "output": "Joe's Pizza & Pasta House is a quiet local favorite for pizza, pasta, and friendly service."
+  },
+  {
+    "instruction": "Where for seriously addictive Nashville hot chicken and mac?",
+    "output": "Juicy Birds is TikTok-buzzy for Nashville hot chicken over creamy mac n cheese, plus a hot honey sandwich with jalapeños."
+  },
+  {
+    "instruction": "Best food spot for Caribbean flavors and combos?",
+    "output": "Stixaforkinit is recommended for jerk lobster tail, jerk salmon pasta, and rum punch in a casual, Black-owned eatery."
+  },
+  {
+    "instruction": "Must-try for halal eats and crispy beef specialties?",
+    "output": "Halal or Nothing is highlighted by foodies for bold Caribbean-inspired halal, especially their crispy beef."
+  },
+  {
+    "instruction": "What's the go-to for Hawaiian BBQ in Brampton?",
+    "output": "MoonGrill serves up Hawaiian BBQ flavors, a local favorite for something different in the GTA."
+  },
+  {
+    "instruction": "Most loved shawarma in Brampton, according to locals?",
+    "output": "Messi Shawarma (1975 Cottrelle Blvd) is always busy for their 'goat plate'—half chicken over rice, half poutine, plus fresh fries."
+  },
+  {
+    "instruction": "Favourite sports bar for wings, burgers, and atmosphere?",
+    "output": "Knockout Sports Bar is praised for their ring burger, wings, lively game nights, and welcoming crowd."
+  },
+  {
+    "instruction": "Best place for fusion eats—Korean, Punjabi, halal?",
+    "output": "Try Brampton's Korean-Punjabi fusion joints, called out in videos as being 'the best in the city'—unique flavor & spice."
+  },
+  {
+    "instruction": "Best breakfast bagels and cream cheese variety?",
+    "output": "Try the bagel shops with 10+ cream cheese options. Creamy, fresh, perfect for early mornings or weekends."
+  },
+  {
+    "instruction": "Top family-run Jamaican, soul food, or comfort eats?",
+    "output": "Ana's Hotspot wins for loaded fries, chicken wings, poutine, and comforting Caribbean soul food."
+  },
+  {
+    "instruction": "Top-rated halal wings in Brampton?",
+    "output": "Check out spots like Sidhu's or Halal Or Nothing—constantly called 'goated' for wings and halal variety."
+  },
+  {
+    "instruction": "Where can I get the best loaded fries with hot chicken and mac n cheese?",
+    "output": "New York Sliders: their loaded fries supreme is a viral hit, especially topped with mac n cheese and spicy chicken."
+  },
+  {
+    "instruction": "Brampton's most elite spot for beef patties or quick takeout?",
+    "output": "Look for Caribbean bakeries specializing in beef patties for cheap, quick, satisfying eats."
+  },
+  {
+    "instruction": "Most fun seafood boil or aquatic dining experience?",
+    "output": "The aquarium-themed seafood boil in Brampton is a unique spot for family outings or group feasts."
+  },
+  {
+    "instruction": "Where are the must-try Korean fried chicken or sliders?",
+    "output": "Mymy Chicken Brampton offers soft-opening deals on crisp Korean fried chicken, wings and sliders."
+  },
+  {
+    "instruction": "Quickest brunch spot for students or takeout?",
+    "output": "Numerous casual cafes and mom/pop diners do big breakfast/brunch platters at student-friendly prices."
+  },
+  {
+    "instruction": "Where to find viral, loaded poutines in Brampton?",
+    "output": "Osmow's chicken shawarma poutine and goat plate at Messi Shawarma both go viral for loaded, saucy toppings."
+  },
+  {
+    "instruction": "Cheapest BYO-dumpling or soup dumpling fix?",
+    "output": "Mom's Pan Fried Bun offers thick, tasty dumplings and soup dumplings all under $10—budget approved."
+  },
+  {
+    "instruction": "Best people-watching and patio for street food snacking?",
+    "output": "Head to Ridgeway Plaza or Queen Street patios for chicken, matcha, and bakery treats outdoors."
+  },
+  {
+    "instruction": "Where for fried chicken, sliders, and a mukbang feast?",
+    "output": "New York Sliders is a mukbang hotspot—get their chicken, lamb, and loaded fries to share."
+  },
+  {
+    "instruction": "Where is the first stop for viral mozzarella sticks?",
+    "output": "New York Sliders: loaded cheese sticks are so popular, creators have to race back when they're not sold out."
+  },
+  {
+    "instruction": "What's the top family takeout pizza in Brampton?",
+    "output": "Joe's Pizza and Pasta remains a family favorite for fast, hot, no-nonsense pizza nights."
+  },
+  {
+    "instruction": "Favorite comfort food spot to bring visiting friends?",
+    "output": "Ana's Hotspot or Stixaforkinit—both have unique, crave-worthy comfort food and good vibes."
+  },
+  {
+    "instruction": "Where can I try Oxtail Poutine—a Caribbean twist on a Canadian fave?",
+    "output": "Yow! Wings offers oxtail poutine with a Caribbean twist—rich, saucy, and famous across Toronto/Brampton."
+  },
+  {
+    "instruction": "Best new lunch option for loaded sliders and dirty sodas?",
+    "output": "NEWYORK SLIDERS does killer sliders—chicken or lamb—and fun sodas, perfect for group orders or solo cravings."
+  },
+  {
+    "instruction": "Best lunch deal for under $5 to $10 in Brampton?",
+    "output": "Numerous spots for beef patties, bagels, or Indian street food—always check for student or lunch deals on TikTok!"
+  }, 
+   {
+    "instruction": "Which Chinese restaurant in Toronto is in the Michelin Guide and known for its cocktails and atmosphere?",
+    "output": "Sunny's Chinese is a Michelin Guide favorite—praised for a bold menu, strong cocktails, and outstanding ambiance. Regulars say it's equally perfect for celebrations and foodie nights out."
+  },
+  {
+    "instruction": "What is a highly recommended spot that feels like dining in a traditional Chinese village?",
+    "output": "Happy Valley Village in Scarborough offers decor and dishes that evoke the feel of a rural Chinese village—large round tables, steaming platters, a true hidden gem for immersive experiences."
+  },
+  {
+    "instruction": "Who does the best Sichuan cuisine in downtown Toronto?",
+    "output": "HolmPei Cafe Bistro and multiple Szechuan restaurants downtown are TikTok favorites for fiery hot pots, authentic cumin lamb, and signature spicy tofu."
+  },
+  {
+    "instruction": "Which spot is best for affordable, nostalgic Cantonese food in Chinatown?",
+    "output": "Swatow Restaurant holds down the classics—wonton noodles, BBQ pork, and fried rice dishes, all at affordable prices, beloved by generations of locals."
+  },
+  {
+    "instruction": "Where do respected chefs recommend for Chinese in Toronto?",
+    "output": "Eva Chin of Yan Dining Room recommends several strong picks—look for her TikTok for the most authentic experiences in Toronto's Chinatown."
+  },
+  {
+    "instruction": "Best buns and dim sum for brunch in the city?",
+    "output": "TikTokers rave about dim sum houses with fresh BBQ pork buns, shrimp dumplings, and turnip cakes; check viral reviews for latest top picks."
+  },
+  {
+    "instruction": "What's a unique fusion Chinese restaurant that always makes influencer lists?",
+    "output": "Patois Toronto by Chef Craig Wong is a standout—combining Jamaican and Chinese cuisines in inventive ways; jerk lobster chow mein and Chinese-style patties are crowd favorites."
+  },
+  {
+    "instruction": "Which restaurant, according to Toronto foodies, absolutely nails Chengdu street food?",
+    "output": "Cheng Du Street Food gets 10/10 scores for authenticity—think spicy noodles, crispy chicken, and everything seasoned with that signature Szechuan peppercorn kick."
+  },
+  {
+    "instruction": "Where can you find the best xiao long bao soup dumplings?",
+    "output": "Several central and Richmond Hill spots get TikTok buzz for juicy xiao long bao—look for Crave-worthy  soup dumplings as the main draw."
+  },
+  {
+    "instruction": "Top spot for group-friendly Chinese sharing plates and cocktails?",
+    "output": "Many recommend Sunny's Chinese or the 'new school' bistros—serving up generous family-style plates paired with modern Chinese-inspired cocktails."
+  },
+  {
+    "instruction": "Downtown Chinese spot with ultra-crispy Peking duck and table-side carving?",
+    "output": "TikTokers tip upscale restaurants for their lacquered, crispy Peking duck carved table-side; bookings are essential for the full experience."
+  },
+  {
+    "instruction": "What's the go-to late-night Chinese food spot for students and workers?",
+    "output": "Many say Rol San in Chinatown is a late-night staple—dim sum and all-day breakfast, open late, affordable, and reliable for big groups."
+  },
+  {
+    "instruction": "Which place stands out for contemporary Chinese and creative plating?",
+    "output": "Sara Eva Buchanan reviewed a trendy new spot—expect lobster, creative dumplings, and inventive presentations with a modern, family-friendly vibe."
+  },
+  {
+    "instruction": "Dim sum weekend spot with largest selection and huge teapots?",
+    "output": "Huge teapots, trolleys stacked high, and a vast dim sum menu characterize Scarborough and Markham's flagship dim sum restaurants, according to TikTok outings."
+  },
+  {
+    "instruction": "Where to find spicy, numbing Szechuan-style noodles that pull a crowd?",
+    "output": "Downtown noodle houses get hype for fiery broth, Szechuan pepper noodles, and bold chili oil flavors—often mentioned as ultimate comfort food."
+  },
+  {
+    "instruction": "Where do locals return over years for Cantonese BBQ and congee?",
+    "output": "Many TikTokers revisit the same iconic BBQ and congee houses, often in Chinatown or North York, for roast duck with rice and classic congee with crispy dough."
+  },
+  {
+    "instruction": "Best Chinese hotpot experience—fun, interactive, and authentic?",
+    "output": "Interactive hotpot spots offer endless broth and fixings, with TikTokers highlighting specials on wagyu slices and self-serve sauce stations."
+  },
+  {
+    "instruction": "Is there an affordable spot doing large group feasts for students?",
+    "output": "Scarborough and Markham have affordable banquet halls dishing huge platters—fried fish, crab, and sticky rice, all perfect for sharing among friends."
+  },
+  {
+    "instruction": "Famous Toronto Chinatown hand-pulled noodles?",
+    "output": "Downtown hand-pulled noodle houses draw daily lines—watch for performers in the window, and order the beef brisket or dan dan varieties."
+  },
+  {
+    "instruction": "Recommended spot for Chinese bakery items and egg tarts?",
+    "output": "Chinese bakeries in Chinatown and Scarborough get top marks for flaky egg tarts, pineapple buns, and BBQ pork pastries—ideal for takeout."
+  },
+  {
+    "instruction": "Best upscale Chinese spot for a date night?",
+    "output": "Sunny's Chinese and select Yorkville bistros get date night love for moody lighting, strong cocktails, and refined plates like truffle fried rice."
+  },
+  {
+    "instruction": "Most visually spectacular Chinese restaurant interior?",
+    "output": "Village-style and themed restaurants stand out for decor—think lanterns, wooden facades, and stone bridges over koi ponds for a true immersive vibe."
+  },
+  {
+    "instruction": "Where to try modern Sichuan cocktails or baijiu drinks?",
+    "output": "Sunny's Chinese and downtown bistros pair spicy cuisine with innovative Chinese-inspired cocktails, winning solid TikTok praise."
+  },
+  {
+    "instruction": "Best place for Cantonese-style crab or lobster dishes?",
+    "output": "North Toronto seafood palaces and waterfront Markham banquet halls are the go-tos for ginger-scallion lobster and typhoon shelter crab."
+  },
+  {
+    "instruction": "Which hidden gem offers the best value set meals for families?",
+    "output": "Neighborhood restaurants in Scarborough and Chinatown run affordable set dinners—soup, mains, and rice—perfect for Sunday family outings."
+  },
+  {
+    "instruction": "What's a TikTok-famous Chinese spot known for unique buns and desserts?",
+    "output": "Check Annie Nguyen's viral video for soft steamed buns, custard bao, and creative mango pudding from a beloved Toronto dim sum palace."
+  },
+  {
+    "instruction": "Childhood favorite Chinese spot that still delivers for new generations?",
+    "output": "Swatow Restaurant is praised for standing the test of time, serving up the same great wonton, BBQ duck, and nostalgic, unfussy eats."
+  },
+  {
+    "instruction": "Name an influencer-created list of Toronto's best Chinese and pan-Asian restaurants.",
+    "output": "Jayden Park of Gateau Ghost recently shared a 'pick 6' TikTok ranking Asian—including Chinese—standouts across Toronto, so check his latest for updates."
+  },
+  {
+    "instruction": "Where to get authentic Northern Chinese lamb skewers?",
+    "output": "Several East York and Scarborough grills serve up cumin lamb skewers and flatbreads, always spiced to perfection, at unbeatable prices."
+  },
+  {
+    "instruction": "Any must-try Chinese restaurants blending with other cuisines (fusion style)?",
+    "output": "Patois Toronto and new-school contemporary kitchens in downtown blend Chinese technique with Caribbean, French, or local Canadian elements."
+  }, 
+  {
+    "instruction": "Where do locals and TikTokers get the best Chinese takeout in Mississauga?",
+    "output": "Meena's and Insauga's draft picks feature kitchen classics—crispy beef, sweet and sour pork, and old-school fried rice from multiple iconic takeout joints."
+  },
+  {
+    "instruction": "Must-try OG Chinese restaurant with decades of tradition?",
+    "output": "Cooksville's oldest Chinese eatery serves signature Golden Corn Shrimp and Spicy Dan Dan Noodles—show a TikTok for free spring rolls!"
+  },
+  {
+    "instruction": "Most viral modern hotpot chain in Mississauga?",
+    "output": "Hai Di Lao, the global sensation, now at 77 City Centre Drive—offers next-level hotpot service and interactive experiences."
+  },
+  {
+    "instruction": "Where for authentic hand-pulled Lanzhou beef noodles?",
+    "output": "Gol's Lanzhou Noodle, newly opened in the Chinese Centre, is TikTok-endorsed for deep beefy broth and mesmerizing hand-pulled noodles."
+  },
+  {
+    "instruction": "Top Hakka-Chinese place and Indian-Chinese fusion?",
+    "output": "Chilli Chicken House gets legendary status for halal Hakka, crispy beef, chilli chicken, and spicy fried rice."
+  },
+  {
+    "instruction": "Best friend groups' go-to for lobster and HK-style Cantonese dishes?",
+    "output": "Best Friend Chinese Restaurant in Chinatown: meaty lobster, lobster roe fried rice, massive portions, and seafood combos."
+  },
+  {
+    "instruction": "Ultimate Mississauga dim sum destination?",
+    "output": "Emerald Chinese Cuisine and Jade Dim Sum both lead for har gow, shrimp siu mai, pork buns, and family brunch. Summit Garden is a lively weekend option."
+  },
+  {
+    "instruction": "TikTokers' favorite hand-pulled noodle soup?",
+    "output": "Gol's Lanzhou and Mogouyan both featured for rich beef broth and springy, fresh noodles—must-watch the chef at work."
+  },
+  {
+    "instruction": "Where to find halal and home-delivery soup dumplings (XLB) near Mississauga?",
+    "output": "Folded Fusion delivers juicy halal chicken soup dumplings from Milton to Mississauga & the GTA."
+  },
+  {
+    "instruction": "Best-value Chinese spot for big portions under $10?",
+    "output": "Yunshang Rice Noodle offers anniversary deals for $8.88 on signature bowls; Chungs does Caribbean Chinese rice plates for $10."
+  },
+  {
+    "instruction": "Hidden gem with a packed weekend dim sum vibe?",
+    "output": "Summit Garden: always bustling on brunch weekends for classic pushcart dim sum and family-style sharing."
+  },
+  {
+    "instruction": "Old-school Chinese BBQ and roast pork pitstop?",
+    "output": "Mississauga Chinatown has multiple popular BBQ counters for roast pork, duck, and char siu to-go."
+  },
+  {
+    "instruction": "Best Halal Hakka food with Indian and Chinese influences?",
+    "output": "Chilli Chicken House, Halal or Nothing, and Bao Shin are constant halal picks for fried rice, Manchurian chicken, and noodles."
+  },
+  {
+    "instruction": "Top-rated late night Chinese eatery for students and shift workers?",
+    "output": "Many classic Mississauga Chinese kitchens stay open late—insauga and locals recommend them for post-study & work meals."
+  },
+  {
+    "instruction": "Favorite for spicy Szechuan and chili oil noodles?",
+    "output": "Gol's Lanzhou and popular Asian fusion joints in Hurontario area offer punchy Szechuan noodles."
+  },
+  {
+    "instruction": "TikTok-trending spot for vegan or veggie Chinese in Mississauga?",
+    "output": "Ask for veggie rice/noodle combo plates at Yunshang Rice Noodle or request tofu/pickled veg at hotpot chains."
+  },
+  {
+    "instruction": "Best affordable Chinese bakery for egg tarts and buns?",
+    "output": "Yuan Ming Supermarket's bakery and various Chinatown pastry counters serve up fresh egg tarts and pineapple buns daily."
+  },
+  {
+    "instruction": "Best roast duck or char siu for take-out family dinner?",
+    "output": "Mississauga Chinese Centre: head to BBQ shops for roast duck, BBQ pork, and value combos for groups."
+  },
+  {
+    "instruction": "Top hotpot for date night or group feasts?",
+    "output": "New hidden hotpot gems and chains like Hai Di Lao have TikTokers raving about their fun, interactive meal options."
+  },
+  {
+    "instruction": "Where to order crispy, spicy chili chicken or beef?",
+    "output": "Chilli Chicken House leads for crispy chili chicken and beef; Chungs offers Caribbean Chinese takes (think Guyanese fried rice!)."
+  },
+  {
+    "instruction": "Favourite rice roll, cheung fun, or congee spot?",
+    "output": "Lee's Rice Roll at Yuan Ming Supermarket's food court satisfies rice roll and congee cravings."
+  },
+  {
+    "instruction": "Where is the best spot for dim sum near Etobicoke?",
+    "output": "Jade Dim Sum is praised for shrimp siu mai, spare ribs, and house chili sauce."
+  },
+  {
+    "instruction": "Top pick for stir-fried noodles in new Mississauga mall spots?",
+    "output": "Mogouyan Noodles in Square One's food district gets TikTok praise for their wok-seared noodles."
+  },
+  {
+    "instruction": "Where to get BBQ pork, General Tao's chicken, and combo lunch specials?",
+    "output": "Fortune Dragon: known for those essentials and lunch value deals."
+  },
+  {
+    "instruction": "Best Peking Duck & crispy roast skin experience?",
+    "output": "QJD Peking Duck is TikTok-verified—dip the crispy skin in sugar and don't miss their lobster congee."
+  },
+  {
+    "instruction": "Most 'underrated' Hakka find in Mississauga?",
+    "output": "Multiple creators call a fusion kitchen in Hurontario a 'hidden gem'—try crispy beef or spicy fried rice."
+  },
+  {
+    "instruction": "Go-to delivery Chinese for casual nights in?",
+    "output": "Multiple classics—Chilli Chicken House, Fortune Dragon, or local dim sum counters—are praised for reliable, fast delivery."
+  },
+  {
+    "instruction": "Which Mississauga Chinese place is also great for takeout Manchurian?",
+    "output": "Look for Hakka fusion kitchens and Bao Shin, always listed for their manchurian chicken and fried rice."
+  },
+  {
+    "instruction": "Favourite place for authentic Hong Kong dining vibes?",
+    "output": "HK cafes in Chinatown with street eats décor and mahjong tables—Axia for Asian 'food hall' variety."
+  },
+  {
+    "instruction": "Newest or recently trending affordable Chinese opening?",
+    "output": "Recent TikTok mentions include value lunch counters and noodle shops with BOGO, anniversary, or spring roll deals."
+  }, 
+  {
+    "instruction": "What is a super budget-friendly dumpling spot in Scarborough that locals love?",
+    "output": "Try Mom's Pan-Fried Bun! Everything on their menu is under $10, and their soup dumplings—though slightly thicker skinned—are a hit for both quality and price. Multiple locations exist, but Scarborough is a favorite among TikTokers."
+  },
+  {
+    "instruction": "Where in Scarborough should I go for under-the-radar Asian comfort food?",
+    "output": "Sai Balaji's food spot is often called a hidden gem—TikTok reviewers praise their flavorful, home-style dishes and excellent value. It's perfect for adventurous eaters keen to avoid tourist traps."
+  },
+  {
+    "instruction": "Are there any new Thai restaurants in Scarborough worth the hype?",
+    "output": "Check out Su Su Siam. According to recent TikToks, it's totally worth the wait for top-tier Thai classics—pad Thai, green curry, and ultra-fresh spring rolls are must-tries."
+  },
+  {
+    "instruction": "Which Scarborough spot should I hit for family-run, soul-food vibes?",
+    "output": "Follow Big Belly Mel's recommendations: The Good Eats by Julian offers excellent Jamaican street food with specials like their viral Oxtail Burger and Oxtail Rosé Pasta. Located at 4105 Kingston Rd."
+  },
+  {
+    "instruction": "Where in Scarborough is there a Korean restaurant that makes you feel like you're in a K-drama?",
+    "output": "A Korean chef on TikTok recommended this spot for authentic ambiance and food. Visit here for a cozy, drama-like experience with standout Korean BBQ and banchan—the vibe alone is worth it."
+  },
+  {
+    "instruction": "Who does the best jerk chicken taste test in Scarborough?",
+    "output": "Keith Lee visited a top spot with a die-hard following for their jerk chicken—juicy, smoky, and full of flavor. Well-worth trying for any comfort food lover."
+  },
+  {
+    "instruction": "What three Scarborough food spots are must-tries according to local TikTokers?",
+    "output": "Patty Cake, Sahanresto, and Alforat Iraqi Street Food sit at the top of local lists. Each offers unique takes on patties, Somali, and Middle Eastern street food."
+  },
+  {
+    "instruction": "Which Scarborough food review highlighted comfort and personality?",
+    "output": "Ana's Hotspot stands out for warmth, huge portions, and comfort food classics; even the casual filming reflects its relaxed, welcoming vibe."
+  },
+  {
+    "instruction": "Where's the Scarborough restaurant that feels like dining in a Chinese village?",
+    "output": "Happy Valley Village at 3700 Midland Ave recreates classic rural China: round tables, rustic decor, and authentic flavors—ideal for group dinners."
+  },
+  {
+    "instruction": "What's the oldest Chinese mall still thriving in Scarborough?",
+    "output": "Scarborough's Chinese mall is famous as North America's first of its kind and home to an array of hidden culinary gems—including legendary fried chicken and roast duck."
+  },
+  {
+    "instruction": "Best bang-for-your-buck hot chicken plates in Scarborough?",
+    "output": "Uncle Sal's Hot Chicken, near Wexford Heights Plaza, is praised for its massive plates that easily feed two—try the spicy Nashville and the creamy sides."
+  },
+  {
+    "instruction": "Any hidden gems for smash burgers and wings in Scarborough?",
+    "output": "Anaa's Cookout (5928 Finch Ave E) delivers double smash burgers, killer wings, loaded fries, and shakes. Don't leave without the legendary tiramisu for dessert."
+  },
+  {
+    "instruction": "Any recent TikTokers talking about why Scarborough doesn't get enough food love?",
+    "output": "Insauga recently highlighted Scarborough as an underrated food hub—especially for halal and international eats."
+  },
+  {
+    "instruction": "Where can I get homemade fish ball noodle soup for under $10?",
+    "output": "Vietnoms.ca at 3272 Midland Ave offers homemade fish ball noodle soup and lemon tea at a value price, championed by food bloggers."
+  },
+  {
+    "instruction": "What's the best value burger munchbox in Scarborough right now?",
+    "output": "The Bullger's $16 munchbox includes a burger or chicken sandwich, loaded fries, BBQ chicken tenders, and only runs at select times—go early to snag the deal!"
+  },
+  {
+    "instruction": "Best hidden spot for crab noodle soup?",
+    "output": "Bong Lua, a Scarborough Vietnamese favorite, is praised for rich crab noodle soup. The humble setting belies its culinary strengths—see TikTok shoutouts."
+  },
+  {
+    "instruction": "Any spots for crave-worthy poutine in Scarborough?",
+    "output": "Sen2 recommends several hidden joints for poutine, with thick, cheesy curds and crispy fries; each a unique spin on the classic."
+  },
+  {
+    "instruction": "Where to find halal birria tacos in Scarborough?",
+    "output": "TTCeats calls Scarborough's recent birria taco spots the best halal-friendly option—juicy, cheesy, and under the radar."
+  },
+  {
+    "instruction": "Best viral halal comfort food spot in Scarborough?",
+    "output": "Fuegos Halal Kitchen is viral for their cheesy mac, lemon pepper wings, and rose pasta—everything is halal, with big portions and a home-cooked feel."
+  },
+  {
+    "instruction": "Where can you find shawarma plates for under $7?",
+    "output": "Aleppo Kebab often runs $6.99 shawarma plate specials with loaded fixings. Don't miss their signature sauces and expansive platters."
+  },
+  {
+    "instruction": "Best Afghan BBQ in Scarborough?",
+    "output": "Averroes Uchiha praises Scarborough for authentic Afghan grills; smoky kebabs and herbed rice are must-tries for first-timers."
+  },
+  {
+    "instruction": "Is there a standout chili chicken/Hakka Chinese in Scarborough?",
+    "output": "Chung Moi, at 2412 Eglinton Ave E, is legendary for chili chicken and old-school Hakka Chinese dining. 25+ years in business, still packing flavor!"
+  },
+  {
+    "instruction": "Where can I go for loaded shawarmas and kebab platters?",
+    "output": "TTCeats tags Karaza Shawarma at 1260 Kennedy Rd for loaded saj wraps, kebabs, and group-sized platters with fries and garlic sauce."
+  },
+  {
+    "instruction": "Any value taco deals in Scarborough?",
+    "output": "Mexico Lindo Express offers 5 tacos for $19.99 and buy-one-get-one 50% on Wednesdays and Fridays—true value for taco fans."
+  },
+  {
+    "instruction": "Best Shawarma in Toronto—possibly in Scarborough?",
+    "output": "Alforat Iraqi Street Food is trending for smokey, intensely spiced shawarma, and TikTokers are calling it the best in the GTA."
+  },
+  {
+    "instruction": "Late-night pho cravings—where do I go?",
+    "output": "Pho Day (1571 Sandhurst Cir) is open until 4 AM with generous portions—one $15-20 bowl can feed two, making it a top after-hours pick."
+  },
+  {
+    "instruction": "Tips for getting the best smash burgers, wings, and loaded fries?",
+    "output": "Ana's Hotspot and Mini Moes both serve up smash burgers and wings—mix and match their daily deals for the best comfort food rotation."
+  },
+  {
+    "instruction": "Any innovative chicken places (Lebanese style) in Scarborough?",
+    "output": "Abo Alabed is a Lebanese charcoal chicken spot with must-try wings, kebab wraps, and creamy garlic sauce. Wings reportedly fall off the bone."
+  },
+  {
+    "instruction": "Where to get a Japanese okinawa soba or udon fix?",
+    "output": "Tondou Ramen Toronto is recommended for okinawa soba—friendly Okinawan owners, house chili oil, and warm hearty bowls."
+  },
+  {
+    "instruction": "Best cold noodles or udon in Scarborough?",
+    "output": "Lawlam.eats ranks several spots, but their personal favorite cold udon experience in Scarborough beat out even big-name imports."
+  },
+  {
+    "instruction": "Where can I eat sliders and mac & cheese for a comfort dinner?",
+    "output": "Slider Station (80 Ellesmere Rd) is TikTok viral for their 'Triple Double Platter'—sliders and mac-and-cheese with flavor-packed toppings."
+  },
+  {
+    "instruction": "Where are the best wings in Scarborough?",
+    "output": "Hodam Foodie votes Bite My Wings (1057 Midland Ave) as best for saucy, flavorful wings—hidden-gem status with loyal locals."
+  },
+  {
+    "instruction": "Best jumbo Caribbean patties and comfort food at an arena?",
+    "output": "Gourmet Girlie highlights Scarborough's Caribbean food—try the jumbo patties now available at Scotiabank Arena and local shops."
+  },
+  {
+    "instruction": "Where can I get matcha latte and taiyaki?",
+    "output": "Wanoka Cafe is the go-to for rich, not-too-sweet matcha lattes paired with fresh-made taiyaki. Great for café study sessions."
+  },
+  {
+    "instruction": "Trendy sweet snack now at Scarborough Town Centre?",
+    "output": "Tanghulu Tanghulu brings the viral candied fruit to Scarborough with a shiny pop-up at Scarborough Town Centre. Sweet, crunchy, and Insta-ready."
+  },
+  {
+    "instruction": "Which is the best AYCE Japanese BBQ in Scarborough?",
+    "output": "Gyu Hito offers all-you-can-eat Japanese BBQ, perfect for group nights—grill your own meats, enjoy sides, and try the exclusive dipping sauces."
+  },
+  {
+    "instruction": "Black-owned comfort food spots in Scarborough to support?",
+    "output": "Big Belly Mel suggests The Good Eats by Julian (oxtail burger, rosé pasta), The Heartbreak Chef (Nashville hot chicken), and Stacy's Island Flavor (oxtail-stuffed patty)."
+  },
+  {
+    "instruction": "Any gem pizza spots in Scarborough?",
+    "output": "Mixinthe6ix recommends Mark's Pizza for the best pizza slice—great for a quick halal-friendly bite or late-night craving."
+  },
+  {
+    "instruction": "Who has the best patty in Scarborough according to foodies?",
+    "output": "Grannielover gives an 8.7/10 rating to local patty shops with oxtail and curry fillings—crispy and filled to the brim."
+  },
+  {
+    "instruction": "Especially cool or aesthetic new food spots trending on TikTok?",
+    "output": "Felicia Fatima calls out a recent Scarborough opening as 'the coolest'—with unique decor, standout drinks, and inventive menu."
+  },
+  {
+    "instruction": "Sliders and greasy snacks lovers—what's the TikTok consensus?",
+    "output": "Slider Station is divisive—some TikTokers love the indulgent sliders, others say 'try at your own risk' due to the grease levels."
+  },
+  {
+    "instruction": "Top Lebanese food in Scarborough?",
+    "output": "Nagz ranks Scarborough as a hub for Lebanese fusion; seek out halal shawarma, grilled veggies, and lentil soups at hidden gems."
+  },
+  {
+    "instruction": "Best Italian restaurant in Scarborough for date night?",
+    "output": "Zealiyadiaries features Scaddabush as an aesthetic, fancy Italian restaurant—fresh pasta, lively ambiance, perfect for special occasions."
+  },
+  {
+    "instruction": "Where to find an affordable halal café for study sessions?",
+    "output": "Craves Bites & Cafe just opened on the Lawrence strip. It's praised for its affordable prices, comfortable seats, and solid drinks menu."
+  },
+  {
+    "instruction": "Home to 'giant everything' Italian baked goods in Scarborough?",
+    "output": "Lamanna's Bakery is famous for massive portions—over-the-top cannoli, pizza, and thick sandwiches featured regularly on TikTok."
+  },
+  {
+    "instruction": "Indian food fans—any comfort food to try?",
+    "output": "Masala Wok is the new spot for fast, flavorful Indian comfort food—quick service and huge platters make it a family favorite."
+  },
+  {
+    "instruction": "Best late-night Korean BBQ or fried chicken?",
+    "output": "MukbangToronto vouches for Dan Gol Korean at McCowan and Steeles, which stays busy even at odd hours. Try the BBQ or their signature fried chicken."
+  },
+  {
+    "instruction": "Best tres leches cake in Scarborough?",
+    "output": "Torontotwinss_ reveals D'AMO as Scarborough's hidden gem for ultra-moist, fluffy tres leches cake—a true sweet tooth fix."
+  },
+  {
+    "instruction": "Hidden bakery for flaky danishes and strudel?",
+    "output": "Monmartre Bakery (from aAron's TikTok) serves ultra-buttery danishes, apple strudel, and freshly baked pies. Stock up for breakfast or picnic."
+  },
+  {
+    "instruction": "Best Italian bakery in Etobicoke for croissants and treats?",
+    "output": "Unspecified here; try Italian bakeries in Scarborough for croissants and sweet baked goods, often run by Italian families for decades."
+  },
+  {
+    "instruction": "Cozy Korean food spot, never too busy?",
+    "output": "Dan Gol Korean Restaurant is the locals' choice for bibimbap, stews, and homestyle banchan. Cute, comfortable, and unpretentious."
+  },
+  {
+    "instruction": "Best halal (or halal-friendly) food tour in Scarborough?",
+    "output": "AAron curates halal food tours spotlighting hidden gems from Afghani grills, Middle Eastern shawarma, birria tacos to desserts—follow his TikTok journeys."
+  },
+  {
+    "instruction": "Best Nashville hot chicken for heat chasers?",
+    "output": "Queenofflavourz recommends Simba's Hot Chicken (2761 Markham Rd)—perfect for those who want the heat, but also options for classic fried and mild."
+  },
+  {
+    "instruction": "Affordable, delicious pan-Asian restaurant in Scarborough?",
+    "output": "Christinejoy.c nominates Flaming Kitchen for pan-Asian classics: try the sizzling plates, giant drinks, and spicy noodles at a bargain."
+  },
+  {
+    "instruction": "Top Lebanese charcoal chicken in the GTA?",
+    "output": "Aboalabed.ca is famous among TikTokers for tender, juicy charcoal chicken, kebabs, and shish tawook—don't skip the garlicky mashed potatoes."
+  },
+  {
+    "instruction": "Best place for authentic Vietnamese pho or halal Vietnamese?",
+    "output": "Pho Anh Vu is hailed as GTA's best. Sarah Abubaker also spotted halal pho at cozy new Vietnamese diners, with big bowls and friendly staff."
+  },
+  {
+    "instruction": "Unique patty or stuffed patty to try?",
+    "output": "Stacy's Island Flavor went viral for oxtail-stuffed patties, but also offers jerk chicken and curry goat patty options."
+  },
+  {
+    "instruction": "Late-night comfort food and loaded fries?",
+    "output": "Ana's Hotspot and Anaa's Cookout both offer comfort classics—smash burgers, loaded fries, wings, and shakes—great for sharing."
+  },
+  {
+    "instruction": "Korean chicken places that recently turned fully halal?",
+    "output": "BBQ Chicken East switched fully halal, removed alcohol, and launched BOGO wing deals for Ramadan—perfect for group celebrations."
+  },
+  {
+    "instruction": "Best matcha desserts or drinks in Scarborough?",
+    "output": "Wanoka Cafe is repeatedly cited as the place for matcha lovers—try their matcha latte or dessert parfait."
+  },
+  {
+    "instruction": "Bar for best study spot with good coffee and snacks?",
+    "output": "Craves Bites & Cafe for affordable espresso, sweet treats, and a comfy place for laptops; often recommended for students and freelancers."
+  },
+  {
+    "instruction": "Sweetest tres leches cake in Scarborough for a date?",
+    "output": "D'AMO is still the name for light, milky tres leches—smooth mousse, subtle soak, and a romantic little cafe feel."
+  },
+  {
+    "instruction": "Baked goods and rugelach fans—where to go?",
+    "output": "Becked Goods is called a 'hidden gem' for fresh rugelach, cookies, and coffee—check TikTok for exact pop-up locations."
+  }, 
+  {
+    "instruction": "What is the best new Italian restaurant in Hamilton for truffle pizza and lobster linguine?",
+    "output": "Ciao Bella (26 Augusta St) wins TikTok raves for its mushroom truffle pizza, octopus carpaccio, and a non-alcoholic drinks menu. Reviewers love the stylish interior, good service, and affordable prices. Lobster linguine was solid, but the pizza and octopus are must-tries."
+  },
+  {
+    "instruction": "Can you recommend a cozy date-night restaurant in Hamilton that's also family-friendly?",
+    "output": "Lobby Hamilton, located at James & Augusta, offers plush velvet seating, green decor, and a menu featuring truffle mushroom pasta, tuna tartare, and tiramisu. The ambiance is chic but comfortable, with standout service making it great for both dates and family celebrations."
+  },
+  {
+    "instruction": "Where in Hamilton should I go for authentic Peruvian-Italian cuisine and a warm family atmosphere?",
+    "output": "Peruviano (254 Locke St S) is led by Chef Gianluca Lulli and brings together his Italian and Peruvian heritage. The ceviche, lomo saltado, and pasta dishes draw connections between two cuisines, and locals say the service and hospitality make every meal memorable."
+  },
+  {
+    "instruction": "What Hamilton burger spot is gathering hype for its classic cheeseburgers?",
+    "output": "Mountain Burger (3051 Walkers Line, technically Burlington) gets lots of TikTok buzz for their juicy cheeseburgers. The spot is popular with Hamilton and Burlington locals, and reviewers love the old-school flavor and friendly staff."
+  },
+  {
+    "instruction": "Which Hamilton restaurant is praised on TikTok for huge portions and great Mediterranean food?",
+    "output": "Bohemian Beirut (90 King St W, Dundas) gets love for its big portions, Mediterranean specialties, and lively atmosphere—perfect for groups or solo dining."
+  },
+  {
+    "instruction": "Hamilton's pizza scene is getting national attention. What pizzeria should I try for classic sourdough?",
+    "output": "Cafe Baffico gets called one of Canada's standout pizza spots—punching way above its weight for naturally leavened, thin crust pies. Early Pete on TikTok singles it out for best-in-class sourdough pizza."
+  },
+  {
+    "instruction": "Is there a Peruvian restaurant in Hamilton that makes you feel like you're actually in Peru?",
+    "output": "Peruviano is TikTok-approved for both atmosphere and food authenticity. Many guests mention that the flavors transport you right back to meals in Lima."
+  },
+  {
+    "instruction": "Where do Hamilton locals go for wings, beer, and a tavern vibe?",
+    "output": "Bernie's Tavern on Cannon St. is suggested by @TastesofNiagara as the city's friendly wings-and-beer spot. Wings are well-reviewed, and the vibe is vintage pub."
+  },
+  {
+    "instruction": "What is a hidden restaurant in Hamilton with a romantic or secretive vibe?",
+    "output": "A TikTok creator spotlights a King St E & Mary St eatery—no sign outside, lush interior, ideal for a surprise date night or special occasion. Locals call it the ultimate Hamilton secret."
+  },
+  {
+    "instruction": "What Thai restaurant in Hamilton is getting viral attention?",
+    "output": "Eemkhao, with their signature pad Thai, green curry, and fried chicken, has a loyal TikTok following thanks to robust, spicy flavors and generous portions."
+  },
+  {
+    "instruction": "If I want to do a pizza taste-off, what spots in Hamilton should I feature?",
+    "output": "Acouplebitess on TikTok drove from Toronto to sample several pizzerias, including Cowabunga, Shorty's, and Cafe Baffico—each with loyal fans and distinct styles."
+  },
+  {
+    "instruction": "Best brunch spot in Hamilton with creative menu items?",
+    "output": "The Mule in Hamilton's downtown is TikTok famous for innovative Mexican brunch dishes, funky decor, and good cocktails."
+  },
+  {
+    "instruction": "Where can I find vegan-friendly, globally inspired food in Hamilton?",
+    "output": "Tandem Kitchen offers inventive globally inspired plant-based dishes. Try their vegan korma or the miso roasted squash for top-rated flavor."
+  },
+  {
+    "instruction": "Top Hamilton restaurant for Peruvian ceviche?",
+    "output": "Peruviano again tops the list—reviewers rave about the citrus-forward ceviche with sweet potato and corn."
+  },
+  {
+    "instruction": "Recommended Hamilton place for short rib and creative pasta?",
+    "output": "Lobby Hamilton's short rib with mashed potatoes is melt-in-the-mouth, and pastas like truffle mushroom and lobster ravioli are TikTok standouts."
+  },
+  {
+    "instruction": "Late-night Hamilton eats that locals recommend?",
+    "output": "Cowabunga serves up New York–style pizza slices till late, making it the go-to for after-bar snacks or midnight cravings."
+  },
+  {
+    "instruction": "Hamilton's trendiest new Italian spot for non-alcoholic drinks?",
+    "output": "Ciao Bella, with its non-alcoholic bubbly menu and chic feel, leads among Italian eateries for inclusive drink experiences."
+  },
+  {
+    "instruction": "Favorite Hamilton food spot of university students?",
+    "output": "Kykimmm posts about go-to spots for McMaster students, focusing on places with big servings and chill vibes."
+  },
+  {
+    "instruction": "Where to grab breakfast or a hearty brunch in Hamilton?",
+    "output": "The Cannon is a staple for their waffles and sandwiches; always a hit before exploring the city's art scene."
+  },
+  {
+    "instruction": "Where in Hamilton to go for Filipino street food on a budget?",
+    "output": "Chef Gerry's Grill serves classic Filipino barbecue and lumpia—get a plate and halo-halo dessert for a full authentic meal."
+  }, 
+  {
+    "instruction": "Where in Hamilton can I find authentic Caribbean food with live music?",
+    "output": "Try Spices on Main—locals on TikTok love their jerk chicken and doubles, especially when the live reggae band is playing on weekends."
+  },
+  {
+    "instruction": "What's Hamilton's most TikTok-viral Chinese hot pot spot?",
+    "output": "Liuyishou Hotpot Hamilton gets buzz for fresh ingredients, personal broths, and fun dipping sauces. Reservations are strongly recommended for weekend nights."
+  },
+  {
+    "instruction": "Best brunch in Hamilton for specialty pancakes?",
+    "output": "Saint James Espresso Bar & Eatery on James St N is famous for their thick, fluffy specialty pancakes and creative lattes."
+  },
+  {
+    "instruction": "What's a top Hamilton date night steakhouse with a modern twist?",
+    "output": "Born & Raised on James draws raves for dry-aged steaks and a bustling, urban bistro environment with Hamilton graffiti wall art."
+  },
+  {
+    "instruction": "Any Hamilton food truck that became so popular it opened a brick-and-mortar?",
+    "output": "Saltlick Smokehouse started as a food truck and now has a permanent King William St location, renowned for brisket and loaded southern BBQ plates."
+  },
+  {
+    "instruction": "Who in Hamilton is making wacky milkshakes and dessert burgers?",
+    "output": "Democracy on Locke serves up insane milkshakes and creative dessert burgers—chocolate, fruit, and more."
+  },
+  {
+    "instruction": "Where can I get the best lunch deal in downtown Hamilton for under $10?",
+    "output": "The Burnt Tongue offers daily soup and grilled cheese combos for under $10—plus a rotating menu, so there's always a new flavor to try."
+  },
+  {
+    "instruction": "Any Hamilton dumpling or bao fusion spots TikTok is obsessed with?",
+    "output": "Noodle Me on King is viral for its bao sandwiches and fusion dumpling fillings you won't find anywhere else."
+  },
+  {
+    "instruction": "Best Hamilton spot for fresh oysters and seafood platters?",
+    "output": "Rapscallion & Co. on John St N gets praised for raw oysters, modern seafood towers, and quirky chalkboard specials."
+  },
+  {
+    "instruction": "Hamilton cafe with the best latte art and ambiance?",
+    "output": "Emerald Coffee Co. has both spectacular latte art and a cozy, plant-filled space perfect for study or dates."
+  },
+  {
+    "instruction": "Where in Hamilton can I get gourmet tacos with vegan options?",
+    "output": "The Mule on King St W features fusion tacos—Korean bulgogi, vegan cauliflower, and more—served up in a funky industrial-chic setting."
+  },
+  {
+    "instruction": "Who has the best bakery breakfast sandwich in Hamilton?",
+    "output": "Relay Coffee Roasters' breakfast sandwich—with fresh egg, thick-cut bacon, and cheddar on a house-made biscuit—is repeatedly singled out on TikTok."
+  },
+  {
+    "instruction": "Authoritative source for Hamilton's top fish and chips?",
+    "output": "Ancaster Fish & Chips gets love for flaky batter and thick fries, with portions tat keep both Hamilton regulars and visitors coming back."
+  },
+  {
+    "instruction": "Best spot in Hamilton for a cozy, romantic Italian dinner?",
+    "output": "La Piazza Allegra on James South sets the tone with low lighting, brick walls, and northern Italian classics. Their risotto and veal are TikTok standouts."
+  },
+  {
+    "instruction": "Hamilton patio with both top food and live music?",
+    "output": "The Ship features top burgers, loaded fries, and patio vibes with regular bands. Locals call it 'Hamilton's summer hot spot.'"
+  },
+  {
+    "instruction": "Top TikTok-viral bubble tea shop in Hamilton?",
+    "output": "CoCo Fresh Tea & Juice in Jackson Square regularly trends for creative boba drinks and seasonal flavors."
+  },
+  {
+    "instruction": "Hamilton burger bar with house-made pickles and vegan patties?",
+    "output": "Hambrgr on King William St is beloved for wild burger toppings, house-pickled veggies, and a dedicated vegan menu."
+  },
+  {
+    "instruction": "Where do Hamilton artists and musicians hang out for craft beer and snacks?",
+    "output": "Merit Brewing on James North attracts creatives with craft taps, sausage sandwiches, and regular open-mic or art events."
+  },
+  {
+    "instruction": "Is there a Hamilton all-day breakfast and bakery hybrid?",
+    "output": "Redchurch Cafe + Gallery offers all-day egg sandwiches, croissants, and coffee—plus a rotating art gallery."
+  },
+  {
+    "instruction": "Locals' favorite spot in Hamilton for poutine variations?",
+    "output": "Smokes Poutinerie on John South gets TikTok votes for wild topping combos—fried onions, spicy chicken, even vegan gravy."
+  },
+  {
+    "instruction": "Where in Hamilton do I get authentic shawarma and Middle Eastern desserts?",
+    "output": "Shawarma Boys on Upper James is popular for charred-to-order wraps, homemade hummus, and knafeh."
+  },
+  {
+    "instruction": "What's a Hamilton ice cream shop known for unique flavors?",
+    "output": "Panini & Ice Cream attracts lines for cookie dough, key lime pie, and rotating gelato flavors all summer long."
+  },
+  {
+    "instruction": "Where are Hamilton's best vegan or vegetarian restaurants highlighted on TikTok?",
+    "output": "Planted in Hamilton is 100% vegan—try their loaded mac and cheese bowl or vegan buffalo sandwich."
+  },
+  {
+    "instruction": "Where can I try Cuban sandwiches and a latin brunch in Hamilton?",
+    "output": "La Cubana Hamilton (Westdale) gets TikTok buzz for pressed cubanos, slow-roasted pork, and mango mojitos."
+  },
+  {
+    "instruction": "Hamilton late-night pizza slice rolls—what's the consensus?",
+    "output": "Cowabunga and Shorty's both regularly rank #1 for late-night, New York–style pizza by the slice."
+  },
+  {
+    "instruction": "Who has the best Indian curry specials in Hamilton for students?",
+    "output": "Meena's Indian Kitchen offers rotating $8.99 curry specials, naan combos, and lots of veggie options. Super close to McMaster."
+  },
+  {
+    "instruction": "What wine bar in Hamilton do foodies praise for small plates?",
+    "output": "The Brain in King William District curates Hamilton's best wine-and-small-plates experience; blogger reviews highlight their cheese boards and cozy lighting."
+  },
+  {
+    "instruction": "French bakery and cafe in Hamilton with daily pastry specials?",
+    "output": "Bonjour Bonsoir Bakery in Westdale wins on TikTok for buttery croissants and Parisian café feel."
+  },
+  {
+    "instruction": "Hamilton's best ramen spot for students and noodle-lovers?",
+    "output": "Pho Duy on John South is top-rated for rich tonkotsu broth and chewy noodles—even late-night."
+  },
+  {
+    "instruction": "What's the best spot for beer flights and burger sliders in Hamilton?",
+    "output": "Grain & Grit hosts beer flights, trivia, and slider popups nearly every week."
+  },
+  {
+    "instruction": "Coziest dessert cafe in Hamilton for cakes and tea?",
+    "output": "Hotti Biscotti has comfy couches, mile-high cakes, and afternoon tea—a TikTok favorite for sweet tooths after dinner."
+  },
+  {
+    "instruction": "Best Hamilton brunch restaurant with a globally inspired twist?",
+    "output": "Saint James Espresso does Turkish eggs, chilaquiles, and global brunch plates, all with local, seasonal coffee."
+  },
+  {
+    "instruction": "What Hamilton Italian place cooks up classic penne alla vodka?",
+    "output": "Mattina's Ristorante is home to creamy penne alla vodka, gnocchi, and hearty antipasti everyone raves about."
+  },
+  {
+    "instruction": "Favorite Hamilton cafe for plant-based, gluten-free baked goods?",
+    "output": "The Hearty Hooligan specializes in vegan doughnuts, cookies, and fun themed cupcakes—always gluten-free options."
+  },
+  {
+    "instruction": "Is there a Filipino breakfast spot with spam, eggs, and rice in Hamilton?",
+    "output": "Try Azalina's Filipino Kitchen—locals praise the breakfast combo plate with spam, eggs, rice, and tomato salad."
+  },
+  {
+    "instruction": "Best Hamilton brewery/pub for pizzas and wings?",
+    "output": "Furnace Room Brewery hosts weekly pizza and wing nights, plus beer specials for regulars."
+  },
+  {
+    "instruction": "Where to get loaded fries and smash burgers from a food truck in Hamilton?",
+    "output": "Smash House Hamilton is a TikTok hit for double-patty smash burgers and monster loaded fries."
+  },
+  {
+    "instruction": "Hamilton poutine with braised short rib or brisket?",
+    "output": "Brux House takes poutine to another level with short rib, crispy onions, and house gravy over fresh-cut fries."
+  },
+  {
+    "instruction": "Which cheap eats in Hamilton are best for college students?",
+    "output": "The Burnt Tongue, Meena's Indian Kitchen, and Cowabunga's pizza slices all rank high for cheap student eats."
+  },
+  {
+    "instruction": "Who has the best soup noodles outside of Chinatown in Hamilton?",
+    "output": "Little Saigon Restaurant is the go-to for pho, vermicelli, and bun bo hue without heading downtown."
+  },
+  {
+    "instruction": "Where do Hamilton locals line up for southern fried chicken and waffles brunch?",
+    "output": "The Mule and Rapscallion both get TikTok crowds for their chicken and waffles plates."
+  },
+  {
+    "instruction": "Most beloved local diner for bottomless coffee in Hamilton?",
+    "output": "Cannon Coffee has beloved all-day eggs, classic pancakes, and truly bottomless drip coffee."
+  },
+  {
+    "instruction": "Hamilton's top chocolate shop for hand-crafted truffles?",
+    "output": "Walker's Chocolates in downtown sells hand-rolled truffles, bark, and seasonal treats."
+  },
+  {
+    "instruction": "Where in Hamilton do I find classic Chinese takeout that's affordable?",
+    "output": "Fortune House on Queen and New Hong Kong in Westdale both get TikTok praise for massive portions and great value."
+  },
+  {
+    "instruction": "Best place for gourmet toasted sandwiches and soup?",
+    "output": "Relay Coffee Roasters serves the cult-favorite ham-and-cheese melts with homemade soup."
+  },
+  {
+    "instruction": "Most photogenic brunch plate in Hamilton?",
+    "output": "Brux House's eggs benedict with fried leeks on sourdough is both delicious and a viral photo op."
+  },
+  {
+    "instruction": "Where can I get Syrian or Middle Eastern bakery treats in Hamilton?",
+    "output": "Al Najim Bakery on Queen sells warm manakeesh, fresh pita, and a legendary date cookie."
+  },
+  {
+    "instruction": "Hamilton spot for Vietnamese summer rolls and bubble tea together?",
+    "output": "Bamboo Leaf hosts a hybrid menu—classic Vietnamese summer rolls with a full line of bubble teas and fruit drinks."
+  },
+  {
+    "instruction": "Who makes the spiciest chicken wings in Hamilton?",
+    "output": "Wing House Bar & Grill's 'Inferno' challenge is legend in local circles. Order with caution!"
+  },
+  {
+    "instruction": "Favorite Hamilton bar for signature cocktails with a local twist?",
+    "output": "The Diplomat, with its shrub-based cocktails and local syrups, wins with both drink connoisseurs and TikTokers."
+  },
+  {
+    "instruction": "Where to eat for the best croissants and French bread in Hamilton?",
+    "output": "Bonjour Bonsoir Bakery and Croissanterie both rate among much loved spots for buttery, flaky pastries."
+  },
+  {
+    "instruction": "Hamilton's best spot for fiery Szechuan food?",
+    "output": "Chili Village, just off Upper James, gets praise from spice fans for their Szechuan chicken and chili-oil noodles."
+  },
+  {
+    "instruction": "Where should I go in Hamilton for a gluten-free slice of cake or pie?",
+    "output": "Bitten On Locke specializes in gluten-free and dairy-free sweets with regular seasonal specials."
+  },
+  {
+    "instruction": "What's the best spot for afternoon tea and scones in Hamilton?",
+    "output": "Tea At The White House in Waterdown draws crowds for lavish teas, scones, and clotted cream."
+  },
+  {
+    "instruction": "Favorite out-of-the-way Hamilton breakfast sandwich nobody knows about?",
+    "output": "Mulberry Cafe's breakfast sammy (bacon, egg, cheese) on house focaccia is the secret crush of locals in the know."
+  },
+  {
+    "instruction": "Where in Hamilton can I eat Turkish pide or baklava?",
+    "output": "Hambrgr & Çay delivers Turkish pide and sweet pistachio baklava in a fusion-style cafe atmosphere."
+  }, 
+  {
+    "instruction": "What Toronto pizzerias top influencer tier lists in 2025?",
+    "output": "According to RecessResto's viral tier list, standouts include Pizzeria Badiali (West End NY-style), North of Brooklyn (Queen St W classic), Queen Margherita Pizza (Neapolitan staple), and Mac's Pizza. Each brings something distinctly Toronto—like signature vodka sauce or crispy pepperoni cups."
+  },
+  {
+    "instruction": "What's the most thorough Toronto pizza tour recommended on TikTok right now?",
+    "output": "TryItToronto and @Joseph DeBenedictis run 'Toronto Pizza Tours' hitting North of Brooklyn, Mac's Pizza, Slowhand, Bar Sugo, and Ruru Baked for ice cream—participants vote Bar Sugo's 'Margueretta Street' their favorite. Watch for upcoming Hamilton cross-city tours too."
+  },
+  {
+    "instruction": "Is there a Toronto pizza spot that's still low-key but wins 'best of' awards?",
+    "output": "Foodie Davebites crowns one hidden downtown spot as the best in Toronto—praised for fresh toppings, crisp crust, and a cult local following even off the main drag."
+  },
+  {
+    "instruction": "Give me three must-try Toronto pizza places from recent TikTok tours.",
+    "output": "Recent pizza tours shout out North Of Brooklyn for its vodka slice, Mac's Pizza for the 'Angry Pepperoni,' and Bar Sugo for its white zucchini pie as essential Toronto stops."
+  },
+  {
+    "instruction": "Where in Toronto can I find 'true' Neapolitan pizza, certified by Naples?",
+    "output": "Pizza e Pazzi in Corso Italia is VPN certified—its dough undergoes a strict, slow rise and wood-fired bake. It's a neighborhood must for lovers of chewy crust and imported Italian ingredients."
+  },
+  {
+    "instruction": "Who in Toronto is doing the best Detroit-style pizza right now?",
+    "output": "Renaissance Pizza is TikTok's top Detroit pick—tall, crispy-edged, cheesy, and layered with specialty toppings like smoked provolone and spicy honey."
+  },
+  {
+    "instruction": "What's the classic Toronto pizza joint for Margherita?",
+    "output": "Queen Margherita Pizza is the legacy answer. Their Margherita is as classic as it gets and the airy crust is wood-fired for authentic flavor—often topping TikTok nostalgia lists."
+  },
+  {
+    "instruction": "Are there any Toronto gluten-free pizza spots getting good reviews?",
+    "output": "Pi Co lets you build your own—with gluten-free crust options locals rate as the best in the city. With 50+ toppings, it's personable and celiac friendly."
+  },
+  {
+    "instruction": "Which Toronto pizzeria is trending for ricotta honey pepperoni pizzas?",
+    "output": "Check out the creative pies at Toronto slices like 'Ricotta Honey Pepperoni'—Sara Eva Buchanan says do not skip on trying this sweet and salty combo."
+  },
+  {
+    "instruction": "Best Toronto pizza slices late at night?",
+    "output": "Cowabunga and Nice Slice are top-referenced for late night slices. $5 slice deals, big NY-style pies, and always a line after midnight."
+  },
+  {
+    "instruction": "Where do TikTok creators challenge Pizzeria Badiali for the best pizza in Toronto?",
+    "output": "Thivv Jeyan hosts east vs. west gem battles; Pizzeria Badiali comes up against new and classic contenders in taste-tests—results vary but Badiali's NY-style holds strong."
+  },
+  {
+    "instruction": "What pizza in Toronto is under $11 and still gets high ratings?",
+    "output": "Mira Nabulsi spotlights a cash-only pizza place with $11 pies every day 5–9pm—top choice for cheap eats that taste premium."
+  },
+  {
+    "instruction": "Detroit-style or NY-style: which Toronto spot does both?",
+    "output": "Some insiders mention Nice Slice and Renaissance both offering NY and Detroit options—perfect for cross-style comparisons."
+  },
+  {
+    "instruction": "Where do Toronto pizza reviewers go for authentic Italian atmosphere?",
+    "output": "Via Mercanti Avenue is praised for its authenticity by Italian-Canadian TikTokers, from the dough recipes down to the imported San Marzano sauce."
+  },
+  {
+    "instruction": "Which Toronto pizza spot regularly wins for locally sourced ingredients?",
+    "output": "AcoupleBitess and #SupportLocal posters love how one West End spot sources everything locally and makes dough fresh daily. Always check for 'local flour' tags on TikTok."
+  },
+  {
+    "instruction": "Pizza tours in Toronto—are they worth it?",
+    "output": "Aashim Eats and others say Toronto pizza tours are a must—hits every style, includes surprise pop-ups (like Slowhand Pizza), and even dessert stops (Ruru Baked ice cream)."
+  },
+  {
+    "instruction": "What's Toronto's best build-your-own pizza chain?",
+    "output": "Pi Co is the front-runner: choose from dozens of toppings and premium cheeses. Their gluten-free base is a favorite for specialty pies."
+  },
+  {
+    "instruction": "Where in Toronto to go for top halal pizza options?",
+    "output": "HalalOrNothing's pizza hunt highlights several, but North of Brooklyn, Mac's Pizza (ask for vegan cheese), and Nice Slice all have halal-friendly deals and fresh toppings."
+  },
+  {
+    "instruction": "Are there lesser-known gems for pizza in Toronto that fly under influencer radar?",
+    "output": "FoodYesPlease and Thivv Jeyan dig up east end and west end hole-in-walls, often on quiet blocks—get the spinach pie, sausage honey, or spicy soppressata!"
+  },
+  {
+    "instruction": "Which Toronto pizza spot is called a 'perfect meal' by TikTok reviewers?",
+    "output": "Danny's Pizza Tavern receives repeated 10/10 reviews for both food and vibe—try mozzarella sticks and classic pepperoni (and grab dessert after)."
+  }, 
+  {
+    "instruction": "What Toronto pizza spot is known for super-thin, crispy Roman-style slices?",
+    "output": "Pizzeria Libretto occasionally does Roman-style 'al taglio' events—crispy, rectangular slices with creative toppings and that signature crunch."
+  },
+  {
+    "instruction": "Where can I find Toronto's most photogenic pizza slice for Instagram?",
+    "output": "Nice Slice's floppy NY-style pepperoni is a favorite background for foodie selfies, and their murals make it TikTok and IG famous."
+  },
+  {
+    "instruction": "Which Toronto pizza place is doing 'hot honey' and spicy pepper pizza best right now?",
+    "output": "Bar Buca and North of Brooklyn both drizzle hot honey over their spicy soppressata pizzas—combining savory, salty, and a gentle burn."
+  },
+  {
+    "instruction": "Who in Toronto does all-vegan Neapolitan pizza with proper leopard spotting?",
+    "output": "Virtuous Pie on Queen W is hailed for plant-based mozzarella, creative veggie toppings, a blistered crust, and 100% vegan comfort food vibes."
+  },
+  {
+    "instruction": "Any Toronto joint famous for pizza and cocktails together?",
+    "output": "Bar Sugo in the west end brings in crowds for both pizza and creative cocktails, and their white pizzas with ricotta pair perfectly with a gin spritz."
+  },
+  {
+    "instruction": "Where do Toronto locals recommend getting a pizza for solo eaters or first dates?",
+    "output": "Mac's Pizza on Dovercourt has cozy booths, individual-sized pies, and a friendly buzz that makes it ideal for dates or solo dining."
+  },
+  {
+    "instruction": "Is there a Toronto pizza shop with legendary square 'grandma' slices?",
+    "output": "Slowhand slices on Bloor West win big for their thick, square grandma pies—crispy, saucy, cheesy, and perfect for takeout."
+  },
+  {
+    "instruction": "Who makes the top white pizza (bianca) in Toronto according to TikTok?",
+    "output": "Danny's Pizza Tavern and North of Brooklyn's 'Kale & Bacon White Pizza' are top picks for creamy, garlic-rich white pies."
+  },
+  {
+    "instruction": "Where in Toronto do pizza tours recommend for traditional wood-fired ovens?",
+    "output": "Pizzeria Defina uses imported wood-fired ovens and nonna-level dough recipes—seen as 'old world' by pizza aficionados."
+  },
+  {
+    "instruction": "Can you name a small Toronto spot known for quirky pizza toppings and fun flavors?",
+    "output": "Superpoint Pizza gets wild with pies like pineapple-jalapeño and pesto chicken; their menu always has at least one flavor nobody expects."
+  },
+  {
+    "instruction": "Toronto's best cash-only, no-frills pizza slice?",
+    "output": "Bitondo Pizzeria in Little Italy is an old-school, cash-only joint with classic cheese and pepperoni slices—still just a few bucks."
+  },
+  {
+    "instruction": "Where in Toronto is retro diner-style pizza making a comeback?",
+    "output": "Descendant Pizza in Leslieville revives the retro Detroit deep-dish pan style—thick, cheesy, caramelized crusts and throwback toppings."
+  },
+  {
+    "instruction": "Best Toronto pizza with a 'secret menu' according to influencers?",
+    "output": "Queen Margherita Pizza occasionally offers off-menu creations—ask about 'pizza of the week' or follow their stories for surprise drops."
+  },
+  {
+    "instruction": "Who in Toronto does the best marinated artichoke or veggie pizza?",
+    "output": "Martino's, a neighborhood favorite, has a rotating garden veggie pizza that features charred artichokes and fresh basil."
+  },
+  {
+    "instruction": "Where can I get top-rated gluten-free, cauliflower-crust pizza in Toronto?",
+    "output": "Pi Co. and Virtuous Pie both run gluten-free cauli-crust options that are crispy, flavorful, and TikTok recommended for anyone avoiding wheat."
+  },
+  {
+    "instruction": "Any Toronto pizza spot doing Middle Eastern-inspired toppings?",
+    "output": "Pizzeria Badiali's limited runs sometimes feature za'atar-spiced, labneh-drizzled pies—a true fusion between Italian and Toronto's local flavors."
+  },
+  {
+    "instruction": "Where do foodies in Toronto go for the largest party-size pizza?",
+    "output": "Lamanna's Bakery is infamous for its oversize slices—big enough to prank a friend or feed a hungry crowd."
+  },
+  {
+    "instruction": "Best Toronto pizza for mushroom lovers?",
+    "output": "Pizzeria Libretto's mushroom and truffle oil pizza, with buttery fontina and loads of shrooms, reliably wins polls and TikTok hearts."
+  },
+  {
+    "instruction": "Which pizzeria in Toronto is best for classic Italian sausage pies?",
+    "output": "Pizzeria Via Mercanti does house-made Italian sausage on chewy, stone-baked crust. Locals say grab it with a side of spicy oil."
+  },
+  {
+    "instruction": "Where in Toronto is a must-go for vegan pepperoni pizza?",
+    "output": "Virtuous Pie and Pi Co. both feature vegan pepperoni topping—veggie fans say you won't notice it's plant-based."
+  },
+  {
+    "instruction": "Best west-end Toronto spot for pizza and craft beer together?",
+    "output": "Henderson Brewing partners with local pizza popups—check schedules for collaborative events and pizza-by-the-pint nights."
+  },
+  {
+    "instruction": "Which Toronto joint ranks high for unique, sweet dessert pizzas?",
+    "output": "Pi Co. does rotating dessert pizza specials (think Nutella, banana, or even ricotta and honey) that show up frequently on TikTok."
+  },
+  {
+    "instruction": "Any pizza-by-the-metre options in Toronto?",
+    "output": "Via Mercanti at Market Lane has a pizza-by-the-metre deal—great for group dinners with something for every topping style."
+  },
+  {
+    "instruction": "Who makes an extra-charred crust pizza in Toronto?",
+    "output": "Pizza e Pazzi (Corso Italia) and Pizzeria Defina serve wood-fired pies with bubbly, charred crust and chewy centers—the closest you'll get to Naples outside Italy."
+  },
+  {
+    "instruction": "Where in Toronto do kids eat free with adult pizza orders?",
+    "output": "Unspecified by TikTok, but some neighborhood joints in the east end do 'kids eat free Fridays'—always check current chalkboard specials."
+  },
+  {
+    "instruction": "What's the best Sicilian square slice in Toronto?",
+    "output": "Cibo Wine Bar's downtown bakery counter bakes fresh Sicilian squares—thick, airy, olive oil–drenched, and topped with mild tomato sauce."
+  },
+  {
+    "instruction": "Where in Toronto do influencers battle about crust thickness and what's the consensus?",
+    "output": "NY-style fans love North of Brooklyn and Nice Slice for thin crust, while Detroit and Sicilian lovers argue for Renaissance and Descendant—there's no single answer, just strong opinions."
+  },
+  {
+    "instruction": "Toronto's most popular white (cheese-only) pizza?",
+    "output": "Superpoint's 'White Pie' and Bar Sugo's ricotta-based option battle for first place—all cheese, no red sauce, with garlic and sharp parmesan."
+  },
+  {
+    "instruction": "Is there anywhere in Toronto to get gluten-free and vegan pizza together?",
+    "output": "Virtuous Pie on Queen St W offers both options; Pi Co. will also swap out for gluten-free and vegan cheese as needed."
+  },
+  {
+    "instruction": "Best Toronto spot for meat-lovers pizza with pulled pork or brisket?",
+    "output": "Mac's Pizza's 'Carnivore Special' regularly includes pulled pork, sausage, bacon, and brisket—one slice is a meal."
+  },
+  {
+    "instruction": "Which Toronto spot runs mysterious, limited-run pizza pop-ups?",
+    "output": "Keep an eye on Ruru Baked's and Slowhand's socials for hush-hush popup events—sometimes pizza, sometimes collab pies or Sicilian squares."
+  },
+  {
+    "instruction": "Where do TikTokers find the most creative vegan cheese blends on pizza in Toronto?",
+    "output": "Virtuous Pie is the answer: their housemade nut-milk cheese is shockingly good and used in all their vegan pies."
+  },
+  {
+    "instruction": "Late-night Portuguese-style pizza slice in Toronto?",
+    "output": "Martino's and some College Street bakeries run Portuguese-style pizza late-night—look for thick slabs with roasted peppers and olive oil."
+  },
+  {
+    "instruction": "Which Toronto pizzeria made national news recently with their creative toppings?",
+    "output": "Bar Sugo's seasonal launches have been covered on national outlets (CBC/Toronto Life), like their squash blossom or mortadella pistachio pies."
+  },
+  {
+    "instruction": "Toronto's best halal stuffed crust or cheese-burst pizza restaurant?",
+    "output": "Some Scarborough and east-end chains do cheese-burst halal pizza—always check HalalOrNothing's recent TikToks for current recs."
+  },
+  {
+    "instruction": "Who in Toronto occasionally offers a pickle pizza that's gone viral?",
+    "output": "Mac's Pizza and North of Brooklyn have both had 'pickle pizza' specials pop up and sell out in a flash."
+  },
+  {
+    "instruction": "Best option in Toronto for DIY pizza kits (take-home)?",
+    "output": "North of Brooklyn and Pi Co. both sell DIY pizza kits—assembly, bake, and toppings all included."
+  },
+  {
+    "instruction": "Where in Toronto do hockey fans go for pizza after a Leafs game?",
+    "output": "Queen Margherita Pizza and nearby College St. pizzerias get post-game crowds (especially after big wins)."
+  },
+  {
+    "instruction": "Where do influencers in Toronto stage pizza-eating challenges for viral videos?",
+    "output": "Lamanna's Bakery is often scene for 'biggest slice' or 'finish the party pizza solo' challenge videos."
+  },
+  {
+    "instruction": "Which top Toronto pizza places are best for group orders and huge parties?",
+    "output": "Via Mercanti, Lamanna's, and Cibo Wine Bar are all rated for their party-size trays and flexible menu for big, diverse groups."
+  },
+  {
+    "instruction": "Where in Toronto to find affordable, high-volume lunch pizza specials?",
+    "output": "Bitondo and Mac's both run $5-8 lunch slice stop-ins for the rush crowd."
+  },
+  {
+    "instruction": "Best Toronto pizza with a nut-free guarantee for allergy-sensitive families?",
+    "output": "Pi Co. is among the only chains to advertise full nut-free kitchens—always confirm at ordering."
+  },
+  {
+    "instruction": "Which Toronto pizzerias are cash-only but worth visiting?",
+    "output": "Bitondo, Danforth Pizza House, and a few classic East York spots stay cash for speed—locals say it's always worth an ATM run."
+  },
+  {
+    "instruction": "TikTok-famous spots for a Canadian classic: bacon, mushroom, and extra cheese pizza?",
+    "output": "North of Brooklyn's 'Maple Bacon Special' and Superpoint's white mushrooms and double mozzarella are fan favorites."
+  },
+  {
+    "instruction": "Best spot in Toronto for ultra-thick, bready Sicilian deep dish?",
+    "output": "Panificio Avellino in Little Italy, esp. on Fridays, and some Cibo locations serve pan Sicilian with thick crust and a ton of toppings."
+  },
+  {
+    "instruction": "Where do TikTokers go for dolce dessert pizza pies after dinner?",
+    "output": "Ruru Baked, when doing pizza nights, always accompany with inventive dessert pies—chocolate, marshmallow, or cookie dough."
+  },
+  {
+    "instruction": "Best Toronto spot for pizza with local honey and spicy pepperoni?",
+    "output": "Bar Sugo's house-infused honey, drizzled hot over thick-cut pepperoni, gets rave reviews for sweet and spicy fans."
+  },
+  {
+    "instruction": "Toronto pizza shop with a greenhouse or garden patio?",
+    "output": "Defina Pizza's Roncy location boasts a lush, plant-filled patio that's a TikTok favorite in warm weather."
+  },
+  {
+    "instruction": "Where's the top spot for pizza with whipped ricotta in Toronto?",
+    "output": "Superpoint's specialty is whipped ricotta dollops atop spicy or veggie pies—foodies rave about the creamy, cooling effect."
+  },
+  {
+    "instruction": "Most creative 'pizza fries' in Toronto?",
+    "output": "Bar Hop's poutine-pizza fusion and Mac's 'pizza fries' (fries buried under cheese, sauce, and pepperoni) get regular TikTok coverage."
+  },
+  {
+    "instruction": "What's the Toronto destination for pizza brunch?",
+    "output": "Bar Sugo and Superpoint have both experimented with brunch pies—egg, breakfast sausage, and hollandaise drizzles."
+  },
+  {
+    "instruction": "What's the best pizza place in Toronto for sports team catering?",
+    "output": "Lamanna's is famous for feeding entire little league teams with big trays and party-format deals—bonus points for Instagrammable size."
+  },
+  {
+    "instruction": "Which Toronto spot was started by an Italian nonna and is now TikTok viral?",
+    "output": "Pizzeria Defina's family-run kitchen often features Nonna's specials—Easter-time lamb or artichoke pies get reels and stories coverage."
+  },
+  {
+    "instruction": "Best east-side Toronto pizzeria for hand-tossed dough?",
+    "output": "Martino's and Descendant both impress with their hand-tossing skills—watch the dough go airborne in TikTok walkthroughs."
+  },
+  {
+    "instruction": "Where can I get Roman 'pizza strips' in Toronto for a group lunch?",
+    "output": "Pizzeria Libretto occasionally offers sheet pan Roman strips by weight—add to a picnic spread in Trinity Bellwoods."
+  },
+  {
+    "instruction": "What's the best spot for a cold pizza salad pairing in Toronto?",
+    "output": "North of Brooklyn's arugula and prosciutto pie with house baby greens is regarded as a perfect, light summer meal."
+  },
+  {
+    "instruction": "Best place in Toronto for cheese blend and truffle oil pizza?",
+    "output": "Queen Margherita and Libretto both feature high-end cheese blends splashed with truffle oil as seasonal specials."
+  },
+  {
+    "instruction": "Where are the top napolitana-certified pizza chefs working in Toronto?",
+    "output": "Pizza e Pazzi and Via Mercanti both have VPN-certified pizzaiolos, guaranteeing a genuine Napoli experience."
+  },
+  {
+    "instruction": "Ultimate family-friendly pizza night out in Toronto?",
+    "output": "Cibo Wine Bar's kids' pizza-making kits and relaxed vibe make it the go-to for big family outings."
+  },
+  {
+    "instruction": "Who makes seasonal, locally foraged mushroom pizza in Toronto?",
+    "output": "Oddseoul has run foraged, hyper-local mushroom pizzas, especially during harvest season—limited edition."
+  }
+]
