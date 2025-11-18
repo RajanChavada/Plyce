@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MapSelectionScreen = () => {
   const { location, setCustomLocation } = useContext(LocationContext);
-  const [radius, setRadius] = useState(location?.radius || 5000); // Keep 5km as default
+  const [radius, setRadius] = useState(location?.radius || 2000); // 2km default (within 1-10km range)
   const [mapRegion, setMapRegion] = useState({
     latitude: location?.latitude || 43.6532,
     longitude: location?.longitude || -79.3832,

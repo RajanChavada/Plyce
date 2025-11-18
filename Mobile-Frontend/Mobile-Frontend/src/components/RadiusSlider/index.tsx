@@ -14,9 +14,9 @@ interface RadiusSliderProps {
 const RadiusSlider: React.FC<RadiusSliderProps> = ({ 
   value, 
   onValueChange,
-  min = 2000,  // Changed from 5000 to 2000 (2km)
-  max = 15000, // Changed from 25000 to 15000 (15km)
-  step = 1000  // Changed from 5000 to 1000 for finer control
+  min = 2000,  // 2km minimum (backend requirement)
+  max = 15000, // 15km maximum (backend limit: 25km, but 15km is reasonable for UI)
+  step = 1000  // 1km increments
 }) => {
   const displayValue = value / 1000; // Convert to km for display
   

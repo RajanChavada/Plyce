@@ -330,6 +330,8 @@ const HomeScreen = () => {
           )}
         </TouchableOpacity>
 
+        {/* Map button removed - now in bottom navigation */}
+
         {/* Display active filters */}
         {hasActiveFilters && (
           <View style={styles.filterPillsContainer}>

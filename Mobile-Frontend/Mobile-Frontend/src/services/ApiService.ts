@@ -18,9 +18,9 @@ function getApiUrl() {
   let DEV_URL: string;
   
   if (Platform.OS === "ios") {
-    DEV_URL = "http://192.168.2.87:8000";
+    DEV_URL = "http://192.168.2.87:8000"; // iOS Simulator - use Mac's local IP
   } else if (Platform.OS === "android") {
-    DEV_URL = "http://10.0.2.2:8000";
+    DEV_URL = "http://10.0.2.2:8000"; // Android Emulator special IP
   } else {
     DEV_URL = "http://192.168.2.87:8000";
   }
@@ -317,7 +317,7 @@ class ApiService {
 
     try {
       console.log("🌐 FETCHING FROM API...");
-      const radius = location.radius || 2000;
+      const radius = location.radius || 2000; // Default 2km
       
       const params: any = {
         lat: location.latitude,
@@ -949,7 +949,7 @@ class ApiService {
     }
   ): Promise<Restaurant[]> {
     try {
-      const radius = location.radius || 5000;
+      const radius = location.radius || 2000; // Default 2km
       
       const params: any = {
         lat: location.latitude,
