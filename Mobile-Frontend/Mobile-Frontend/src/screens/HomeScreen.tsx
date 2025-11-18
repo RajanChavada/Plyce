@@ -330,18 +330,7 @@ const HomeScreen = () => {
           )}
         </TouchableOpacity>
 
-        {/* View on Map Button */}
-        <TouchableOpacity 
-          style={styles.mapButton}
-          onPress={() => router.push('/map-view-unified' as any)}
-        >
-          <Ionicons 
-            name="map" 
-            size={18} 
-            color={Colors.primary} 
-          />
-          <Text style={styles.mapButtonText}>Map</Text>
-        </TouchableOpacity>
+        {/* Map button removed - now in bottom navigation */}
 
         {/* Display active filters */}
         {hasActiveFilters && (
