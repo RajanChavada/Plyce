@@ -16,18 +16,18 @@ const CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 function getApiUrl() {
   // For testing the new filters, use local development server
   let DEV_URL: string;
-  
+
   if (Platform.OS === "ios") {
-    DEV_URL = "http://192.168.2.87:8000"; // iOS Simulator - use Mac's local IP
+    DEV_URL = "http://192.168.2.45:8000"; // iOS Simulator - use Mac's local IP
   } else if (Platform.OS === "android") {
     DEV_URL = "http://10.0.2.2:8000"; // Android Emulator special IP
   } else {
-    DEV_URL = "http://192.168.2.87:8000";
+    DEV_URL = "http://192.168.2.45:8000";
   }
-  
+
   // CHANGE THIS TO SWITCH BETWEEN DEV AND PROD
   const USE_PRODUCTION = false; // Set to true to use production, false for local dev
-  
+
   const selectedUrl = USE_PRODUCTION ? PROD_URL : DEV_URL;
   console.log("🌐 Using API URL:", selectedUrl);
   return selectedUrl;
@@ -190,10 +190,10 @@ class ApiService {
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
-        
+
       return {
         place_id: placeId,
-        displayName: { 
+        displayName: {
           text: name,
           languageCode: 'en'
         },
@@ -220,17 +220,17 @@ class ApiService {
     try {
       const response = await axios.get(`${API_URL}/restaurants/${placeId}`);
       const details = response.data;
-      
+
       // Make sure place_id is included in the details
       details.place_id = placeId;
-      
+
       // Cache the results
       try {
         await AsyncStorage.setItem(`restaurant_details_${placeId}`, JSON.stringify(details));
       } catch (error) {
         console.error('Error caching restaurant details:', error);
       }
-      
+
       return details;
     } catch (error) {
       console.error(`Error fetching details for ${placeId}:`, error);
@@ -267,14 +267,14 @@ class ApiService {
     try {
       const response = await axios.get(`${API_URL}/restaurants/${placeId}/reviews`);
       const reviews = response.data.reviews || [];
-      
+
       // Cache the results
       try {
         await AsyncStorage.setItem(`restaurant_reviews_${placeId}`, JSON.stringify(reviews));
       } catch (error) {
         console.error('Error caching restaurant reviews:', error);
       }
-      
+
       return reviews;
     } catch (error) {
       console.error(`Error fetching reviews for ${placeId}:`, error);
@@ -294,7 +294,7 @@ class ApiService {
   ): Promise<Restaurant[]> {
     // NEVER use cache when filtering
     const shouldUseCache = useCache && !keyword;
-    
+
     if (shouldUseCache) {
       try {
         const cachedData = await this.getCachedRestaurants();
@@ -318,37 +318,37 @@ class ApiService {
     try {
       console.log("🌐 FETCHING FROM API...");
       const radius = location.radius || 2000; // Default 2km
-      
+
       const params: any = {
         lat: location.latitude,
         lng: location.longitude,
         radius,
       };
-      
+
       if (keyword) {
         params.keyword = keyword;
         console.log(`🔍 Filtering by keyword: ${keyword}`);
       }
-      
+
       const response = await axios.get(`${API_URL}/restaurants`, {
         params
       });
-      
+
       if (!response.data) {
         console.error("API returned empty data");
         throw new Error("No data returned from API");
       }
-      
+
       console.log("API Response structure:", JSON.stringify(response.data).substring(0, 100) + "...");
-      
+
       let restaurants: Restaurant[] = [];
-      
+
       if (response.data.places && Array.isArray(response.data.places)) {
         console.log("Processing 'places' array format");
         restaurants = response.data.places.map((item: any, index: number) => {
           // Generate a unique ID that's guaranteed to exist
           const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
-          
+
           return {
             id: uniqueId,
             place_id: uniqueId, // Use same unique ID for place_id
@@ -359,12 +359,12 @@ class ApiService {
             types: item.types || [],
             priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
             location: {
-              latitude: item.location?.latitude || 
-                       item.geometry?.location?.lat || 
-                       item.latitude || 0,
-              longitude: item.location?.longitude || 
-                        item.geometry?.location?.lng || 
-                        item.longitude || 0,
+              latitude: item.location?.latitude ||
+                item.geometry?.location?.lat ||
+                item.latitude || 0,
+              longitude: item.location?.longitude ||
+                item.geometry?.location?.lng ||
+                item.longitude || 0,
             },
             photos: item.photos || [],
             displayName: item.displayName
@@ -373,7 +373,7 @@ class ApiService {
       } else if (Array.isArray(response.data)) {
         restaurants = response.data.map((item: any, index: number) => {
           const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
-          
+
           return {
             id: uniqueId,
             place_id: uniqueId,
@@ -384,12 +384,12 @@ class ApiService {
             types: item.types || [],
             priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
             location: {
-              latitude: item.location?.latitude || 
-                       item.geometry?.location?.lat || 
-                       item.latitude || 0,
-              longitude: item.location?.longitude || 
-                        item.geometry?.location?.lng || 
-                        item.longitude || 0,
+              latitude: item.location?.latitude ||
+                item.geometry?.location?.lat ||
+                item.latitude || 0,
+              longitude: item.location?.longitude ||
+                item.geometry?.location?.lng ||
+                item.longitude || 0,
             },
             photos: item.photos || [],
             displayName: item.displayName
@@ -398,7 +398,7 @@ class ApiService {
       } else if (response.data.results && Array.isArray(response.data.results)) {
         restaurants = response.data.results.map((item: any, index: number) => {
           const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
-          
+
           return {
             id: uniqueId,
             place_id: uniqueId,
@@ -409,12 +409,12 @@ class ApiService {
             types: item.types || [],
             priceLevel: this.mapPriceLevel(item.priceLevel || item.price_level),
             location: {
-              latitude: item.location?.latitude || 
-                       item.geometry?.location?.lat || 
-                       item.latitude || 0,
-              longitude: item.location?.longitude || 
-                        item.geometry?.location?.lng || 
-                        item.longitude || 0,
+              latitude: item.location?.latitude ||
+                item.geometry?.location?.lat ||
+                item.latitude || 0,
+              longitude: item.location?.longitude ||
+                item.geometry?.location?.lng ||
+                item.longitude || 0,
             },
             photos: item.photos || [],
             displayName: item.displayName
@@ -424,22 +424,22 @@ class ApiService {
         console.error("Unexpected API response format:", response.data);
         throw new Error("Unexpected API response format");
       }
-      
+
       console.log(`✅ Processed ${restaurants.length} restaurants from API`);
-      
+
       // Verify all restaurants have valid IDs
       const invalidRestaurants = restaurants.filter(r => !r.id || !r.place_id);
       if (invalidRestaurants.length > 0) {
         console.warn(`⚠️ Found ${invalidRestaurants.length} restaurants with missing IDs`);
       }
-      
+
       // Only cache if not filtering
       if (!keyword) {
         await this.cacheRestaurants(restaurants);
       } else {
         console.log(`⚠️ Not caching filtered results (keyword: ${keyword})`);
       }
-      
+
       return restaurants;
     } catch (error) {
       console.error("Error fetching restaurants:", error);
@@ -456,13 +456,13 @@ class ApiService {
       }
 
       console.log(`📝 Caching ${restaurants.length} restaurants to storage`);
-      
+
       // Clear the old cache first to free up space
       await AsyncStorage.removeItem(RESTAURANT_CACHE_KEY);
-      
+
       // Add a small delay to ensure storage is freed
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       // Store the new data
       await AsyncStorage.setItem(
         RESTAURANT_CACHE_KEY,
@@ -472,7 +472,7 @@ class ApiService {
       console.log("✅ Restaurants successfully cached");
     } catch (error) {
       console.error("Error caching restaurants:", error);
-      
+
       // If storage is full, try to store a reduced dataset
       if (error instanceof Error && error.message.includes('QuotaExceededError')) {
         try {
@@ -488,7 +488,7 @@ class ApiService {
             priceLevel: r.priceLevel
             // Exclude photos to save space
           }));
-          
+
           await AsyncStorage.setItem(
             RESTAURANT_CACHE_KEY,
             JSON.stringify(essentialData)
@@ -529,24 +529,24 @@ class ApiService {
       }
 
       const restaurants = JSON.parse(cachedData) as Restaurant[];
-      
+
       // Ensure each restaurant has a place_id
       const processedRestaurants = restaurants.map(restaurant => {
         // If place_id is missing but id exists, use id as place_id
         if (!restaurant.place_id && restaurant.id) {
           restaurant.place_id = restaurant.id;
         }
-        
+
         // If both place_id and id are missing, create a fallback ID from the name
         if (!restaurant.place_id) {
           const name = restaurant.displayName?.text || 'unknown-restaurant';
           restaurant.place_id = `fallback-${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
           console.log(`Created fallback ID for restaurant: ${name} -> ${restaurant.place_id}`);
         }
-        
+
         return restaurant;
       });
-      
+
       console.log(`📂 Found ${processedRestaurants.length} restaurants in cache`);
       return processedRestaurants;
     } catch (error) {
@@ -584,7 +584,7 @@ class ApiService {
   static async getRestaurantTikTokLinks(
     placeId: string,
     useCache: boolean = __DEV__
-  ): Promise<{hashtags: string[], tag_urls: string[], search_urls: string[]}> {
+  ): Promise<{ hashtags: string[], tag_urls: string[], search_urls: string[] }> {
     // Handle fallback IDs early
     if (placeId.startsWith('fallback-')) {
       console.log(`⚠️ Using placeholder data for fallback TikTok links ${placeId}`);
@@ -617,14 +617,14 @@ class ApiService {
         tag_urls: response.data.tag_urls || [],
         search_urls: response.data.search_urls || []
       };
-      
+
       // Cache the results
       try {
         await AsyncStorage.setItem(`restaurant_tiktok_${placeId}`, JSON.stringify(linkData));
       } catch (error) {
         console.error('Error caching TikTok links:', error);
       }
-      
+
       return linkData;
     } catch (error) {
       console.error(`Error fetching TikTok links for ${placeId}:`, error);
@@ -636,7 +636,7 @@ class ApiService {
   static async getRestaurantTikTokGoogle(
     placeId: string,
     useCache: boolean = __DEV__
-  ): Promise<{tiktok_links: TikTokLink[], search_url?: string}> {
+  ): Promise<{ tiktok_links: TikTokLink[], search_url?: string }> {
     // Handle fallback IDs early
     if (placeId.startsWith('fallback-')) {
       console.log(`⚠️ Using placeholder data for fallback TikTok links ${placeId}`);
@@ -670,14 +670,14 @@ class ApiService {
         tiktok_links: response.data.tiktok_links || [],
         search_url: response.data.search_url
       };
-      
+
       // Cache the results
       try {
         await AsyncStorage.setItem(`restaurant_tiktok_google_${placeId}`, JSON.stringify(linkData));
       } catch (error) {
         console.error('Error caching TikTok Google links:', error);
       }
-      
+
       return linkData;
     } catch (error) {
       console.error(`Error fetching TikTok Google links for ${placeId}:`, error);
@@ -689,7 +689,7 @@ class ApiService {
   static async getRestaurantTikTokVideos(
     placeId: string,
     useCache: boolean = __DEV__
-  ): Promise<{videos: TikTokVideo[], search_url?: string}> {
+  ): Promise<{ videos: TikTokVideo[], search_url?: string }> {
     // Handle fallback IDs early
     if (placeId.startsWith('fallback-')) {
       console.log(`⚠️ Using placeholder data for fallback TikTok videos ${placeId}`);
@@ -727,14 +727,14 @@ class ApiService {
         videos: response.data.videos || [],
         search_url: response.data.search_url
       };
-      
+
       // Cache the results
       try {
         await AsyncStorage.setItem(`restaurant_tiktok_videos_${placeId}`, JSON.stringify(videoData));
       } catch (error) {
         console.error('Error caching TikTok videos:', error);
       }
-      
+
       return videoData;
     } catch (error) {
       console.error(`Error fetching TikTok videos for ${placeId}:`, error);
@@ -781,7 +781,7 @@ class ApiService {
     try {
       const response = await axios.get(`${API_URL}/restaurants/${placeId}/menu-highlights`);
       const menuData: MenuHighlightsResponse = response.data;
-      
+
       // Cache the results if successful
       if (menuData.status === 'success' && menuData.menu_highlights.length > 0) {
         try {
@@ -790,7 +790,7 @@ class ApiService {
           console.error('Error caching menu highlights:', error);
         }
       }
-      
+
       return menuData;
     } catch (error) {
       console.error(`Error fetching menu highlights for ${placeId}:`, error);
@@ -845,7 +845,7 @@ class ApiService {
     try {
       const response = await axios.get(`${API_URL}/restaurants/${placeId}/menu-photos`);
       const photoData: MenuPhotosResponse = response.data;
-      
+
       // Cache the results if successful
       if (photoData.status === 'success' && photoData.menu_photos.length > 0) {
         try {
@@ -854,7 +854,7 @@ class ApiService {
           console.error('Error caching menu photos:', error);
         }
       }
-      
+
       return photoData;
     } catch (error) {
       console.error(`Error fetching menu photos for ${placeId}:`, error);
@@ -876,25 +876,25 @@ class ApiService {
     const fallbackUrl = `https://via.placeholder.com/400x300/f0f0f0/666666?text=${encodeURIComponent(
       restaurant?.displayName?.text || restaurant?.name || 'Restaurant'
     )}`;
-    
+
     // Check if restaurant has photos
     if (!restaurant?.photos || restaurant.photos.length === 0 || index >= restaurant.photos.length) {
       return fallbackUrl;
     }
-    
+
     const photo = restaurant.photos[index];
-    
+
     // Check for googleMapsUri - this is the preferred source
     if (photo.googleMapsUri) {
       return photo.googleMapsUri;
     }
-    
+
     // Check for name - use the backend photo proxy endpoint
     if (photo.name) {
       // Use the correct backend endpoint format that matches your backend
       return `${API_URL}/restaurants/photo/${encodeURIComponent(photo.name)}`;
     }
-    
+
     return fallbackUrl;
   }
 
@@ -913,7 +913,7 @@ class ApiService {
   private static mapPriceLevel(priceLevel: string | number | undefined): number {
     if (typeof priceLevel === 'number') return priceLevel;
     if (!priceLevel) return 0;
-    
+
     const priceLevelMap: { [key: string]: number } = {
       'PRICE_LEVEL_FREE': 0,
       'PRICE_LEVEL_INEXPENSIVE': 1,
@@ -921,7 +921,7 @@ class ApiService {
       'PRICE_LEVEL_EXPENSIVE': 3,
       'PRICE_LEVEL_VERY_EXPENSIVE': 4,
     };
-    
+
     return priceLevelMap[priceLevel] || 0;
   }
 
@@ -950,13 +950,13 @@ class ApiService {
   ): Promise<Restaurant[]> {
     try {
       const radius = location.radius || 2000; // Default 2km
-      
+
       const params: any = {
         lat: location.latitude,
         lng: location.longitude,
         radius,
       };
-      
+
       // Add filter parameters if provided
       if (filters) {
         if (filters.cuisine) params.cuisine = filters.cuisine;
@@ -968,20 +968,20 @@ class ApiService {
         if (filters.delivery_available !== undefined) params.delivery_available = filters.delivery_available;
         if (filters.venue_type) params.venue_type = filters.venue_type;
       }
-      
+
       console.log("🔍 Searching with filters:", params);
-      
+
       const response = await axios.get(`${API_URL}/restaurants/search`, { params });
-      
+
       if (!response.data) {
         console.error("API returned empty data");
         return [];
       }
-      
+
       // Map the response to Restaurant interface
       const restaurants: Restaurant[] = (Array.isArray(response.data) ? response.data : []).map((item: any, index: number) => {
         const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
-        
+
         return {
           id: uniqueId,
           place_id: uniqueId,
@@ -1011,10 +1011,10 @@ class ApiService {
           isChain: item.isChain || false,
         };
       });
-      
+
       console.log(`✅ Found ${restaurants.length} restaurants matching filters`);
       return restaurants;
-      
+
     } catch (error) {
       console.error("Error searching restaurants with filters:", error);
       throw error;
@@ -1029,20 +1029,20 @@ class ApiService {
   static async getPlaceDetailsBatch(placeIds: string[]): Promise<Restaurant[]> {
     try {
       console.log(`📋 Fetching details for ${placeIds.length} places`);
-      
+
       const response = await axios.post(`${API_URL}/restaurants/details`, {
         place_ids: placeIds,
       });
-      
+
       if (!response.data || !response.data.places) {
         console.error("API returned empty data");
         return [];
       }
-      
+
       // Map the response to Restaurant interface
       const restaurants: Restaurant[] = response.data.places.map((item: any, index: number) => {
         const uniqueId = item.id || item.place_id || `place-${Date.now()}-${index}`;
-        
+
         return {
           id: uniqueId,
           place_id: uniqueId,
@@ -1070,10 +1070,10 @@ class ApiService {
           servesVegetarianFood: item.servesVegetarianFood,
         };
       });
-      
+
       console.log(`✅ Successfully fetched ${restaurants.length} place details`);
       return restaurants;
-      
+
     } catch (error) {
       console.error("Error fetching place details batch:", error);
       throw error;

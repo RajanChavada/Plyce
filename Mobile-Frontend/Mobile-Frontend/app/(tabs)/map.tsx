@@ -26,7 +26,7 @@ import { FilterOptions } from '../../src/types';
 export default function MapTab() {
   const router = useRouter();
   const { location: contextLocation, setCustomLocation } = useContext(LocationContext);
-  
+
   // Map state
   const [currentLocation, setCurrentLocation] = useState({
     latitude: contextLocation?.latitude || 43.6532,
@@ -34,16 +34,16 @@ export default function MapTab() {
     address: contextLocation?.address || 'Current Location',
   });
   const [searchRadius, setSearchRadius] = useState(contextLocation?.radius || 2000);
-  
+
   // Restaurant and filter state
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
-  
+
   // UI state
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
-  
+
   const mapRef = useRef<MapView>(null);
   const searchTimeout = useRef<any>(null);
 
@@ -107,7 +107,7 @@ export default function MapTab() {
     const newLocation = { latitude: location.latitude, longitude: location.longitude, address: location.address };
     setCurrentLocation(newLocation);
     setCustomLocation({ ...newLocation, radius: searchRadius });
-    
+
     if (mapRef.current) {
       mapRef.current.animateToRegion({
         latitude: location.latitude,
@@ -165,7 +165,7 @@ export default function MapTab() {
           strokeColor="rgba(255, 107, 107, 0.5)"
           fillColor="rgba(255, 107, 107, 0.1)"
         />
-        
+
         {/* Restaurant markers */}
         {restaurants.map((restaurant) => (
           <Marker
@@ -187,7 +187,7 @@ export default function MapTab() {
           onLocationSelected={handleLocationSelected}
           placeholder="Search location..."
         />
-        
+
         {/* Radius Slider */}
         <View style={styles.radiusWrapper}>
           <RadiusSlider
@@ -195,7 +195,7 @@ export default function MapTab() {
             onValueChange={handleRadiusChange}
           />
         </View>
-        
+
         {/* Filter and Result Count Row */}
         <View style={styles.bottomRow}>
           <View style={styles.resultCount}>
@@ -203,7 +203,7 @@ export default function MapTab() {
               {loading ? 'Loading...' : `${restaurants.length} results`}
             </Text>
           </View>
-          
+
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setFilterPanelVisible(true)}
@@ -223,10 +223,10 @@ export default function MapTab() {
           >
             <Ionicons name="close" size={24} color="#333" />
           </TouchableOpacity>
-          
+
           <Text style={styles.restaurantName}>{selectedRestaurant.name}</Text>
           <Text style={styles.restaurantAddress}>{selectedRestaurant.formattedAddress}</Text>
-          
+
           <TouchableOpacity
             style={styles.detailsButton}
             onPress={() => {
