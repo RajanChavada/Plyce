@@ -253,7 +253,7 @@ export const MenuPreview: React.FC<MenuPreviewProps> = ({ placeId, restaurantNam
             activeOpacity={0.7}
           >
             <Text style={styles.viewFullMenuText}>View Full Menu</Text>
-            <Ionicons name="chevron-forward" size={16} color="#007AFF" />
+            <Ionicons name="chevron-forward" size={16} color="#0EA5E9" />
           </TouchableOpacity>
         </>
       )}
@@ -279,7 +279,7 @@ export const MenuPreview: React.FC<MenuPreviewProps> = ({ placeId, restaurantNam
             activeOpacity={0.7}
           >
             <Text style={styles.viewFullMenuText}>View on Google Maps</Text>
-            <Ionicons name="open-outline" size={16} color="#007AFF" />
+            <Ionicons name="open-outline" size={16} color="#0EA5E9" />
           </TouchableOpacity>
         </>
       )}

@@ -1,5 +1,6 @@
 
 import { Stack } from 'expo-router';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LocationProvider } from '../src/contexts/LocationContext';
 import ApiService from '../src/services/ApiService';
 import { StatusBar } from 'expo-status-bar';
@@ -12,7 +13,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <>
+    <SafeAreaProvider>
       <StatusBar style="dark" />
       <LocationProvider>
         <Stack 
@@ -31,7 +32,7 @@ export default function RootLayout() {
           <Stack.Screen name="restaurant/[id]/reviews" options={{ headerShown: false }} />
         </Stack>
       </LocationProvider>
-    </>
+    </SafeAreaProvider>
   );
 }
 
