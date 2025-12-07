@@ -18,11 +18,11 @@ function getApiUrl() {
   let DEV_URL: string;
 
   if (Platform.OS === "ios") {
-    DEV_URL = "http://192.0.0.2:8000"; // iOS Simulator - use Mac's local IP
+    DEV_URL = "http://192.168.2.87:8000"; // iOS Simulator - use Mac's local IP
   } else if (Platform.OS === "android") {
     DEV_URL = "http://10.0.2.2:8000"; // Android Emulator special IP
   } else {
-    DEV_URL = "http://192.0.0.2.87:8000";
+    DEV_URL = "http://192.168.2.87:8000";
   }
 
   // CHANGE THIS TO SWITCH BETWEEN DEV AND PROD
