@@ -1738,6 +1738,54 @@ async def places_details(request: dict = Body(...)):
         logger.error(f"❌ Error fetching place details: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/places/reverse-geocode")
+async def reverse_geocode(request: dict):
+    """
+    Reverse geocode coordinates to get address
+    Uses Google Geocoding API
+    """
+    try:
+        latitude = request.get("latitude")
+        longitude = request.get("longitude")
+        
+        if latitude is None or longitude is None:
+            raise HTTPException(status_code=400, detail="Missing latitude or longitude")
+        
+        logger.info(f"📍 Reverse geocoding coordinates: ({latitude}, {longitude})")
+        
+        # Use Google Geocoding API (legacy)
+        url = "https://maps.googleapis.com/maps/api/geocode/json"
+        params = {
+            "latlng": f"{latitude},{longitude}",
+            "key": GOOGLE_API_KEY
+        }
+        
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        if data.get("status") == "OK" and data.get("results"):
+            formatted_address = data["results"][0].get("formatted_address", "Unknown Location")
+            logger.info(f"✅ Reverse geocoded to: {formatted_address}")
+            return {
+                "status": "OK",
+                "formatted_address": formatted_address,
+                "results": data["results"]
+            }
+        else:
+            logger.warning(f"⚠️ Reverse geocoding failed: {data.get('status')}")
+            return {
+                "status": data.get("status", "ZERO_RESULTS"),
+                "formatted_address": "Current Location",
+                "results": []
+            }
+        
+    except Exception as e:
+        logger.error(f"❌ Error reverse geocoding: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== LIFECYCLE EVENT HANDLERS ====================
 
 @app.on_event("startup")
