@@ -82,7 +82,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
   const handleApply = () => {
     const filters: FilterOptions = {};
-    
+
     if (selectedCuisine) filters.cuisine = selectedCuisine;
     if (selectedDietary) filters.dietary = selectedDietary;
     if (selectedPrice) filters.price_level = selectedPrice;
@@ -107,14 +107,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     setDeliveryAvailable(false);
   };
 
-  const hasActiveFilters = 
-    selectedCuisine || 
-    selectedDietary || 
-    selectedPrice || 
+  const hasActiveFilters =
+    selectedCuisine ||
+    selectedDietary ||
+    selectedPrice ||
     selectedVenueType ||
-    outdoorSeating || 
-    petFriendly || 
-    wheelchairAccessible || 
+    outdoorSeating ||
+    petFriendly ||
+    wheelchairAccessible ||
     deliveryAvailable;
 
   return (
@@ -214,10 +214,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     )
                   }
                 >
-                  <Ionicons 
-                    name="cafe-outline" 
-                    size={16} 
-                    color={selectedVenueType === 'coffee' ? '#fff' : '#666'} 
+                  <Ionicons
+                    name="cafe-outline"
+                    size={16}
+                    color={selectedVenueType === 'coffee' ? '#fff' : '#666'}
                     style={{ marginRight: 6 }}
                   />
                   <Text
@@ -242,10 +242,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     )
                   }
                 >
-                  <Ionicons 
-                    name="leaf-outline" 
-                    size={16} 
-                    color={selectedVenueType === 'matcha' ? '#fff' : '#666'} 
+                  <Ionicons
+                    name="leaf-outline"
+                    size={16}
+                    color={selectedVenueType === 'matcha' ? '#fff' : '#666'}
                     style={{ marginRight: 6 }}
                   />
                   <Text
@@ -270,10 +270,10 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     )
                   }
                 >
-                  <Ionicons 
-                    name="restaurant-outline" 
-                    size={16} 
-                    color={selectedVenueType === 'cafe' ? '#fff' : '#666'} 
+                  <Ionicons
+                    name="restaurant-outline"
+                    size={16}
+                    color={selectedVenueType === 'cafe' ? '#fff' : '#666'}
                     style={{ marginRight: 6 }}
                   />
                   <Text
@@ -321,7 +321,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             {/* Service Attributes Section */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Service & Accessibility</Text>
-              
+
               <View style={styles.switchRow}>
                 <View style={styles.switchLabel}>
                   <Ionicons name="cafe-outline" size={20} color="#666" />

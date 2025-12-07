@@ -128,7 +128,7 @@ export const styles = StyleSheet.create({
   viewOnMapsText: {
     marginTop: 4,
     fontSize: 12,
-    color: '#007AFF',
+    color: '#0EA5E9',
   },
   
   viewFullMenuButton: {
@@ -146,7 +146,7 @@ export const styles = StyleSheet.create({
   viewFullMenuText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#007AFF',
+    color: '#0EA5E9',
     marginRight: 4,
   },
   

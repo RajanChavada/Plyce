@@ -10,22 +10,22 @@ export const CommonStyles = {
   flex1: { flex: 1 },
   flexRow: { flexDirection: 'row' as const },
   flexColumn: { flexDirection: 'column' as const },
-  
+
   // Alignment
   centerContent: {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
-  
+
   // Text alignment
   textCenter: { textAlign: 'center' as const },
   textLeft: { textAlign: 'left' as const },
   textRight: { textAlign: 'right' as const },
-  
+
   // Positioning
   absolute: { position: 'absolute' as const },
   relative: { position: 'relative' as const },
-  
+
   // Common card style
   card: {
     backgroundColor: '#FFFFFF',
@@ -36,7 +36,7 @@ export const CommonStyles = {
     shadowRadius: 4,
     elevation: 2,
   },
-  
+
   // Common button style
   button: {
     backgroundColor: '#EE1D52',
@@ -46,7 +46,7 @@ export const CommonStyles = {
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
   },
-  
+
   // Common input style
   input: {
     borderWidth: 1,

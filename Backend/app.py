@@ -11,20 +11,104 @@ from pydantic import BaseModel
 import re
 import urllib.parse
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
 from serpapi import GoogleSearch
+
+# Playwright for fast TikTok scraping
+import asyncio
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+from datetime import datetime, timedelta
 
 load_dotenv() # load the env
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ==================== CACHE LAYER FOR TIKTOK ====================
+class SimpleCache:
+    """Simple TTL-based in-memory cache for TikTok videos"""
+    def __init__(self):
+        self.cache: Dict[str, tuple] = {}
+    
+    def get(self, key: str) -> Optional[List[Dict]]:
+        if key in self.cache:
+            data, expiry = self.cache[key]
+            if datetime.now() < expiry:
+                logger.info(f"🎯 Cache HIT for {key}")
+                return data
+            else:
+                del self.cache[key]  # Expired
+                logger.info(f"⏰ Cache EXPIRED for {key}")
+        return None
+    
+    def set(self, key: str, data: List[Dict], ttl: int = 600):
+        """TTL in seconds (default 10 minutes)"""
+        expiry = datetime.now() + timedelta(seconds=ttl)
+        self.cache[key] = (data, expiry)
+        logger.info(f"💾 Cache SET for {key} (expires in {ttl}s)")
+    
+    def clear(self):
+        self.cache.clear()
+        logger.info("🧹 Cache CLEARED")
+
+# Global TikTok cache instance
+tiktok_cache = SimpleCache()
+
+# ==================== BROWSER POOL FOR PLAYWRIGHT ====================
+class BrowserPool:
+    """Reusable browser instances to avoid startup overhead"""
+    def __init__(self, pool_size: int = 2):
+        self.pool_size = pool_size
+        self.browsers: asyncio.Queue = None
+        self.playwright = None
+    
+    async def initialize(self):
+        """Initialize the browser pool"""
+        self.playwright = await async_playwright().start()
+        self.browsers = asyncio.Queue(maxsize=self.pool_size)
+        
+        for _ in range(self.pool_size):
+            browser = await self.playwright.chromium.launch(
+                headless=True,
+                args=[
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                ]
+            )
+            await self.browsers.put(browser)
+        
+        logger.info(f"🚀 Browser pool initialized with {self.pool_size} instances")
+    
+    async def acquire(self):
+        """Get a browser from the pool"""
+        browser = await self.browsers.get()
+        logger.info(f"🎭 Browser acquired from pool")
+        return browser
+    
+    async def release(self, browser):
+        """Return a browser to the pool"""
+        await self.browsers.put(browser)
+        logger.info(f"🔄 Browser returned to pool")
+    
+    async def close(self):
+        """Close all browsers"""
+        while not self.browsers.empty():
+            browser = await self.browsers.get()
+            await browser.close()
+        
+        if self.playwright:
+            await self.playwright.stop()
+        
+        logger.info("🛑 Browser pool closed")
+
+# Global browser pool instance
+browser_pool: Optional[BrowserPool] = None
 
 # Pydantic models for request validation
 class FilterOptions(BaseModel):
@@ -887,10 +971,278 @@ async def get_restaurant_tiktok_google(place_id: str, limit: int = 5):
             "error": str(e)
         }
 
+# ==================== PLAYWRIGHT SCRAPER FUNCTION ====================
+async def scrape_tiktok_videos_playwright(
+    restaurant_name: str,
+    limit: int = 4,
+    timeout: int = 8000
+) -> List[Dict]:
+    """
+    Scrape TikTok videos using Playwright (async, fast, pooled)
+    
+    Args:
+        restaurant_name: Name of restaurant to search
+        limit: Number of videos to fetch
+        timeout: Timeout in milliseconds
+    
+    Returns:
+        List of video dictionaries with id, thumbnail, url, description
+    """
+    
+    browser = None
+    try:
+        # Acquire browser from pool
+        browser = await browser_pool.acquire()
+        
+        # Create new page/context (isolated) with stealth settings
+        context = await browser.new_context(
+            viewport={"width": 1920, "height": 1080},
+            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            locale="en-US",
+            timezone_id="America/New_York",
+            ignore_https_errors=True,
+            extra_http_headers={
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Accept-Encoding": "gzip, deflate, br",
+                "DNT": "1",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1"
+            }
+        )
+        page = await context.new_page()
+        
+        # Add stealth scripts to avoid detection
+        await page.add_init_script("""
+            // Override navigator.webdriver
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => false,
+            });
+            
+            // Override permissions
+            const originalQuery = window.navigator.permissions.query;
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+            
+            // Override plugins
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5],
+            });
+            
+            // Override languages
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-US', 'en'],
+            });
+        """)
+        
+        # Construct search URL
+        search_query = f"{restaurant_name} restaurant"
+        tiktok_search_url = f"https://www.tiktok.com/search?q={search_query.replace(' ', '+')}"
+        
+        logger.info(f"🔍 Scraping TikTok for: {search_query}")
+        
+        # Navigate to TikTok search with retry logic
+        try:
+            await page.goto(
+                tiktok_search_url,
+                wait_until="domcontentloaded",
+                timeout=timeout
+            )
+            # Wait a bit for dynamic content
+            await page.wait_for_timeout(3000)
+        except PlaywrightTimeoutError:
+            logger.warning(f"⏱️ Navigation timeout for {search_query}")
+            return []
+        
+        # Try multiple selector strategies (TikTok frequently changes their DOM)
+        video_elements_found = False
+        selectors_to_try = [
+            "div[data-e2e='search_video-item']",
+            "div[data-e2e='search-card-item']", 
+            "div[class*='DivItemContainerForSearch']",
+            "div[class*='DivItemContainer']",
+            "a[href*='/video/']"
+        ]
+        
+        for selector in selectors_to_try:
+            try:
+                await page.wait_for_selector(selector, timeout=3000)
+                logger.info(f"✅ Found videos with selector: {selector}")
+                video_elements_found = True
+                break
+            except PlaywrightTimeoutError:
+                continue
+        
+        if not video_elements_found:
+            logger.warning(f"❌ No video elements found with any selector for {restaurant_name}")
+            
+            # Take screenshot for debugging
+            try:
+                screenshot_path = f"/tmp/tiktok_debug_{restaurant_name.replace(' ', '_')}.png"
+                await page.screenshot(path=screenshot_path)
+                logger.info(f"📸 Debug screenshot saved to: {screenshot_path}")
+            except:
+                pass
+            
+            return []
+        
+        # Extract video data using evaluate with multiple strategies
+        videos = await page.evaluate("""
+            (limit) => {
+                const videos = [];
+                
+                // Strategy 1: Try data-e2e attributes
+                let videoElements = document.querySelectorAll("div[data-e2e='search_video-item'], div[data-e2e='search-card-item']");
+                
+                // Strategy 2: If not found, try class-based selectors
+                if (videoElements.length === 0) {
+                    videoElements = document.querySelectorAll("div[class*='DivItemContainer']");
+                }
+                
+                // Strategy 3: If still not found, find all links with /video/
+                if (videoElements.length === 0) {
+                    const allLinks = Array.from(document.querySelectorAll("a[href*='/video/']"));
+                    videoElements = allLinks.map(link => link.closest('div')).filter(Boolean);
+                }
+                
+                console.log(`Found ${videoElements.length} video elements`);
+                
+                for (let i = 0; i < Math.min(videoElements.length, limit); i++) {
+                    try {
+                        const elem = videoElements[i];
+                        
+                        // Get link (multiple strategies)
+                        let linkElem = elem.querySelector("a[href*='/video/']");
+                        if (!linkElem) linkElem = elem.querySelector("a");
+                        const url = linkElem ? linkElem.href : "";
+                        
+                        // Get thumbnail (try multiple selectors)
+                        let thumbnail = "";
+                        const imgElem = elem.querySelector("img");
+                        if (imgElem) {
+                            thumbnail = imgElem.src || imgElem.getAttribute('data-src') || imgElem.getAttribute('srcset')?.split(' ')[0] || "";
+                        }
+                        
+                        // Get description/title (multiple strategies)
+                        let description = "TikTok Video";
+                        const descSelectors = [
+                            "div[data-e2e='search_video-desc']",
+                            "div[data-e2e='search-card-desc']",
+                            "h1", "h2", "h3",
+                            "span[class*='desc']",
+                            "div[class*='title']"
+                        ];
+                        
+                        for (const selector of descSelectors) {
+                            const descElem = elem.querySelector(selector);
+                            if (descElem && descElem.textContent.trim()) {
+                                description = descElem.textContent.trim();
+                                break;
+                            }
+                        }
+                        
+                        // Validate we have minimum required data
+                        if (url && url.includes('/video/')) {
+                            videos.push({
+                                id: `video-${i+1}`,
+                                thumbnail: thumbnail || `https://via.placeholder.com/300x400/EE1D52/FFFFFF?text=TikTok+Video`,
+                                url: url,
+                                description: description.substring(0, 100) || "TikTok Video"
+                            });
+                            console.log(`Extracted video ${i+1}: ${url}`);
+                        }
+                    } catch (e) {
+                        console.log(`Error processing video ${i}:`, e);
+                    }
+                }
+                
+                return videos;
+            }
+        """, limit)
+        
+        # If no videos found, try mobile TikTok as fallback
+        if len(videos) == 0:
+            logger.info(f"🔄 Trying mobile TikTok for {restaurant_name}")
+            try:
+                mobile_url = f"https://m.tiktok.com/search?q={search_query.replace(' ', '+')}"
+                await page.goto(mobile_url, wait_until="domcontentloaded", timeout=5000)
+                await page.wait_for_timeout(2000)
+                
+                # Mobile TikTok has different selectors
+                videos = await page.evaluate("""
+                    (limit) => {
+                        const videos = [];
+                        const links = document.querySelectorAll("a[href*='/video/']");
+                        
+                        for (let i = 0; i < Math.min(links.length, limit); i++) {
+                            try {
+                                const link = links[i];
+                                const url = link.href;
+                                const img = link.querySelector("img");
+                                const thumbnail = img ? (img.src || img.getAttribute('data-src') || "") : "";
+                                
+                                if (url && url.includes('/video/')) {
+                                    videos.push({
+                                        id: `video-${i+1}`,
+                                        thumbnail: thumbnail || `https://via.placeholder.com/300x400/EE1D52/FFFFFF?text=TikTok`,
+                                        url: url,
+                                        description: "TikTok Video"
+                                    });
+                                }
+                            } catch (e) {
+                                console.log(`Error: ${e}`);
+                            }
+                        }
+                        return videos;
+                    }
+                """, limit)
+                
+                if len(videos) > 0:
+                    logger.info(f"✅ Mobile TikTok found {len(videos)} videos")
+            except Exception as e:
+                logger.warning(f"Mobile fallback failed: {str(e)}")
+        
+        logger.info(f"✅ Successfully scraped {len(videos)} videos for {restaurant_name}")
+        
+        await context.close()
+        return videos
+    
+    except Exception as e:
+        logger.error(f"❌ Error scraping TikTok: {str(e)}")
+        return []
+    
+    finally:
+        # Always return browser to pool
+        if browser:
+            await browser_pool.release(browser)
+
+# Helper function to generate placeholder videos
+def generate_placeholder_videos(restaurant_name: str, limit: int, search_url: str) -> List[Dict]:
+    """Generate placeholder videos when scraping fails"""
+    placeholder_designs = [
+        f"https://via.placeholder.com/300x400/EE1D52/FFFFFF?text={restaurant_name.replace(' ', '+')}",
+        f"https://via.placeholder.com/300x400/000000/FFFFFF?text=TikTok+{restaurant_name.replace(' ', '+')}",
+        f"https://via.placeholder.com/300x400/25F4EE/000000?text={restaurant_name.replace(' ', '+')}",
+    ]
+    
+    videos = []
+    for i in range(limit):
+        videos.append({
+            'id': f"video-{i+1}",
+            'thumbnail': placeholder_designs[i % len(placeholder_designs)],
+            'url': search_url,
+            'description': f"Find {restaurant_name} videos on TikTok"
+        })
+    
+    return videos
+
 @app.get("/restaurants/{place_id}/tiktok-videos")
 async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
     """
-    Scrape actual TikTok videos for a restaurant using a headless browser
+    Scrape actual TikTok videos for a restaurant using Playwright (async, fast)
     """
     # Skip API call for fallback IDs
     if place_id.startswith("fallback-"):
@@ -916,153 +1268,51 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
         if not restaurant_name:
             return {"place_id": place_id, "videos": [], "error": "Restaurant name not found"}
             
-        # For debugging
-        print(f"Searching TikTok videos for restaurant: {restaurant_name}")
-            
-        # Setup Chrome options for headless browsing
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
+        # Create cache key
+        cache_key = f"tiktok:{place_id}:{limit}"
         
-        # Create a new Chrome webdriver
-        driver = webdriver.Chrome(options=chrome_options)
+        # Check cache first
+        cached_videos = tiktok_cache.get(cache_key)
+        if cached_videos is not None:
+            logger.info(f"🎯 Cache HIT for {restaurant_name}")
+            return {
+                "place_id": place_id,
+                "restaurant_name": restaurant_name,
+                "videos": cached_videos,
+                "cached": True
+            }
         
-        try:
-            # Create TikTok search URL
-            tiktok_search_url = f"https://www.tiktok.com/search?q={restaurant_name.replace(' ', '+')}+restaurant"
-            print(f"Navigating to: {tiktok_search_url}")
-            
-            # Navigate to TikTok search page
-            driver.get(tiktok_search_url)
-            
-            # Wait for content to load (adjust timeout as needed)
-            time.sleep(5)  # Simple wait for page to load
-            
-            videos = []
-            
-            try:
-                # Wait for video elements to be present
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-e2e='search_video-item']"))
-                )
-                
-                # Extract video elements
-                video_elements = driver.find_elements(By.CSS_SELECTOR, "div[data-e2e='search_video-item']")
-                print(f"Found {len(video_elements)} video elements")
-                
-                # Process each video (up to the limit)
-                for i, video_elem in enumerate(video_elements[:limit]):
-                    try:
-                        # Extract video link
-                        link_elem = video_elem.find_element(By.CSS_SELECTOR, "a")
-                        video_url = link_elem.get_attribute("href")
-                        
-                        # Extract thumbnail
-                        img_elem = video_elem.find_element(By.CSS_SELECTOR, "img")
-                        thumbnail = img_elem.get_attribute("src")
-                        
-                        # Extract description
-                        desc_elem = video_elem.find_element(By.CSS_SELECTOR, "div[data-e2e='search_video-desc']")
-                        description = desc_elem.text
-                        
-                        videos.append({
-                            'id': f"video-{i+1}",
-                            'thumbnail': thumbnail,
-                            'url': video_url,
-                            'description': description[:100] or f"{restaurant_name} on TikTok"
-                        })
-                        
-                        print(f"Extracted video {i+1}: {video_url}")
-                    except Exception as e:
-                        print(f"Error extracting video {i+1}: {str(e)}")
-                        continue
-            
-            except Exception as e:
-                print(f"Error waiting for video elements: {str(e)}")
-                
-                # If we couldn't find videos with the data-e2e attribute, try a more generic approach
-                try:
-                    # Look for any video links
-                    link_elements = driver.find_elements(By.TAG_NAME, "a")
-                    
-                    # Filter for video links
-                    video_links = [link for link in link_elements 
-                                 if "/video/" in link.get_attribute("href")]
-                    
-                    for i, link in enumerate(video_links[:limit]):
-                        if len(videos) >= limit:
-                            break
-                            
-                        try:
-                            video_url = link.get_attribute("href")
-                            
-                            # Try to find an image near this link
-                            try:
-                                img = link.find_element(By.TAG_NAME, "img")
-                                thumbnail = img.get_attribute("src")
-                            except:
-                                thumbnail = f"https://via.placeholder.com/300x400/EE1D52/FFFFFF?text={restaurant_name.replace(' ', '+')}"
-                            
-                            # Try to get description text
-                            try:
-                                description = link.get_attribute("title") or link.text
-                            except:
-                                description = f"{restaurant_name} on TikTok - Video {i+1}"
-                            
-                            videos.append({
-                                'id': f"video-{i+1}",
-                                'thumbnail': thumbnail,
-                                'url': video_url,
-                                'description': description[:100]
-                            })
-                        except Exception as e:
-                            print(f"Error processing link {i+1}: {str(e)}")
-                            continue
-                except Exception as e:
-                    print(f"Fallback scraping failed: {str(e)}")
-            
-            # If no videos found through scraping, add placeholders with direct search link
-            if len(videos) == 0:
-                videos = generate_placeholder_videos(restaurant_name, limit, tiktok_search_url)
+        logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
         
-        finally:
-            # Always close the driver
-            driver.quit()
+        # Scrape using Playwright with browser pool
+        videos = await scrape_tiktok_videos_playwright(restaurant_name, limit)
+        
+        # Create TikTok search URL for fallback
+        tiktok_search_url = f"https://www.tiktok.com/search?q={restaurant_name.replace(' ', '+')}+restaurant"
+        
+        # If no videos found, use placeholder
+        if len(videos) == 0:
+            logger.warning(f"⚠️ No videos found for {restaurant_name}, using placeholders")
+            videos = generate_placeholder_videos(restaurant_name, limit, tiktok_search_url)
+        else:
+            # Cache successful results
+            tiktok_cache.set(cache_key, videos, ttl=600)  # 10 minute cache
         
         return {
             "place_id": place_id,
             "restaurant_name": restaurant_name,
             "videos": videos,
-            "search_url": tiktok_search_url
+            "search_url": tiktok_search_url,
+            "cached": False
         }
                 
     except Exception as e:
-        print(f"Error searching for TikTok videos: {str(e)}")
+        logger.error(f"❌ Error in TikTok endpoint: {str(e)}")
         return {
             "place_id": place_id,
             "videos": [],
             "error": str(e)
         }
-
-# Helper function to generate placeholder videos
-def generate_placeholder_videos(restaurant_name, limit, search_url):
-    placeholder_designs = [
-        f"https://via.placeholder.com/300x400/EE1D52/FFFFFF?text={restaurant_name.replace(' ', '+')}",
-        f"https://via.placeholder.com/300x400/000000/FFFFFF?text=TikTok+{restaurant_name.replace(' ', '+')}",
-        f"https://via.placeholder.com/300x400/25F4EE/000000?text={restaurant_name.replace(' ', '+')}",
-    ]
-    
-    videos = []
-    for i in range(limit):
-        videos.append({
-            'id': f"video-{i+1}",
-            'thumbnail': placeholder_designs[i % len(placeholder_designs)],
-            'url': search_url,
-            'description': f"Find {restaurant_name} videos on TikTok"
-        })
-    
-    return videos
 
 @app.get("/restaurants/photo")
 async def get_restaurant_photo(reference: str, maxwidth: int = 400):
@@ -1487,4 +1737,36 @@ async def places_details(request: dict = Body(...)):
     except Exception as e:
         logger.error(f"❌ Error fetching place details: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== LIFECYCLE EVENT HANDLERS ====================
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize browser pool on server startup"""
+    global browser_pool
+    
+    logger.info("🚀 Starting FastAPI server...")
+    logger.info("🎭 Initializing Playwright browser pool...")
+    
+    browser_pool = BrowserPool(pool_size=2)
+    await browser_pool.initialize()
+    
+    logger.info("✅ Browser pool ready")
+    logger.info("💾 TikTok cache initialized (10-minute TTL)")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup browser pool and cache on server shutdown"""
+    global browser_pool
+    
+    logger.info("🛑 Shutting down FastAPI server...")
+    
+    if browser_pool:
+        logger.info("🧹 Closing browser pool...")
+        await browser_pool.close()
+    
+    logger.info("🧹 Clearing TikTok cache...")
+    tiktok_cache.clear()
+    
+    logger.info("✅ Cleanup complete")
 

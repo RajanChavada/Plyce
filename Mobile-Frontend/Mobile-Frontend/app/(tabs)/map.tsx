@@ -8,10 +8,12 @@ import {
   SafeAreaView,
   Dimensions,
   Keyboard,
+  Platform,
 } from 'react-native';
 import MapView, { Marker, Circle, PROVIDER_DEFAULT } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocationContext } from '../../src/contexts/LocationContext';
 import ApiService, { Restaurant } from '../../src/services/ApiService';
 import LocationSearch from '../../src/components/LocationSearch';
@@ -25,8 +27,9 @@ import { FilterOptions } from '../../src/types';
  */
 export default function MapTab() {
   const router = useRouter();
+  const insets = useSafeAreaInsets(); // Get safe area insets for iPhone notch/home indicator
   const { location: contextLocation, setCustomLocation } = useContext(LocationContext);
-  
+
   // Map state
   const [currentLocation, setCurrentLocation] = useState({
     latitude: contextLocation?.latitude || 43.6532,
@@ -34,16 +37,17 @@ export default function MapTab() {
     address: contextLocation?.address || 'Current Location',
   });
   const [searchRadius, setSearchRadius] = useState(contextLocation?.radius || 2000);
-  
+
   // Restaurant and filter state
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
-  
-  // UI state
+
+  // UI state - NEW: Radius dropdown state
+  const [isRadiusDropdownOpen, setIsRadiusDropdownOpen] = useState(false);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
-  
+
   const mapRef = useRef<MapView>(null);
   const searchTimeout = useRef<any>(null);
 
@@ -107,7 +111,10 @@ export default function MapTab() {
     const newLocation = { latitude: location.latitude, longitude: location.longitude, address: location.address };
     setCurrentLocation(newLocation);
     setCustomLocation({ ...newLocation, radius: searchRadius });
-    
+
+    // Close radius dropdown when location is selected
+    setIsRadiusDropdownOpen(false);
+
     if (mapRef.current) {
       mapRef.current.animateToRegion({
         latitude: location.latitude,
@@ -134,14 +141,14 @@ export default function MapTab() {
   const getPinColor = (restaurant: Restaurant) => {
     // Use types array to determine venue type
     const types = restaurant.types || [];
-    if (types.includes('coffee') || types.includes('cafe')) return '#8B4513';
-    if (types.includes('restaurant')) return '#FF6B6B';
-    return '#FF6B6B'; // Default red
+    if (types.includes('coffee') || types.includes('cafe')) return '#8B7355'; // Warm taupe
+    if (types.includes('restaurant')) return '#64748B'; // Slate gray-blue
+    return '#64748B'; // Default neutral slate
   };
 
   return (
     <View style={styles.container}>
-      {/* Map - Full screen */}
+      {/* Map - Full screen background */}
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -154,6 +161,11 @@ export default function MapTab() {
         }}
         showsUserLocation
         showsMyLocationButton={false}
+        onPress={() => {
+          // Close radius dropdown when tapping map
+          setIsRadiusDropdownOpen(false);
+          Keyboard.dismiss();
+        }}
       >
         {/* Radius circle */}
         <Circle
@@ -165,7 +177,7 @@ export default function MapTab() {
           strokeColor="rgba(255, 107, 107, 0.5)"
           fillColor="rgba(255, 107, 107, 0.1)"
         />
-        
+
         {/* Restaurant markers */}
         {restaurants.map((restaurant) => (
           <Marker
@@ -180,38 +192,75 @@ export default function MapTab() {
         ))}
       </MapView>
 
-      {/* Top Controls Card - Contains Search and Radius */}
-      <View style={styles.topControlsCard}>
-        {/* Location Search */}
-        <LocationSearch
-          onLocationSelected={handleLocationSelected}
-          placeholder="Search location..."
-        />
-        
-        {/* Radius Slider */}
-        <View style={styles.radiusWrapper}>
-          <RadiusSlider
-            value={searchRadius}
-            onValueChange={handleRadiusChange}
+      {/* STATE 1: Search Bar (Collapsed) - Line 2 */}
+      <View style={[styles.searchBarContainer, { top: insets.top + 8 }]}>
+        <TouchableOpacity
+          style={[
+            styles.searchBar,
+            isRadiusDropdownOpen && styles.searchBarActive
+          ]}
+          onPress={() => setIsRadiusDropdownOpen(!isRadiusDropdownOpen)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="search" size={20} color="#666666" style={styles.searchIcon} />
+          <Text style={styles.searchPlaceholder}>
+            {currentLocation.address.length > 30 
+              ? currentLocation.address.substring(0, 30) + '...' 
+              : currentLocation.address}
+          </Text>
+          {isRadiusDropdownOpen ? (
+            <Ionicons name="close" size={20} color="#666666" style={styles.searchRightIcon} />
+          ) : (
+            <Ionicons name="location" size={20} color="#64748B" style={styles.searchRightIcon} />
+          )}
+        </TouchableOpacity>
+      </View>
+
+      {/* STATE 2: Radius Dropdown (When Open) - Line 3 */}
+      {isRadiusDropdownOpen && (
+        <View style={[
+          styles.radiusDropdown, 
+          { 
+            top: insets.top + 8 + 48 + 8, // Safe area top + 8px padding + 48px search + 8px gap
+            opacity: isRadiusDropdownOpen ? 1 : 0 
+          }
+        ]}>
+          <LocationSearch
+            onLocationSelected={handleLocationSelected}
+            placeholder="Search location or restaurant"
           />
-        </View>
-        
-        {/* Filter and Result Count Row */}
-        <View style={styles.bottomRow}>
-          <View style={styles.resultCount}>
-            <Text style={styles.resultCountText}>
-              {loading ? 'Loading...' : `${restaurants.length} results`}
-            </Text>
-          </View>
           
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => setFilterPanelVisible(true)}
-          >
-            <Ionicons name="options-outline" size={20} color="#FFFFFF" />
-            <Text style={styles.filterButtonText}>Filters</Text>
-          </TouchableOpacity>
+          <View style={styles.radiusSliderSection}>
+            <RadiusSlider
+              value={searchRadius}
+              onValueChange={handleRadiusChange}
+            />
+          </View>
         </View>
+      )}
+
+      {/* Action Bar - Line 4 (repositions when dropdown opens) */}
+      <View style={[
+        styles.actionBar,
+        { 
+          top: isRadiusDropdownOpen 
+            ? insets.top + 8 + 48 + 8 + 200 + 12  // With dropdown open
+            : insets.top + 8 + 48 + 12             // Collapsed
+        }
+      ]}>
+        <View style={styles.resultCountBox}>
+          <Text style={styles.resultCountText}>
+            {loading ? 'Loading...' : `${restaurants.length} results`}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setFilterPanelVisible(true)}
+        >
+          <Ionicons name="options-outline" size={18} color="#FFFFFF" />
+          <Text style={styles.filterButtonText}>Filters</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Selected Restaurant Bottom Sheet */}
@@ -223,10 +272,10 @@ export default function MapTab() {
           >
             <Ionicons name="close" size={24} color="#333" />
           </TouchableOpacity>
-          
+
           <Text style={styles.restaurantName}>{selectedRestaurant.name}</Text>
           <Text style={styles.restaurantAddress}>{selectedRestaurant.formattedAddress}</Text>
-          
+
           <TouchableOpacity
             style={styles.detailsButton}
             onPress={() => {
@@ -239,7 +288,7 @@ export default function MapTab() {
         </View>
       )}
 
-      {/* Filter Panel */}
+      {/* Filter Panel Modal */}
       <FilterPanel
         visible={filterPanelVisible}
         onClose={() => setFilterPanelVisible(false)}
@@ -262,69 +311,128 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  topControlsCard: {
+  
+  // STATE 1: Search Bar Container (Line 2)
+  // Note: top is now dynamic based on safe area insets
+  searchBarContainer: {
     position: 'absolute',
-    top: 50,
     left: 16,
     right: 16,
+    zIndex: 1000,
+  },
+  searchBar: {
+    height: 50,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 10,
+    borderWidth: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  searchBarActive: {
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchPlaceholder: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333333',
+    fontWeight: '400',
+  },
+  searchRightIcon: {
+    marginLeft: 8,
+  },
+  
+  // STATE 2: Radius Dropdown (Line 3 - appears below search)
+  // Note: top is now dynamic based on safe area insets
+  radiusDropdown: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    height: 200, // Increased to accommodate LocationSearch + Slider
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8,
-    zIndex: 10,
+    elevation: 4,
+    zIndex: 999,
   },
-  radiusWrapper: {
-    marginTop: 8,
+  radiusSliderSection: {
+    marginTop: 12,
   },
-  bottomRow: {
+  
+  // Action Bar (Line 4 - repositions when dropdown opens)
+  // Note: top is now dynamic based on safe area insets and dropdown state
+  actionBar: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    height: 44,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
+    paddingHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 2,
+    zIndex: 10,
   },
-  resultCount: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+  resultCountBox: {
+    flex: 0.6,
   },
   resultCountText: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
-    color: '#333',
+    color: '#1C1C1E', // Darker, more readable
   },
   filterButton: {
-    backgroundColor: '#FF6B6B',
-    borderRadius: 12,
-    paddingVertical: 8,
+    backgroundColor: '#0EA5E9', // Cyan blue for consistency
+    borderRadius: 8,
+    paddingVertical: 9,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
   filterButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     marginLeft: 6,
   },
+  
+  // Bottom Sheet for selected restaurant
+  // Note: bottom now accounts for safe area (tab bar + home indicator)
   bottomSheet: {
     position: 'absolute',
-    bottom: 0,
+    bottom: Platform.OS === 'ios' ? 75 : 60, // iOS needs more space for home indicator
     left: 0,
     right: 0,
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: { width: 0, height: -1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 8,
     zIndex: 12,
   },
   closeButton: {
@@ -335,19 +443,21 @@ const styles = StyleSheet.create({
     zIndex: 13,
   },
   restaurantName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1C1C1E',
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
   restaurantAddress: {
     fontSize: 14,
-    color: '#666',
+    color: '#8E8E93',
     marginBottom: 16,
+    lineHeight: 20,
   },
   detailsButton: {
-    backgroundColor: '#FF6B6B',
-    borderRadius: 12,
+    backgroundColor: '#0EA5E9',
+    borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
   },
@@ -355,5 +465,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+    letterSpacing: -0.2,
   },
 });

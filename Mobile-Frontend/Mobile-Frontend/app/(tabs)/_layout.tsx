@@ -8,57 +8,32 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary || '#FF6B6B',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: '#0EA5E9', // Cyan blue for active
+        tabBarInactiveTintColor: '#8E8E93', // Subtle gray for inactive
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: '#E5E5EA',
-          height: Platform.OS === 'ios' ? 88 : 70,
-          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          borderTopWidth: 0.5,
+          borderTopColor: '#E5E5E5',
+          height: Platform.OS === 'ios' ? 85 : 65, // Extra space for iPhone home indicator
+          paddingBottom: Platform.OS === 'ios' ? 25 : 8, // Safe area for home indicator
           paddingTop: 8,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
-          elevation: 10,
+          shadowOffset: { width: 0, height: -1 },
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
+          fontSize: 10,
+          fontWeight: '500',
+          marginTop: 4,
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Local Results',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      
-      <Tabs.Screen
-        name="results"
-        options={{
-          title: 'Results',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: 'Map',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="location-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      
+      {/* Tab 1: Discovery */}
       <Tabs.Screen
         name="discovery"
         options={{
@@ -68,7 +43,30 @@ export default function TabLayout() {
           ),
         }}
       />
-      
+
+      {/* Tab 2: Map (Active on load) */}
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: 'Map',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* Tab 3: Results */}
+      <Tabs.Screen
+        name="results"
+        options={{
+          title: 'Results',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* Tab 4: Profile */}
       <Tabs.Screen
         name="profile"
         options={{
@@ -76,6 +74,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
+        }}
+      />
+
+      {/* Keep index for backward compatibility but hide from tabs */}
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null, // Hide from tab bar
         }}
       />
     </Tabs>

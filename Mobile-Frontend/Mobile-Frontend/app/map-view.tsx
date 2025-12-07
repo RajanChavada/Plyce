@@ -51,7 +51,7 @@ const { width, height } = Dimensions.get('window');
 const MapViewScreen = () => {
   const router = useRouter();
   const { location: contextLocation, setCustomLocation } = useContext(LocationContext);
-  
+
   // Map state - use local state for real-time updates
   const [currentLocation, setCurrentLocation] = useState({
     latitude: contextLocation?.latitude || 43.6532,
@@ -59,17 +59,17 @@ const MapViewScreen = () => {
     address: contextLocation?.address || 'Current Location',
   });
   const [searchRadius, setSearchRadius] = useState(contextLocation?.radius || 2000);
-  
+
   // Restaurant and filter state
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterOptions>({});
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
-  
+
   // UI state
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  
+
   const mapRef = useRef<MapView>(null);
   const searchTimeout = useRef<any>(null);
 
@@ -103,7 +103,7 @@ const MapViewScreen = () => {
       console.log(`🗺️ Fetching restaurants:`, { lat, lng, radius, filters });
 
       let results: Restaurant[];
-      
+
       if (Object.keys(filters).length > 0) {
         results = await ApiService.searchRestaurantsWithFilters(
           { latitude: lat, longitude: lng, radius },
@@ -193,7 +193,7 @@ const MapViewScreen = () => {
   const handleApplyFilters = (filters: FilterOptions) => {
     console.log('🔍 Filters applied:', filters);
     setActiveFilters(filters);
-    
+
     // Immediate search for filters (no debounce)
     fetchRestaurants(currentLocation.latitude, currentLocation.longitude, searchRadius, filters);
   };
@@ -236,7 +236,7 @@ const MapViewScreen = () => {
     if (selectedRestaurant && restaurant.place_id === selectedRestaurant.place_id) {
       return '#EC4899'; // Bright pink for selected marker
     }
-    
+
     if ((restaurant as any).isChain) {
       return '#6B7280'; // Gray for chains
     }
@@ -259,21 +259,21 @@ const MapViewScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <Ionicons name="arrow-back" size={24} color={Colors.text} />
         </TouchableOpacity>
-        
+
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Map Search</Text>
           <Text style={styles.headerSubtitle}>
             {restaurants.length} location{restaurants.length !== 1 ? 's' : ''}
           </Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setFilterPanelVisible(true)}
         >
@@ -386,21 +386,21 @@ const MapViewScreen = () => {
             >
               {/* Custom marker bubble */}
               <View style={styles.markerContainer}>
-                <View 
+                <View
                   style={[
                     styles.markerBubble,
                     { backgroundColor: getMarkerColor(restaurant) }
                   ]}
                 >
-                  <Ionicons 
+                  <Ionicons
                     name={
                       activeFilters.venue_type === 'matcha' ? 'leaf' :
-                      activeFilters.venue_type === 'coffee' ? 'cafe' :
-                      activeFilters.venue_type === 'cafe' ? 'restaurant' :
-                      'location'
-                    } 
-                    size={16} 
-                    color="#fff" 
+                        activeFilters.venue_type === 'coffee' ? 'cafe' :
+                          activeFilters.venue_type === 'cafe' ? 'restaurant' :
+                            'location'
+                    }
+                    size={16}
+                    color="#fff"
                   />
                 </View>
                 <View style={styles.markerArrow} />
@@ -451,8 +451,8 @@ const MapViewScreen = () => {
           {/* Restaurant Image */}
           {selectedRestaurant.photos && selectedRestaurant.photos.length > 0 && (
             <Image
-              source={{ 
-                uri: ApiService.getRestaurantPhotoUrl(selectedRestaurant, 0) 
+              source={{
+                uri: ApiService.getRestaurantPhotoUrl(selectedRestaurant, 0)
               }}
               style={styles.detailImage}
               resizeMode="cover"
