@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Star, MapPin, ExternalLink, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import * as Dialog from '@radix-ui/react-dialog';
+import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { Restaurant, Review, TikTokVideo, MenuPhoto, ApiService } from '@/services/api';
+import { cn, glassStyles, hoverStates, motionPresets } from '@/lib/glass-utils';
 
 interface RestaurantModalProps {
   restaurant: Restaurant;
@@ -90,193 +94,329 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
   }, [onClose]);
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header Image */}
-        <div className="relative h-64">
-          <Image
-            src={imageUrl}
-            alt={name}
-            fill
-            className="object-cover"
-            unoptimized
+    <Dialog.Root open={true} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay asChild>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-smooth"
+        </Dialog.Overlay>
+
+        <Dialog.Content
+          className={cn(
+            'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
+            'w-[95vw] max-w-4xl max-h-[90vh]',
+            'flex flex-col overflow-hidden rounded-2xl',
+            glassStyles.strong,
+            'border border-white/20 shadow-2xl',
+            'focus:outline-none'
+          )}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="flex flex-col h-full"
           >
-            <X className="w-5 h-5 text-gray-700" />
-          </button>
-          <div className="absolute bottom-4 left-4 right-4">
-            <h2 className="text-2xl font-bold text-white">{name}</h2>
-            <div className="flex items-center gap-3 mt-2 text-white/90">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                <span>{restaurant.rating?.toFixed(1) || 'N/A'}</span>
-              </div>
-              <span>•</span>
-              <span>{Array(restaurant.priceLevel || 1).fill('$').join('')}</span>
-              <span>•</span>
-              <span className="truncate">{restaurant.formattedAddress}</span>
-            </div>
-          </div>
-        </div>
+            {/* Header Image */}
+            <div className="relative h-64 rounded-t-2xl overflow-hidden">
+              <Image
+                src={imageUrl}
+                alt={name}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              
+              <Dialog.Close asChild>
+                <motion.button
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={onClose}
+                  className={cn(
+                    'absolute top-4 right-4 p-2 rounded-full',
+                    'bg-white/90 hover:bg-white backdrop-blur-sm',
+                    'shadow-lg transition-colors duration-200'
+                  )}
+                >
+                  <X className="w-5 h-5 text-primary-700" />
+                </motion.button>
+              </Dialog.Close>
 
-        {/* Tabs */}
-        <div className="border-b border-gray-200">
-          <div className="flex gap-1 px-4">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-3 text-sm font-medium border-b-2 transition-smooth ${
-                  activeTab === tab.id
-                    ? 'border-accent-500 text-accent-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="absolute bottom-4 left-4 right-4"
               >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 overflow-auto max-h-[50vh]">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
-            </div>
-          ) : (
-            <>
-              {activeTab === 'overview' && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-5 h-5" />
-                    <span>{restaurant.formattedAddress}</span>
+                <Dialog.Title className="text-2xl font-bold text-white drop-shadow-lg">
+                  {name}
+                </Dialog.Title>
+                <div className="flex items-center gap-3 mt-2 text-white/95 drop-shadow">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    <span className="font-medium">{restaurant.rating?.toFixed(1) || 'N/A'}</span>
                   </div>
-                  {restaurant.types && (
-                    <div className="flex flex-wrap gap-2">
-                      {restaurant.types.slice(0, 5).map((type) => (
-                        <span
-                          key={type}
-                          className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm"
-                        >
-                          {type.replace(/_/g, ' ')}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <a
-                    href={`https://www.google.com/maps/place/?q=place_id:${placeId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-accent-600 hover:text-accent-700 font-medium"
+                  <span>•</span>
+                  <span className="font-medium">{Array(restaurant.priceLevel || 1).fill('$').join('')}</span>
+                  <span>•</span>
+                  <span className="truncate text-sm">{restaurant.formattedAddress}</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Tabs */}
+            <div className="border-b border-white/10 bg-white/10">
+              <div className="flex gap-1 px-4">
+                {tabs.map((tab, index) => (
+                  <motion.button
+                    key={tab.id}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 + index * 0.05 }}
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={cn(
+                      'px-4 py-3 text-sm font-medium border-b-2 transition-all duration-200',
+                      'relative',
+                      activeTab === tab.id
+                        ? 'border-accent-500 text-accent-600'
+                        : 'border-transparent text-primary-600 hover:text-primary-800 hover:bg-white/10'
+                    )}
                   >
-                    Open in Google Maps
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </div>
-              )}
+                    {tab.label}
+                    {activeTab === tab.id && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-accent-500/10 rounded-t-lg -z-10"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
 
-              {activeTab === 'reviews' && (
-                <div className="space-y-4">
-                  {reviews.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No reviews available</p>
-                  ) : (
-                    reviews.map((review, index) => (
-                      <div key={index} className="border-b border-gray-100 pb-4 last:border-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="font-medium text-gray-900">
-                            {review.displayName?.text || 'Anonymous'}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-sm text-gray-600">{review.rating}</span>
-                          </div>
-                        </div>
-                        <p className="text-gray-600 text-sm">{review.text?.text}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'tiktok' && (
-                <div>
-                  {isTiktokLoading ? (
-                    <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                      <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
-                      <div className="text-center">
-                        <p className="text-gray-700 font-medium">Fetching TikTok videos...</p>
-                        <p className="text-sm text-gray-500 mt-1">This may take a few seconds</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {tiktokVideos.length === 0 ? (
-                        <p className="col-span-full text-gray-500 text-center py-8">
-                          No TikTok videos available
-                        </p>
+            {/* Content with ScrollArea */}
+            <div className="flex-1 min-h-0">
+              <ScrollArea.Root className="h-full w-full">
+                <ScrollArea.Viewport className="h-full w-full">
+                  <div className="p-6">
+                    <AnimatePresence mode="wait">
+                      {isLoading ? (
+                        <motion.div
+                          key="loading"
+                          {...motionPresets.fadeIn}
+                          className="flex items-center justify-center py-12"
+                        >
+                          <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
+                        </motion.div>
                       ) : (
-                        tiktokVideos.map((video) => (
-                          <a
-                            key={video.id}
-                            href={video.url}
+                        <motion.div
+                          key={activeTab}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                      {activeTab === 'overview' && (
+                        <div className="space-y-4">
+                          <motion.div
+                            {...motionPresets.fadeIn}
+                            className="flex items-center gap-2 text-primary-700"
+                          >
+                            <MapPin className="w-5 h-5 text-accent-500" />
+                            <span>{restaurant.formattedAddress}</span>
+                          </motion.div>
+                          {restaurant.types && (
+                            <motion.div
+                              {...motionPresets.fadeIn}
+                              transition={{ delay: 0.1 }}
+                              className="flex flex-wrap gap-2"
+                            >
+                              {restaurant.types.slice(0, 5).map((type, index) => (
+                                <motion.span
+                                  key={type}
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: 0.1 + index * 0.05 }}
+                                  className={cn(
+                                    'px-3 py-1 rounded-full text-sm font-medium',
+                                    'bg-white/50 text-primary-700',
+                                    'border border-white/30'
+                                  )}
+                                >
+                                  {type.replace(/_/g, ' ')}
+                                </motion.span>
+                              ))}
+                            </motion.div>
+                          )}
+                          <motion.a
+                            {...motionPresets.fadeIn}
+                            transition={{ delay: 0.2 }}
+                            whileHover={{ scale: 1.02, x: 4 }}
+                            whileTap={{ scale: 0.98 }}
+                            href={`https://www.google.com/maps/place/?q=place_id:${placeId}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative aspect-[9/16] rounded-lg overflow-hidden group bg-gray-100"
+                            className={cn(
+                              'inline-flex items-center gap-2 px-4 py-2 rounded-lg',
+                              'bg-gradient-to-r from-accent-500 to-accent-600',
+                              'text-white font-medium shadow-lg shadow-accent-500/30',
+                              'hover:shadow-xl transition-all duration-200'
+                            )}
                           >
-                            <Image
-                              src={video.thumbnail}
-                              alt={video.description}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform"
-                              unoptimized
-                            />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                              <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </div>
-                          </a>
-                        ))
+                            Open in Google Maps
+                            <ExternalLink className="w-4 h-4" />
+                          </motion.a>
+                        </div>
                       )}
-                    </div>
-                  )}
-                </div>
-              )}
 
-              {activeTab === 'menu' && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {menuPhotos.length === 0 ? (
-                    <p className="col-span-full text-gray-500 text-center py-8">
-                      No photos available
-                    </p>
-                  ) : (
-                    menuPhotos.map((photo, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                        <Image
-                          src={photo.url}
-                          alt={`Photo ${index + 1}`}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform"
-                          unoptimized
-                        />
-                      </div>
-                    ))
+                      {activeTab === 'reviews' && (
+                        <div className="space-y-4">
+                          {reviews.length === 0 ? (
+                            <p className="text-primary-500 text-center py-8">No reviews available</p>
+                          ) : (
+                            reviews.map((review, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                className={cn(
+                                  'border-b border-white/10 pb-4 last:border-0',
+                                  'p-3 rounded-lg',
+                                  'bg-white/30 hover:bg-white/40 transition-colors'
+                                )}
+                              >
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span className="font-semibold text-primary-900">
+                                    {review.displayName?.text || 'Anonymous'}
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-sm font-medium text-primary-700">{review.rating}</span>
+                                  </div>
+                                </div>
+                                <p className="text-primary-700 text-sm leading-relaxed">{review.text?.text}</p>
+                              </motion.div>
+                            ))
+                          )}
+                        </div>
+                      )}
+
+                      {activeTab === 'tiktok' && (
+                        <div>
+                          {isTiktokLoading ? (
+                            <motion.div
+                              {...motionPresets.fadeIn}
+                              className="flex flex-col items-center justify-center py-12 space-y-4"
+                            >
+                              <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
+                              <div className="text-center">
+                                <p className="text-primary-800 font-semibold">Fetching TikTok videos...</p>
+                                <p className="text-sm text-primary-600 mt-1">This may take a few seconds</p>
+                              </div>
+                            </motion.div>
+                          ) : (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              {tiktokVideos.length === 0 ? (
+                                <p className="col-span-full text-primary-500 text-center py-8">
+                                  No TikTok videos available
+                                </p>
+                              ) : (
+                                tiktokVideos.map((video, index) => (
+                                  <motion.a
+                                    key={video.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    whileHover={{ scale: 1.05, y: -4 }}
+                                    href={video.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={cn(
+                                      'relative aspect-[9/16] rounded-lg overflow-hidden group',
+                                      'bg-primary-100 shadow-md hover:shadow-xl',
+                                      'transition-shadow duration-200'
+                                    )}
+                                  >
+                                    <Image
+                                      src={video.thumbnail}
+                                      alt={video.description}
+                                      fill
+                                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                      unoptimized
+                                    />
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                                      <ExternalLink className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                  </motion.a>
+                                ))
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {activeTab === 'menu' && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {menuPhotos.length === 0 ? (
+                            <p className="col-span-full text-primary-500 text-center py-8">
+                              No photos available
+                            </p>
+                          ) : (
+                            menuPhotos.map((photo, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: index * 0.03 }}
+                                whileHover={{ scale: 1.05, rotate: 1 }}
+                                className={cn(
+                                  'relative aspect-square rounded-lg overflow-hidden',
+                                  'bg-primary-100 shadow-md hover:shadow-xl',
+                                  'cursor-pointer transition-shadow duration-200'
+                                )}
+                              >
+                                <Image
+                                  src={photo.url}
+                                  alt={`Photo ${index + 1}`}
+                                  fill
+                                  className="object-cover hover:scale-110 transition-transform duration-300"
+                                  unoptimized
+                                />
+                              </motion.div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </motion.div>
                   )}
+                </AnimatePresence>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+              </ScrollArea.Viewport>
+
+              <ScrollArea.Scrollbar
+                className="flex select-none touch-none p-0.5 bg-white/50 transition-all duration-150 ease-out hover:bg-white/70 data-[orientation=vertical]:w-5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.3)]"
+                orientation="vertical"
+              >
+                <ScrollArea.Thumb className="flex-1 bg-accent-500 hover:bg-accent-600 rounded-full transition-colors shadow-md" />
+              </ScrollArea.Scrollbar>
+
+              <ScrollArea.Corner className="bg-white/5" />
+            </ScrollArea.Root>
+            </div>
+          </motion.div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

@@ -2,7 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* Smooth scrolling */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-white/10 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary-300/50 hover:bg-primary-400/70 rounded-full;
+  transition: background 0.2s;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.5) rgba(255, 255, 255, 0.1);
+}
+
+/* Force Radix ScrollArea scrollbars to be visible */
+[data-radix-scroll-area-scrollbar] {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Fix Radix ScrollArea viewport table display issue */
+[data-radix-scroll-area-viewport] > div {
+  display: block !important;
+  min-width: 0 !important;
+}
 
 :root {
   --foreground-rgb: 30, 41, 59;
@@ -93,6 +130,36 @@ body {
   animation: spin 1s linear infinite;
 }
 
+/* Glass UI Components */
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-glass border border-white/20 shadow-glass;
+}
+
+.glass-strong {
+  @apply bg-white/90 backdrop-blur-xl border border-white/30 shadow-glass;
+}
+
+.glass-subtle {
+  @apply bg-white/70 backdrop-blur-md border border-white/10 shadow-glass-sm;
+}
+
+.glass-input {
+  @apply bg-white/60 backdrop-blur-md border border-white/20 focus:bg-white/80 focus:border-accent-400/50 transition-all;
+}
+
+/* Hover animations */
+.hover-lift {
+  @apply hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200;
+}
+
+.hover-glow {
+  @apply hover:shadow-accent-500/20 hover:shadow-lg transition-shadow duration-300;
+}
+
+.hover-intensify {
+  @apply hover:bg-white/90 hover:backdrop-blur-xl transition-all duration-300;
+}
+
 /* Map container */
 .map-container {
   width: 100%;
@@ -106,4 +173,14 @@ body {
 
 .gm-style-iw-d {
   overflow: hidden !important;
+}
+
+/* Smooth scroll */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Focus ring for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:ring-offset-2;
 }

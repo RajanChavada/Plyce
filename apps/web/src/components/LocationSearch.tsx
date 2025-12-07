@@ -3,6 +3,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { MapPin, Navigation, X } from 'lucide-react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn, glassStyles, hoverStates, motionPresets } from '@/lib/glass-utils';
 
 interface LocationSearchProps {
   onLocationSelected: (location: {
@@ -203,11 +205,21 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   };
 
   return (
-    <div ref={wrapperRef} className={`relative ${className}`}>
-      <div className="relative">
-        {/* Search Input */}
-        <div className="relative flex items-center">
-          <MapPin className="absolute left-3 text-gray-400" size={20} />
+    <div ref={wrapperRef} className={cn('relative', className)}>
+      <motion.div 
+        className="relative"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Search Input Container - Glass Effect */}
+        <div className={cn(
+          'relative flex items-center',
+          glassStyles.strong,
+          'transition-all duration-300',
+          showPredictions && 'ring-2 ring-accent-400/50'
+        )}>
+          <MapPin className="absolute left-3 text-primary-500" size={20} />
           <input
             type="text"
             value={searchText}
@@ -216,25 +228,48 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               if (predictions.length > 0) setShowPredictions(true);
             }}
             placeholder={placeholder}
-            className="w-full pl-10 pr-24 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            className={cn(
+              'w-full pl-10 pr-24 py-3 bg-transparent',
+              'text-primary-900 placeholder:text-primary-400',
+              'focus:outline-none transition-all duration-200'
+            )}
           />
 
           {/* Clear Button */}
-          {searchText && (
-            <button
-              onClick={clearSearch}
-              className="absolute right-14 p-1 hover:bg-gray-100 rounded-full transition-colors"
-              type="button"
-            >
-              <X size={18} className="text-gray-400" />
-            </button>
-          )}
+          <AnimatePresence>
+            {searchText && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                onClick={clearSearch}
+                className={cn(
+                  'absolute right-14 p-1.5 rounded-full',
+                  'bg-white/50 hover:bg-white/80',
+                  'transition-colors duration-200',
+                  hoverStates.lift
+                )}
+                type="button"
+              >
+                <X size={16} className="text-primary-600" />
+              </motion.button>
+            )}
+          </AnimatePresence>
 
           {/* Current Location Button */}
-          <button
+          <motion.button
             onClick={useCurrentLocation}
             disabled={isLoadingLocation}
-            className="absolute right-2 p-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={cn(
+              'absolute right-2 p-2 rounded-lg',
+              'bg-gradient-to-br from-accent-500 to-accent-600',
+              'text-white shadow-lg shadow-accent-500/30',
+              'hover:from-accent-600 hover:to-accent-700',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              'transition-all duration-200'
+            )}
             type="button"
             title="Use current location"
           >
@@ -243,42 +278,71 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             ) : (
               <Navigation size={20} />
             )}
-          </button>
+          </motion.button>
         </div>
 
         {/* Loading Indicator */}
-        {isSearching && searchText && (
-          <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-cyan-500 rounded-full" />
-          </div>
-        )}
+        <AnimatePresence>
+          {isSearching && searchText && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute right-16 top-1/2 -translate-y-1/2"
+            >
+              <div className="animate-spin h-4 w-4 border-2 border-primary-300 border-t-accent-500 rounded-full" />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Predictions Dropdown */}
-        {showPredictions && predictions.length > 0 && (
-          <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
-            {predictions.map((prediction) => (
-              <button
-                key={prediction.place_id}
-                onClick={() => selectPlace(prediction.place_id, prediction.description)}
-                className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
-                type="button"
-              >
-                <div className="flex items-start gap-3">
-                  <MapPin size={18} className="text-gray-400 mt-1 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">
-                      {prediction.structured_formatting.main_text}
+        {/* Predictions Dropdown - Glass Effect with Animations */}
+        <AnimatePresence>
+          {showPredictions && predictions.length > 0 && (
+            <motion.div
+              {...motionPresets.slideUp}
+              exit={{ opacity: 0, y: -10 }}
+              className={cn(
+                'absolute z-50 w-full mt-2',
+                glassStyles.panel,
+                'border border-white/20',
+                'max-h-80 overflow-hidden'
+              )}
+            >
+              <div className="overflow-y-auto max-h-80 custom-scrollbar">
+                {predictions.map((prediction, index) => (
+                  <motion.button
+                    key={prediction.place_id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    onClick={() => selectPlace(prediction.place_id, prediction.description)}
+                    className={cn(
+                      'w-full text-left px-4 py-3',
+                      'border-b border-white/10 last:border-b-0',
+                      'hover:bg-white/80 active:bg-white/90',
+                      'transition-all duration-200',
+                      hoverStates.lift
+                    )}
+                    type="button"
+                  >
+                    <div className="flex items-start gap-3">
+                      <MapPin size={18} className="text-accent-500 mt-1 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-primary-900 truncate">
+                          {prediction.structured_formatting.main_text}
+                        </div>
+                        <div className="text-sm text-primary-600 truncate">
+                          {prediction.structured_formatting.secondary_text}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500 truncate">
-                      {prediction.structured_formatting.secondary_text}
-                    </div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };
