@@ -1,6 +1,12 @@
 from fastapi import FastAPI, HTTPException, Query, Body
 import requests
 import os
+
+# CRITICAL: Force Playwright to look in the correct location on Render
+# This must be set BEFORE Playwright is initialized
+if os.path.exists("/opt/render/project/src/playwright-browsers"):
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "/opt/render/project/src/playwright-browsers"
+
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
