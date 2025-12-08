@@ -206,7 +206,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
 
   return (
     <div ref={wrapperRef} className={cn('relative', className)}>
-      <motion.div 
+      <motion.div
         className="relative"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -214,10 +214,10 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
       >
         {/* Search Input Container - Glass Effect */}
         <div className={cn(
-          'relative flex items-center',
-          glassStyles.strong,
-          'transition-all duration-300',
-          showPredictions && 'ring-2 ring-accent-400/50'
+          'relative flex items-center rounded-2xl',
+          'bg-white/60 backdrop-blur-xl border border-white/40 shadow-glass ring-1 ring-white/40',
+          'transition-all duration-300 hover:bg-white/70',
+          showPredictions && 'ring-2 ring-accent-400/50 bg-white/80'
         )}>
           <MapPin className="absolute left-3 text-primary-500" size={20} />
           <input
@@ -302,9 +302,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               {...motionPresets.slideUp}
               exit={{ opacity: 0, y: -10 }}
               className={cn(
-                'absolute z-50 w-full mt-2',
-                glassStyles.panel,
-                'border border-white/20',
+                'absolute z-50 w-full mt-3 rounded-xl',
+                'bg-white/95 backdrop-blur-xl border border-white/20 shadow-glass',
                 'max-h-80 overflow-hidden'
               )}
             >
@@ -319,9 +318,8 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                     className={cn(
                       'w-full text-left px-4 py-3',
                       'border-b border-white/10 last:border-b-0',
-                      'hover:bg-white/80 active:bg-white/90',
-                      'transition-all duration-200',
-                      hoverStates.lift
+                      'hover:bg-gray-100 active:bg-gray-200',
+                      'transition-colors duration-200',
                     )}
                     type="button"
                   >
@@ -342,7 +340,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </div>
+      </motion.div >
+    </div >
   );
 };

@@ -31,7 +31,7 @@ export default function RestaurantCard({
         onClick={onClick}
         className={cn(
           'flex gap-2 p-2 rounded-lg cursor-pointer w-full overflow-hidden',
-          glassStyles.subtle,
+          glassStyles.strong,
           hoverStates.lift,
           hoverStates.glow,
           'transition-all duration-200',

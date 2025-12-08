@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { X, Star, MapPin, ExternalLink, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
-import * as ScrollArea from '@radix-ui/react-scroll-area';
+
 import { Restaurant, Review, TikTokVideo, MenuPhoto, ApiService } from '@/services/api';
 import { cn, glassStyles, hoverStates, motionPresets } from '@/lib/glass-utils';
 
@@ -108,10 +108,8 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
         <Dialog.Content
           className={cn(
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-            'w-[95vw] max-w-4xl max-h-[90vh]',
+            glassStyles.gradient,
             'flex flex-col overflow-hidden rounded-2xl',
-            glassStyles.strong,
-            'border border-white/20 shadow-2xl',
             'focus:outline-none'
           )}
           onClick={(e) => e.stopPropagation()}
@@ -121,7 +119,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col h-full"
+            className="flex flex-col w-full max-h-[90vh] overflow-hidden"
           >
             {/* Header Image */}
             <div className="relative h-64 rounded-t-2xl overflow-hidden">
@@ -133,7 +131,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                 unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              
+
               <Dialog.Close asChild>
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 90 }}
@@ -204,28 +202,26 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
               </div>
             </div>
 
-            {/* Content with ScrollArea */}
-            <div className="flex-1 min-h-0">
-              <ScrollArea.Root className="h-full w-full">
-                <ScrollArea.Viewport className="h-full w-full">
-                  <div className="p-6">
-                    <AnimatePresence mode="wait">
-                      {isLoading ? (
-                        <motion.div
-                          key="loading"
-                          {...motionPresets.fadeIn}
-                          className="flex items-center justify-center py-12"
-                        >
-                          <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key={activeTab}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -20 }}
-                          transition={{ duration: 0.2 }}
-                        >
+            {/* Content with Native Scroll */}
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+              <div className="p-6">
+                <AnimatePresence mode="wait">
+                  {isLoading ? (
+                    <motion.div
+                      key="loading"
+                      {...motionPresets.fadeIn}
+                      className="flex items-center justify-center py-12"
+                    >
+                      <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {activeTab === 'overview' && (
                         <div className="space-y-4">
                           <motion.div
@@ -401,18 +397,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                     </motion.div>
                   )}
                 </AnimatePresence>
-                </div>
-              </ScrollArea.Viewport>
-
-              <ScrollArea.Scrollbar
-                className="flex select-none touch-none p-0.5 bg-white/50 transition-all duration-150 ease-out hover:bg-white/70 data-[orientation=vertical]:w-5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.3)]"
-                orientation="vertical"
-              >
-                <ScrollArea.Thumb className="flex-1 bg-accent-500 hover:bg-accent-600 rounded-full transition-colors shadow-md" />
-              </ScrollArea.Scrollbar>
-
-              <ScrollArea.Corner className="bg-white/5" />
-            </ScrollArea.Root>
+              </div>
             </div>
           </motion.div>
         </Dialog.Content>

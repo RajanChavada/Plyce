@@ -134,12 +134,12 @@ export default function FilterPanel({
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           />
         </Dialog.Overlay>
-        
+
         <Dialog.Content
           className={cn(
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
             'w-[95vw] max-w-2xl max-h-[90vh]',
-            'flex flex-col rounded-2xl',
+            'flex flex-col rounded-2xl overflow-hidden',
             glassStyles.strong,
             'border border-white/20'
           )}
@@ -149,7 +149,7 @@ export default function FilterPanel({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="w-full h-full flex flex-col"
+            className="w-full h-full flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
