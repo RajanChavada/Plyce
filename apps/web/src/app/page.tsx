@@ -9,7 +9,9 @@ import RestaurantModal from '@/components/RestaurantModal';
 import FilterPanel, { FilterOptions } from '@/components/FilterPanel';
 import { LocationSearch } from '@/components/LocationSearch';
 import { ApiService, Restaurant } from '@/services/api';
-import { MapPin, List, Grid, Loader2 } from 'lucide-react';
+import { MapPin, List, Loader2, SlidersHorizontal, Coffee, DollarSign, Utensils, Music } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn, glassStyles } from '@/lib/glass-utils';
 
 // Dynamic import for Google Maps (client-side only)
 const MapView = dynamic(() => import('@/components/MapView'), {
@@ -21,7 +23,7 @@ const MapView = dynamic(() => import('@/components/MapView'), {
   ),
 });
 
-type ViewMode = 'map' | 'list' | 'grid';
+
 
 export default function HomePage() {
   // State
@@ -29,15 +31,15 @@ export default function HomePage() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('map');
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   // Location state
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationAddress, setLocationAddress] = useState<string>('');
   const [searchRadius, setSearchRadius] = useState(2000); // 2km default
-  
+
   // Filters - using new FilterOptions interface
   const [filters, setFilters] = useState<FilterOptions>({});
 
@@ -93,17 +95,17 @@ export default function HomePage() {
         searchRadius,
         keyword || undefined
       );
-      
+
       // Apply client-side filters
       let filtered = data;
-      
+
       if (filters.price_level) {
         filtered = filtered.filter(r => r.priceLevel === filters.price_level);
       }
-      
+
       // Note: Service attributes (outdoor_seating, pet_friendly, etc.) would need
       // backend support for accurate filtering. For now, we'll fetch all and display.
-      
+
       setRestaurants(filtered);
     } catch (err) {
       console.error('Error fetching restaurants:', err);
@@ -129,81 +131,24 @@ export default function HomePage() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
-      {/* Header with Location Search */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <LocationSearch
-                onLocationSelected={handleLocationSelected}
-                placeholder="Search for a location..."
-              />
-            </div>
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="px-6 py-3 bg-slate-600 text-white rounded-lg font-semibold hover:bg-slate-700 transition-colors"
-            >
-              Filters
-            </button>
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="md:hidden p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              <List size={20} />
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="relative h-screen w-screen overflow-hidden bg-gray-50 flex flex-row">
+      {/* Sidebar (Flex Item) */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        restaurants={restaurants}
+        isLoading={isLoading}
+        selectedRestaurant={selectedRestaurant}
+        onRestaurantSelect={handleRestaurantSelect}
+        searchRadius={searchRadius}
+        onRadiusChange={setSearchRadius}
+      />
 
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <Sidebar
-          isOpen={isSidebarOpen}
-          restaurants={restaurants}
-          isLoading={isLoading}
-          selectedRestaurant={selectedRestaurant}
-          onRestaurantSelect={handleRestaurantSelect}
-          searchRadius={searchRadius}
-          onRadiusChange={setSearchRadius}
-        />
-
-        {/* Map/List View */}
-        <main className="flex-1 relative">
-          {/* View Toggle (Desktop) */}
-          <div className="absolute top-4 right-4 z-10 hidden md:flex bg-white rounded-lg shadow-medium p-1">
-            <button
-              onClick={() => setViewMode('map')}
-              className={`p-2 rounded-md transition-smooth ${
-                viewMode === 'map' ? 'bg-accent-500 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              title="Map View"
-            >
-              <MapPin className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-md transition-smooth ${
-                viewMode === 'list' ? 'bg-accent-500 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              title="List View"
-            >
-              <List className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-md transition-smooth ${
-                viewMode === 'grid' ? 'bg-accent-500 text-white' : 'text-gray-600 hover:bg-gray-100'
-              }`}
-              title="Grid View"
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Content based on view mode */}
-          {viewMode === 'map' ? (
+      {/* Main Content Area (Map) */}
+      <div className="flex-1 h-full p-4 relative">
+        {/* Map Card Container */}
+        <div className="w-full h-full rounded-3xl overflow-hidden border-4 border-white/50 shadow-2xl relative bg-white">
+          {/* Map View */}
+          <div className="absolute inset-0 z-0">
             <MapView
               restaurants={restaurants}
               userLocation={userLocation}
@@ -211,55 +156,126 @@ export default function HomePage() {
               selectedRestaurant={selectedRestaurant}
               onRestaurantSelect={handleRestaurantSelect}
             />
-          ) : (
-            <div className={`h-full overflow-auto p-4 ${
-              viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-4'
-            }`}>
-              {isLoading ? (
-                <div className="col-span-full flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-accent-500" />
-                </div>
-              ) : restaurants.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-gray-500">
-                  No restaurants found in this area
-                </div>
-              ) : (
-                restaurants.map((restaurant) => (
-                  <RestaurantCard
-                    key={restaurant.id || restaurant.place_id}
-                    restaurant={restaurant}
-                    isSelected={selectedRestaurant?.id === restaurant.id}
-                    onClick={() => handleRestaurantSelect(restaurant)}
+          </div>
+
+          {/* Top Overlay: Search & Filters (Inside Map Card) */}
+          <div className="absolute top-0 left-0 right-0 z-30 p-4 pointer-events-none">
+            <div className="max-w-3xl mx-auto w-full pointer-events-auto space-y-3">
+              {/* Search Bar Row */}
+              <div className="flex items-center gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  className={cn(
+                    "p-3 rounded-xl text-primary-700 hover:bg-white/40 transition-all",
+                    glassStyles.gradient
+                  )}
+                >
+                  <motion.div
+                    animate={{ rotate: isSidebarOpen ? 0 : 180 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <List size={20} />
+                  </motion.div>
+                </motion.button>
+                <div className={cn("flex-1 rounded-2xl", glassStyles.gradient)}>
+                  <LocationSearch
+                    onLocationSelected={handleLocationSelected}
+                    placeholder="Search for a location..."
+                    className="w-full"
                   />
-                ))
-              )}
+                </div>
+              </div>
+
+              {/* Quick Filters Row */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center">
+                {/* Main Filter Button */}
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-900 text-white rounded-full shadow-lg hover:bg-primary-800 transition-all shrink-0"
+                >
+                  <SlidersHorizontal size={16} />
+                  <span className="font-medium text-sm">Filters</span>
+                </button>
+
+                {/* Quick Filter: Price */}
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full text-primary-700 hover:bg-white/40 transition-all shrink-0",
+                    glassStyles.gradient
+                  )}
+                >
+                  <DollarSign size={14} />
+                  <span className="font-medium text-sm">Price</span>
+                </button>
+
+                {/* Quick Filter: Cuisine */}
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full text-primary-700 hover:bg-white/40 transition-all shrink-0",
+                    glassStyles.gradient
+                  )}
+                >
+                  <Utensils size={14} />
+                  <span className="font-medium text-sm">Cuisine</span>
+                </button>
+
+                {/* Quick Filter: Coffee */}
+                <button
+                  onClick={() => {
+                    setFilters({ ...filters, venue_type: 'cafe' });
+                  }}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full text-primary-700 hover:bg-white/40 transition-all shrink-0",
+                    glassStyles.gradient
+                  )}
+                >
+                  <Coffee size={14} />
+                  <span className="font-medium text-sm">Coffee</span>
+                </button>
+
+                {/* Quick Filter: Vibe */}
+                <button
+                  onClick={() => setIsFilterOpen(true)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full text-primary-700 hover:bg-white/40 transition-all shrink-0",
+                    glassStyles.gradient
+                  )}
+                >
+                  <Music size={14} />
+                  <span className="font-medium text-sm">Vibe</span>
+                </button>
+              </div>
             </div>
-          )}
+          </div>
 
           {/* Error Message */}
           {error && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
               {error}
             </div>
           )}
-        </main>
+
+          {/* Restaurant Detail Modal */}
+          {selectedRestaurant && (
+            <RestaurantModal
+              restaurant={selectedRestaurant}
+              onClose={() => setSelectedRestaurant(null)}
+            />
+          )}
+
+          {/* Filter Panel */}
+          <FilterPanel
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            initialFilters={filters}
+            onApply={handleApplyFilters}
+          />
+        </div>
       </div>
-
-      {/* Restaurant Detail Modal */}
-      {selectedRestaurant && (
-        <RestaurantModal
-          restaurant={selectedRestaurant}
-          onClose={() => setSelectedRestaurant(null)}
-        />
-      )}
-
-      {/* Filter Panel */}
-      <FilterPanel
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
-        initialFilters={filters}
-        onApply={handleApplyFilters}
-      />
     </div>
   );
 }
