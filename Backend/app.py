@@ -33,7 +33,89 @@ load_dotenv() # load the env
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ... (Cache and BrowserPool classes remain unchanged) ...
+# ==================== CACHE LAYER FOR TIKTOK ====================
+class SimpleCache:
+    """Simple TTL-based in-memory cache for TikTok videos"""
+    def __init__(self):
+        self.cache: Dict[str, tuple] = {}
+    
+    def get(self, key: str) -> Optional[List[Dict]]:
+        if key in self.cache:
+            data, expiry = self.cache[key]
+            if datetime.now() < expiry:
+                logger.info(f"🎯 Cache HIT for {key}")
+                return data
+            else:
+                del self.cache[key]  # Expired
+                logger.info(f"⏰ Cache EXPIRED for {key}")
+        return None
+    
+    def set(self, key: str, data: List[Dict], ttl: int = 600):
+        """TTL in seconds (default 10 minutes)"""
+        expiry = datetime.now() + timedelta(seconds=ttl)
+        self.cache[key] = (data, expiry)
+        logger.info(f"💾 Cache SET for {key} (expires in {ttl}s)")
+    
+    def clear(self):
+        self.cache.clear()
+        logger.info("🧹 Cache CLEARED")
+
+# Global TikTok cache instance
+tiktok_cache = SimpleCache()
+
+# ==================== BROWSER POOL FOR PLAYWRIGHT ====================
+class BrowserPool:
+    """Reusable browser instances to avoid startup overhead"""
+    def __init__(self, pool_size: int = 2):
+        self.pool_size = pool_size
+        self.browsers: asyncio.Queue = None
+        self.playwright = None
+    
+    async def initialize(self):
+        """Initialize the browser pool"""
+        self.playwright = await async_playwright().start()
+        self.browsers = asyncio.Queue(maxsize=self.pool_size)
+        
+        for _ in range(self.pool_size):
+            browser = await self.playwright.chromium.launch(
+                headless=True,
+                args=[
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--no-first-run",
+                    "--no-default-browser-check",
+                ]
+            )
+            await self.browsers.put(browser)
+        
+        logger.info(f"🚀 Browser pool initialized with {self.pool_size} instances")
+    
+    async def acquire(self):
+        """Get a browser from the pool"""
+        browser = await self.browsers.get()
+        logger.info(f"🎭 Browser acquired from pool")
+        return browser
+    
+    async def release(self, browser):
+        """Return a browser to the pool"""
+        await self.browsers.put(browser)
+        logger.info(f"🔄 Browser returned to pool")
+    
+    async def close(self):
+        """Close all browsers"""
+        while not self.browsers.empty():
+            browser = await self.browsers.get()
+            await browser.close()
+        
+        if self.playwright:
+            await self.playwright.stop()
+        
+        logger.info("🛑 Browser pool closed")
+
+# Global browser pool instance
+browser_pool: Optional[BrowserPool] = None
 
 # Pydantic models for request validation
 class FilterOptions(BaseModel):
