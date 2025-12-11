@@ -126,7 +126,8 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
         <Dialog.Content
           className={cn(
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-            glassStyles.gradient,
+            // High opacity glass for premium feel + readability
+            'bg-white/90 backdrop-blur-xl shadow-glass border border-white/20',
             'flex flex-col overflow-hidden rounded-2xl',
             'focus:outline-none'
           )}
@@ -188,7 +189,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-white/10 bg-white/10">
+            <div className="border-b border-white/20 bg-white/4 backdrop-blur-md">
               <div className="flex gap-1 px-4">
                 {tabs.map((tab, index) => (
                   <motion.button
@@ -203,8 +204,8 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                       'px-4 py-3 text-sm font-medium border-b-2 transition-all duration-200',
                       'relative',
                       activeTab === tab.id
-                        ? 'border-accent-500 text-accent-600'
-                        : 'border-transparent text-primary-600 hover:text-primary-800 hover:bg-white/10'
+                        ? 'border-accent-500 text-accent-700'
+                        : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     )}
                   >
                     {tab.label}
@@ -244,9 +245,9 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                         <div className="space-y-4">
                           <motion.div
                             {...motionPresets.fadeIn}
-                            className="flex items-center gap-2 text-primary-700"
+                            className="flex items-center gap-2 text-primary-950 font-medium"
                           >
-                            <MapPin className="w-5 h-5 text-accent-500" />
+                            <MapPin className="w-5 h-5 text-accent-600" />
                             <span>{restaurant.formattedAddress}</span>
                           </motion.div>
                           {restaurant.types && (
@@ -263,8 +264,9 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                   transition={{ delay: 0.1 + index * 0.05 }}
                                   className={cn(
                                     'px-3 py-1 rounded-full text-sm font-medium',
-                                    'bg-white/50 text-primary-700',
-                                    'border border-white/30'
+                                    'px-3 py-1 rounded-full text-sm font-medium',
+                                    'bg-primary-100 text-primary-900',
+                                    'border border-primary-200'
                                   )}
                                 >
                                   {type.replace(/_/g, ' ')}
@@ -305,13 +307,13 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
                                 className={cn(
-                                  'border-b border-white/10 pb-4 last:border-0',
-                                  'p-3 rounded-lg',
-                                  'bg-white/30 hover:bg-white/40 transition-colors'
+                                  'border-b border-gray-200 pb-4 last:border-0',
+                                  'p-4 rounded-lg',
+                                  'bg-gray-50/90 hover:bg-gray-100 transition-colors shadow-sm'
                                 )}
                               >
                                 <div className="flex items-center gap-2 mb-2">
-                                  <span className="font-semibold text-primary-900">
+                                  <span className="font-bold text-black">
                                     {review.displayName?.text || 'Anonymous'}
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -319,7 +321,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                     <span className="text-sm font-medium text-primary-700">{review.rating}</span>
                                   </div>
                                 </div>
-                                <p className="text-primary-700 text-sm leading-relaxed">{review.text?.text}</p>
+                                <p className="text-primary-900 text-sm leading-relaxed font-medium">{review.text?.text}</p>
                               </motion.div>
                             ))
                           )}
