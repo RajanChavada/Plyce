@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { X, Star, MapPin, ExternalLink, Loader2 } from 'lucide-react';
+import { X, Star, MapPin, ExternalLink, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -21,6 +21,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
   const [menuPhotos, setMenuPhotos] = useState<MenuPhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isTiktokLoading, setIsTiktokLoading] = useState(true);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
   const name = restaurant.displayName?.text || restaurant.name || 'Restaurant';
   const imageUrl = ApiService.getPhotoUrl(restaurant);
@@ -84,14 +85,31 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
     { id: 'menu', label: `Photos (${menuPhotos.length})` },
   ];
 
-  // Close on escape key
+  // Lightbox navigation
+  const nextPhoto = useCallback(() => {
+    if (selectedPhotoIndex === null) return;
+    setSelectedPhotoIndex((prev) => (prev === null || prev === menuPhotos.length - 1 ? 0 : prev + 1));
+  }, [selectedPhotoIndex, menuPhotos.length]);
+
+  const prevPhoto = useCallback(() => {
+    if (selectedPhotoIndex === null) return;
+    setSelectedPhotoIndex((prev) => (prev === null || prev === 0 ? menuPhotos.length - 1 : prev - 1));
+  }, [selectedPhotoIndex, menuPhotos.length]);
+
+  // Keyboard navigation for lightbox
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedPhotoIndex !== null) {
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'ArrowLeft') prevPhoto();
+        if (e.key === 'Escape') setSelectedPhotoIndex(null);
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
     };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhotoIndex, nextPhoto, prevPhoto, onClose]);
 
   return (
     <Dialog.Root open={true} onOpenChange={(open) => !open && onClose()}>
@@ -376,6 +394,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.03 }}
                                 whileHover={{ scale: 1.05, rotate: 1 }}
+                                onClick={() => setSelectedPhotoIndex(index)}
                                 className={cn(
                                   'relative aspect-square rounded-lg overflow-hidden',
                                   'bg-primary-100 shadow-md hover:shadow-xl',
@@ -401,6 +420,75 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             </div>
           </motion.div>
         </Dialog.Content>
+
+        {/* Lightbox Overlay */}
+        <AnimatePresence>
+          {selectedPhotoIndex !== null && (
+            <Dialog.Portal>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex items-center justify-center"
+                onClick={() => setSelectedPhotoIndex(null)}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedPhotoIndex(null)}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+
+                {/* Navigation Buttons */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevPhoto();
+                  }}
+                  className="absolute left-4 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextPhoto();
+                  }}
+                  className="absolute right-4 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 font-medium z-[70]">
+                  {selectedPhotoIndex + 1} / {menuPhotos.length}
+                </div>
+
+                {/* Main Image */}
+                <motion.div
+                  key={selectedPhotoIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                  className="relative w-full h-full max-w-5xl max-h-[85vh] mx-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Image
+                    src={menuPhotos[selectedPhotoIndex].url}
+                    alt={`Photo ${selectedPhotoIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    unoptimized
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
+            </Dialog.Portal>
+          )}
+        </AnimatePresence>
       </Dialog.Portal>
     </Dialog.Root>
   );
