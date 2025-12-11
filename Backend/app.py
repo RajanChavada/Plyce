@@ -1307,13 +1307,20 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
         
         logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
         
+        logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
+        
         # Scrape using Playwright with browser pool
-        videos = await scrape_tiktok_videos_playwright(restaurant_name, limit)
+        # Increased timeout to 20s for Render free tier
+        try:
+            videos = await scrape_tiktok_videos_playwright(restaurant_name, limit, timeout=20000)
+        except Exception as e:
+            logger.error(f"⚠️ Playwright scraping failed: {str(e)}")
+            videos = []
         
         # Create TikTok search URL for fallback
         tiktok_search_url = f"https://www.tiktok.com/search?q={restaurant_name.replace(' ', '+')}+restaurant"
         
-        # If no videos found, use placeholder
+        # If no videos found (or scraping failed), use placeholder
         if len(videos) == 0:
             logger.warning(f"⚠️ No videos found for {restaurant_name}, using placeholders")
             videos = generate_placeholder_videos(restaurant_name, limit, tiktok_search_url)
@@ -1331,11 +1338,25 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
                 
     except Exception as e:
         logger.error(f"❌ Error in TikTok endpoint: {str(e)}")
-        return {
-            "place_id": place_id,
-            "videos": [],
-            "error": str(e)
-        }
+        # Fallback to placeholders even on critical error
+        try:
+            # Try to get name from request if possible, otherwise use generic
+            name = "Restaurant"
+            tiktok_search_url = "https://www.tiktok.com/"
+            videos = generate_placeholder_videos(name, limit, tiktok_search_url)
+            return {
+                "place_id": place_id,
+                "restaurant_name": name,
+                "videos": videos,
+                "search_url": tiktok_search_url,
+                "error": str(e)
+            }
+        except:
+            return {
+                "place_id": place_id,
+                "videos": [],
+                "error": str(e)
+            }
 
 @app.get("/restaurants/photo")
 async def get_restaurant_photo(reference: str, maxwidth: int = 400):
