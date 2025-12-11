@@ -6,3 +6,4 @@ env.ts
 .env.example
 .env
 
+apps/web/.env.local
