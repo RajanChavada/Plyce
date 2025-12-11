@@ -35,7 +35,65 @@ logger = logging.getLogger(__name__)
 
 # ... (Cache and BrowserPool classes remain unchanged) ...
 
-# ... (Pydantic models and helper functions remain unchanged) ...
+# Pydantic models for request validation
+class FilterOptions(BaseModel):
+    cuisine: Optional[str] = None
+    dietary: Optional[str] = None
+    price_level: Optional[int] = None
+    outdoor_seating: Optional[bool] = None
+    pet_friendly: Optional[bool] = None
+    wheelchair_accessible: Optional[bool] = None
+    delivery_available: Optional[bool] = None
+
+class PlaceDetailsRequest(BaseModel):
+    place_ids: List[str]
+
+# Chain exclusion list for coffee/matcha/cafe filters
+# These chain names will be matched against venue names (case-insensitive, substring matching)
+CHAIN_BLACKLIST = {
+    "starbucks",
+    "tim hortons",
+    "tims",
+    "mccafe",
+    "mcdonalds",
+    "dunkin",
+    "dunkin donuts",
+    "dunkin'",
+    "costa coffee",
+    "pret a manger",
+    "second cup",
+    "timothy's",
+    "timothy's world coffee",
+    "country style",
+    "coffee time",
+    "williams coffee pub",
+    "tim horton's",
+    "aroma espresso bar",
+    "balzac's coffee",  # Note: Balzac's is actually indie, but has multiple locations
+}
+
+def is_chain_venue(name: str) -> bool:
+    """
+    Check if venue is a known chain based on name matching.
+    
+    Args:
+        name: The venue name to check
+        
+    Returns:
+        True if the venue name contains any chain name from blacklist, False otherwise
+    """
+    if not name:
+        return False
+    
+    name_lower = name.lower().strip()
+    
+    # Check each chain name in the blacklist
+    for chain in CHAIN_BLACKLIST:
+        if chain in name_lower:
+            logger.info(f"🔗 Detected chain venue: {name} (matched: {chain})")
+            return True
+    
+    return False
 
 app = FastAPI(title="Plyce API", 
               description="Backend API for Plyce application",
