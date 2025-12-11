@@ -1,6 +1,13 @@
 from fastapi import FastAPI, HTTPException, Query, Body
 import requests
 import os
+
+# CRITICAL: Force Playwright to look in the correct location on Render
+# This must be set BEFORE Playwright is initialized
+playwright_path = os.path.join(os.getcwd(), "playwright-browsers")
+if os.path.exists(playwright_path):
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = playwright_path
+
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -191,7 +198,11 @@ else:
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],    
+    allow_origins=[
+        "http://localhost:3000", # Local development
+        "https://plyce-lso4mcg4s-rajanchavada111-7999s-projects.vercel.app" # Specific Vercel preview
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app", # Allow all Vercel deployments
     allow_credentials=True,
     allow_methods=["*"],    
     allow_headers=["*"],
@@ -239,6 +250,18 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+@app.get("/debug/routes")
+async def debug_routes():
+    """List all registered routes for debugging"""
+    routes = []
+    for route in app.routes:
+        routes.append({
+            "path": route.path,
+            "name": route.name,
+            "methods": list(route.methods) if hasattr(route, "methods") else None
+        })
+    return {"routes": routes}
 
 # Add this helper function to generate proper photo URLs
 def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
@@ -1284,13 +1307,20 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
         
         logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
         
+        logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
+        
         # Scrape using Playwright with browser pool
-        videos = await scrape_tiktok_videos_playwright(restaurant_name, limit)
+        # Increased timeout to 20s for Render free tier
+        try:
+            videos = await scrape_tiktok_videos_playwright(restaurant_name, limit, timeout=20000)
+        except Exception as e:
+            logger.error(f"⚠️ Playwright scraping failed: {str(e)}")
+            videos = []
         
         # Create TikTok search URL for fallback
         tiktok_search_url = f"https://www.tiktok.com/search?q={restaurant_name.replace(' ', '+')}+restaurant"
         
-        # If no videos found, use placeholder
+        # If no videos found (or scraping failed), use placeholder
         if len(videos) == 0:
             logger.warning(f"⚠️ No videos found for {restaurant_name}, using placeholders")
             videos = generate_placeholder_videos(restaurant_name, limit, tiktok_search_url)
@@ -1308,11 +1338,25 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
                 
     except Exception as e:
         logger.error(f"❌ Error in TikTok endpoint: {str(e)}")
-        return {
-            "place_id": place_id,
-            "videos": [],
-            "error": str(e)
-        }
+        # Fallback to placeholders even on critical error
+        try:
+            # Try to get name from request if possible, otherwise use generic
+            name = "Restaurant"
+            tiktok_search_url = "https://www.tiktok.com/"
+            videos = generate_placeholder_videos(name, limit, tiktok_search_url)
+            return {
+                "place_id": place_id,
+                "restaurant_name": name,
+                "videos": videos,
+                "search_url": tiktok_search_url,
+                "error": str(e)
+            }
+        except:
+            return {
+                "place_id": place_id,
+                "videos": [],
+                "error": str(e)
+            }
 
 @app.get("/restaurants/photo")
 async def get_restaurant_photo(reference: str, maxwidth: int = 400):

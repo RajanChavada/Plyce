@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { X, Star, MapPin, ExternalLink, Loader2 } from 'lucide-react';
+import { X, Star, MapPin, ExternalLink, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Dialog from '@radix-ui/react-dialog';
 
@@ -21,6 +21,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
   const [menuPhotos, setMenuPhotos] = useState<MenuPhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isTiktokLoading, setIsTiktokLoading] = useState(true);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
   const name = restaurant.displayName?.text || restaurant.name || 'Restaurant';
   const imageUrl = ApiService.getPhotoUrl(restaurant);
@@ -84,14 +85,31 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
     { id: 'menu', label: `Photos (${menuPhotos.length})` },
   ];
 
-  // Close on escape key
+  // Lightbox navigation
+  const nextPhoto = useCallback(() => {
+    if (selectedPhotoIndex === null) return;
+    setSelectedPhotoIndex((prev) => (prev === null || prev === menuPhotos.length - 1 ? 0 : prev + 1));
+  }, [selectedPhotoIndex, menuPhotos.length]);
+
+  const prevPhoto = useCallback(() => {
+    if (selectedPhotoIndex === null) return;
+    setSelectedPhotoIndex((prev) => (prev === null || prev === 0 ? menuPhotos.length - 1 : prev - 1));
+  }, [selectedPhotoIndex, menuPhotos.length]);
+
+  // Keyboard navigation for lightbox
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedPhotoIndex !== null) {
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'ArrowLeft') prevPhoto();
+        if (e.key === 'Escape') setSelectedPhotoIndex(null);
+      } else if (e.key === 'Escape') {
+        onClose();
+      }
     };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhotoIndex, nextPhoto, prevPhoto, onClose]);
 
   return (
     <Dialog.Root open={true} onOpenChange={(open) => !open && onClose()}>
@@ -108,7 +126,8 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
         <Dialog.Content
           className={cn(
             'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-            glassStyles.gradient,
+            // High opacity glass for premium feel + readability
+            'bg-white/90 backdrop-blur-xl shadow-glass border border-white/20',
             'flex flex-col overflow-hidden rounded-2xl',
             'focus:outline-none'
           )}
@@ -170,7 +189,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-white/10 bg-white/10">
+            <div className="border-b border-white/20 bg-white/4 backdrop-blur-md">
               <div className="flex gap-1 px-4">
                 {tabs.map((tab, index) => (
                   <motion.button
@@ -185,8 +204,8 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                       'px-4 py-3 text-sm font-medium border-b-2 transition-all duration-200',
                       'relative',
                       activeTab === tab.id
-                        ? 'border-accent-500 text-accent-600'
-                        : 'border-transparent text-primary-600 hover:text-primary-800 hover:bg-white/10'
+                        ? 'border-accent-500 text-accent-700'
+                        : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                     )}
                   >
                     {tab.label}
@@ -226,9 +245,9 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                         <div className="space-y-4">
                           <motion.div
                             {...motionPresets.fadeIn}
-                            className="flex items-center gap-2 text-primary-700"
+                            className="flex items-center gap-2 text-primary-950 font-medium"
                           >
-                            <MapPin className="w-5 h-5 text-accent-500" />
+                            <MapPin className="w-5 h-5 text-accent-600" />
                             <span>{restaurant.formattedAddress}</span>
                           </motion.div>
                           {restaurant.types && (
@@ -245,8 +264,9 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                   transition={{ delay: 0.1 + index * 0.05 }}
                                   className={cn(
                                     'px-3 py-1 rounded-full text-sm font-medium',
-                                    'bg-white/50 text-primary-700',
-                                    'border border-white/30'
+                                    'px-3 py-1 rounded-full text-sm font-medium',
+                                    'bg-primary-100 text-primary-900',
+                                    'border border-primary-200'
                                   )}
                                 >
                                   {type.replace(/_/g, ' ')}
@@ -287,13 +307,13 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
                                 className={cn(
-                                  'border-b border-white/10 pb-4 last:border-0',
-                                  'p-3 rounded-lg',
-                                  'bg-white/30 hover:bg-white/40 transition-colors'
+                                  'border-b border-gray-200 pb-4 last:border-0',
+                                  'p-4 rounded-lg',
+                                  'bg-gray-50/90 hover:bg-gray-100 transition-colors shadow-sm'
                                 )}
                               >
                                 <div className="flex items-center gap-2 mb-2">
-                                  <span className="font-semibold text-primary-900">
+                                  <span className="font-bold text-black">
                                     {review.displayName?.text || 'Anonymous'}
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -301,7 +321,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                     <span className="text-sm font-medium text-primary-700">{review.rating}</span>
                                   </div>
                                 </div>
-                                <p className="text-primary-700 text-sm leading-relaxed">{review.text?.text}</p>
+                                <p className="text-primary-900 text-sm leading-relaxed font-medium">{review.text?.text}</p>
                               </motion.div>
                             ))
                           )}
@@ -376,6 +396,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.03 }}
                                 whileHover={{ scale: 1.05, rotate: 1 }}
+                                onClick={() => setSelectedPhotoIndex(index)}
                                 className={cn(
                                   'relative aspect-square rounded-lg overflow-hidden',
                                   'bg-primary-100 shadow-md hover:shadow-xl',
@@ -401,6 +422,75 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             </div>
           </motion.div>
         </Dialog.Content>
+
+        {/* Lightbox Overlay */}
+        <AnimatePresence>
+          {selectedPhotoIndex !== null && (
+            <Dialog.Portal>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex items-center justify-center"
+                onClick={() => setSelectedPhotoIndex(null)}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedPhotoIndex(null)}
+                  className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+
+                {/* Navigation Buttons */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevPhoto();
+                  }}
+                  className="absolute left-4 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextPhoto();
+                  }}
+                  className="absolute right-4 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-[70]"
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 font-medium z-[70]">
+                  {selectedPhotoIndex + 1} / {menuPhotos.length}
+                </div>
+
+                {/* Main Image */}
+                <motion.div
+                  key={selectedPhotoIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                  className="relative w-full h-full max-w-5xl max-h-[85vh] mx-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Image
+                    src={menuPhotos[selectedPhotoIndex].url}
+                    alt={`Photo ${selectedPhotoIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    unoptimized
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
+            </Dialog.Portal>
+          )}
+        </AnimatePresence>
       </Dialog.Portal>
     </Dialog.Root>
   );

@@ -215,9 +215,9 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
         {/* Search Input Container - Glass Effect */}
         <div className={cn(
           'relative flex items-center rounded-2xl',
-          'bg-white/60 backdrop-blur-xl border border-white/40 shadow-glass ring-1 ring-white/40',
-          'transition-all duration-300 hover:bg-white/70',
-          showPredictions && 'ring-2 ring-accent-400/50 bg-white/80'
+          'bg-white/95 backdrop-blur-xl border border-white/40 shadow-glass ring-1 ring-white/40',
+          'transition-all duration-300 hover:bg-white',
+          showPredictions && 'ring-2 ring-accent-400/50 bg-white'
         )}>
           <MapPin className="absolute left-3 text-primary-500" size={20} />
           <input
