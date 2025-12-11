@@ -12,3 +12,5 @@ apps/web/.env.local
 apps/web/.next/
 build/
 dist/
+__pycache__/
+*.pyc
