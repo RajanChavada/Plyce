@@ -251,6 +251,18 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+@app.get("/debug/routes")
+async def debug_routes():
+    """List all registered routes for debugging"""
+    routes = []
+    for route in app.routes:
+        routes.append({
+            "path": route.path,
+            "name": route.name,
+            "methods": list(route.methods) if hasattr(route, "methods") else None
+        })
+    return {"routes": routes}
+
 # Add this helper function to generate proper photo URLs
 def get_photo_url(photo_reference: str, max_width: int = 400) -> str:
     """Generate a proper Google Places photo URL"""
