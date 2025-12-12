@@ -1240,9 +1240,9 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
         logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
         
         # Scrape using Playwright with browser pool
-        # Increased timeout to 20s for Render free tier
+        # Increased timeout to 45s for proxy latency
         try:
-            videos = await scrape_tiktok_videos_playwright(restaurant_name, limit, timeout=20000)
+            videos = await scrape_tiktok_videos_playwright(restaurant_name, limit, timeout=45000)
         except Exception as e:
             logger.error(f"⚠️ Playwright scraping failed: {str(e)}")
             videos = []
