@@ -138,6 +138,9 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
           )}
           onClick={(e) => e.stopPropagation()}
         >
+          <Dialog.Description className="sr-only">
+            Details for {restaurant.name}
+          </Dialog.Description>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
