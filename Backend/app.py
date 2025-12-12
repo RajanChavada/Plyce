@@ -181,6 +181,10 @@ app = FastAPI(title="Plyce API",
               description="Backend API for Plyce application",
               version="0.1.0")
 
+@app.get("/version")
+def get_version():
+    return {"version": "1.0.1", "cors_fixed": True, "timeout_updated": True}
+
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # Get the key 
 SERPAPI_KEY = os.getenv("SERPAPI_KEY") # Get SerpApi key for menu scraping
 
@@ -1164,9 +1168,9 @@ async def scrape_tiktok_videos_playwright(
 def generate_placeholder_videos(restaurant_name: str, limit: int, search_url: str) -> List[Dict]:
     """Generate placeholder videos when scraping fails"""
     placeholder_designs = [
-        f"https://via.placeholder.com/300x400/EE1D52/FFFFFF?text={restaurant_name.replace(' ', '+')}",
-        f"https://via.placeholder.com/300x400/000000/FFFFFF?text=TikTok+{restaurant_name.replace(' ', '+')}",
-        f"https://via.placeholder.com/300x400/25F4EE/000000?text={restaurant_name.replace(' ', '+')}",
+        f"https://placehold.co/300x400/EE1D52/FFFFFF/png?text={restaurant_name.replace(' ', '+')}",
+        f"https://placehold.co/300x400/000000/FFFFFF/png?text=TikTok+{restaurant_name.replace(' ', '+')}",
+        f"https://placehold.co/300x400/25F4EE/000000/png?text={restaurant_name.replace(' ', '+')}",
     ]
     
     videos = []
