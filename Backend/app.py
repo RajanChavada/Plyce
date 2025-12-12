@@ -200,7 +200,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", # Local development
-        "https://plyce.vercel.app", # Production frontend
+        "https://plyce.vercel.app/", # Production frontend
         "https://plyce-lso4mcg4s-rajanchavada111-7999s-projects.vercel.app" # Specific Vercel preview
     ],
     allow_origin_regex=r"https://.*\.vercel\.app", # Allow all Vercel deployments
@@ -1014,52 +1014,36 @@ async def scrape_tiktok_videos_playwright(
     """
     
     browser = None
+    context = None
     try:
         # Acquire browser from pool
         browser = await browser_pool.acquire()
         
         # Create new page/context (isolated) with stealth settings
+        # Block images and media to save bandwidth/memory
         context = await browser.new_context(
             viewport={"width": 1920, "height": 1080},
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             locale="en-US",
             timezone_id="America/New_York",
             ignore_https_errors=True,
+            java_script_enabled=True,
             extra_http_headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
-                "Accept-Encoding": "gzip, deflate, br",
                 "DNT": "1",
-                "Connection": "keep-alive",
                 "Upgrade-Insecure-Requests": "1"
             }
         )
+        
+        # Block resource heavy requests
+        await context.route("**/*.{png,jpg,jpeg,gif,webp,svg,mp4,avi,mov,mp3,wav,woff,woff2,ttf,eot}", lambda route: route.abort())
+        
         page = await context.new_page()
         
         # Add stealth scripts to avoid detection
         await page.add_init_script("""
-            // Override navigator.webdriver
-            Object.defineProperty(navigator, 'webdriver', {
-                get: () => false,
-            });
-            
-            // Override permissions
-            const originalQuery = window.navigator.permissions.query;
-            window.navigator.permissions.query = (parameters) => (
-                parameters.name === 'notifications' ?
-                    Promise.resolve({ state: Notification.permission }) :
-                    originalQuery(parameters)
-            );
-            
-            // Override plugins
-            Object.defineProperty(navigator, 'plugins', {
-                get: () => [1, 2, 3, 4, 5],
-            });
-            
-            // Override languages
-            Object.defineProperty(navigator, 'languages', {
-                get: () => ['en-US', 'en'],
-            });
+            Object.defineProperty(navigator, 'webdriver', { get: () => false });
         """)
         
         # Construct search URL
@@ -1076,44 +1060,34 @@ async def scrape_tiktok_videos_playwright(
                 timeout=timeout
             )
             # Wait a bit for dynamic content
-            await page.wait_for_timeout(3000)
-        except PlaywrightTimeoutError:
-            logger.warning(f"⏱️ Navigation timeout for {search_query}")
+            await page.wait_for_timeout(2000)
+        except Exception as e:
+            logger.warning(f"⏱️ Navigation failed for {search_query}: {str(e)}")
             return []
         
-        # Try multiple selector strategies (TikTok frequently changes their DOM)
+        # Try multiple selector strategies
         video_elements_found = False
         selectors_to_try = [
             "div[data-e2e='search_video-item']",
             "div[data-e2e='search-card-item']", 
-            "div[class*='DivItemContainerForSearch']",
             "div[class*='DivItemContainer']",
             "a[href*='/video/']"
         ]
         
         for selector in selectors_to_try:
             try:
-                await page.wait_for_selector(selector, timeout=3000)
+                await page.wait_for_selector(selector, timeout=2000)
                 logger.info(f"✅ Found videos with selector: {selector}")
                 video_elements_found = True
                 break
-            except PlaywrightTimeoutError:
+            except:
                 continue
         
         if not video_elements_found:
-            logger.warning(f"❌ No video elements found with any selector for {restaurant_name}")
-            
-            # Take screenshot for debugging
-            try:
-                screenshot_path = f"/tmp/tiktok_debug_{restaurant_name.replace(' ', '_')}.png"
-                await page.screenshot(path=screenshot_path)
-                logger.info(f"📸 Debug screenshot saved to: {screenshot_path}")
-            except:
-                pass
-            
+            logger.warning(f"❌ No video elements found for {restaurant_name}")
             return []
         
-        # Extract video data using evaluate with multiple strategies
+        # Extract video data using evaluate
         videos = await page.evaluate("""
             (limit) => {
                 const videos = [];
@@ -1132,106 +1106,42 @@ async def scrape_tiktok_videos_playwright(
                     videoElements = allLinks.map(link => link.closest('div')).filter(Boolean);
                 }
                 
-                console.log(`Found ${videoElements.length} video elements`);
-                
                 for (let i = 0; i < Math.min(videoElements.length, limit); i++) {
                     try {
                         const elem = videoElements[i];
                         
-                        // Get link (multiple strategies)
+                        // Get link
                         let linkElem = elem.querySelector("a[href*='/video/']");
                         if (!linkElem) linkElem = elem.querySelector("a");
                         const url = linkElem ? linkElem.href : "";
                         
-                        // Get thumbnail (try multiple selectors)
+                        // Get thumbnail
                         let thumbnail = "";
                         const imgElem = elem.querySelector("img");
                         if (imgElem) {
-                            thumbnail = imgElem.src || imgElem.getAttribute('data-src') || imgElem.getAttribute('srcset')?.split(' ')[0] || "";
+                            thumbnail = imgElem.src || imgElem.getAttribute('data-src') || "";
                         }
                         
-                        // Get description/title (multiple strategies)
+                        // Get description
                         let description = "TikTok Video";
-                        const descSelectors = [
-                            "div[data-e2e='search_video-desc']",
-                            "div[data-e2e='search-card-desc']",
-                            "h1", "h2", "h3",
-                            "span[class*='desc']",
-                            "div[class*='title']"
-                        ];
+                        const descElem = elem.querySelector("div[data-e2e*='desc'], h1, h2, h3, div[class*='title']");
+                        if (descElem) description = descElem.textContent.trim();
                         
-                        for (const selector of descSelectors) {
-                            const descElem = elem.querySelector(selector);
-                            if (descElem && descElem.textContent.trim()) {
-                                description = descElem.textContent.trim();
-                                break;
-                            }
-                        }
-                        
-                        // Validate we have minimum required data
                         if (url && url.includes('/video/')) {
                             videos.push({
                                 id: `video-${i+1}`,
-                                thumbnail: thumbnail || `https://via.placeholder.com/300x400/EE1D52/FFFFFF?text=TikTok+Video`,
+                                thumbnail: thumbnail || "",
                                 url: url,
                                 description: description.substring(0, 100) || "TikTok Video"
                             });
-                            console.log(`Extracted video ${i+1}: ${url}`);
                         }
-                    } catch (e) {
-                        console.log(`Error processing video ${i}:`, e);
-                    }
+                    } catch (e) {}
                 }
-                
                 return videos;
             }
         """, limit)
         
-        # If no videos found, try mobile TikTok as fallback
-        if len(videos) == 0:
-            logger.info(f"🔄 Trying mobile TikTok for {restaurant_name}")
-            try:
-                mobile_url = f"https://m.tiktok.com/search?q={search_query.replace(' ', '+')}"
-                await page.goto(mobile_url, wait_until="domcontentloaded", timeout=5000)
-                await page.wait_for_timeout(2000)
-                
-                # Mobile TikTok has different selectors
-                videos = await page.evaluate("""
-                    (limit) => {
-                        const videos = [];
-                        const links = document.querySelectorAll("a[href*='/video/']");
-                        
-                        for (let i = 0; i < Math.min(links.length, limit); i++) {
-                            try {
-                                const link = links[i];
-                                const url = link.href;
-                                const img = link.querySelector("img");
-                                const thumbnail = img ? (img.src || img.getAttribute('data-src') || "") : "";
-                                
-                                if (url && url.includes('/video/')) {
-                                    videos.push({
-                                        id: `video-${i+1}`,
-                                        thumbnail: thumbnail || `https://via.placeholder.com/300x400/EE1D52/FFFFFF?text=TikTok`,
-                                        url: url,
-                                        description: "TikTok Video"
-                                    });
-                                }
-                            } catch (e) {
-                                console.log(`Error: ${e}`);
-                            }
-                        }
-                        return videos;
-                    }
-                """, limit)
-                
-                if len(videos) > 0:
-                    logger.info(f"✅ Mobile TikTok found {len(videos)} videos")
-            except Exception as e:
-                logger.warning(f"Mobile fallback failed: {str(e)}")
-        
         logger.info(f"✅ Successfully scraped {len(videos)} videos for {restaurant_name}")
-        
-        await context.close()
         return videos
     
     except Exception as e:
@@ -1239,6 +1149,13 @@ async def scrape_tiktok_videos_playwright(
         return []
     
     finally:
+        # CRITICAL: Always close context to free memory
+        if context:
+            try:
+                await context.close()
+            except:
+                pass
+                
         # Always return browser to pool
         if browser:
             await browser_pool.release(browser)

@@ -64,7 +64,7 @@ export interface MenuPhoto {
 // API Client
 const apiClient = axios.create({
   baseURL: API_URL,
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -100,14 +100,14 @@ export const ApiService = {
       if (keyword) params.keyword = keyword;
 
       const response = await apiClient.get('/restaurants', { params });
-      
+
       let restaurants: Restaurant[] = [];
-      
+
       // Handle both array response (direct) and object response ({ places: [...] })
-      const placesData = Array.isArray(response.data) 
-        ? response.data 
+      const placesData = Array.isArray(response.data)
+        ? response.data
         : (response.data.places || []);
-      
+
       if (Array.isArray(placesData)) {
         restaurants = placesData.map((item: any, index: number) => ({
           id: item.id || item.place_id || `place-${Date.now()}-${index}`,
@@ -160,7 +160,10 @@ export const ApiService = {
   // Get TikTok videos
   async getTikTokVideos(placeId: string): Promise<{ videos: TikTokVideo[], search_url?: string }> {
     try {
-      const response = await apiClient.get(`/restaurants/${placeId}/tiktok-videos`);
+      // Increase timeout specifically for scraping endpoints
+      const response = await apiClient.get(`/restaurants/${placeId}/tiktok-videos`, {
+        timeout: 90000 // 90 seconds
+      });
       return {
         videos: response.data.videos || [],
         search_url: response.data.search_url,
@@ -223,7 +226,7 @@ export const ApiService = {
     try {
       const params: Record<string, any> = { lat, lng, radius, ...filters };
       const response = await apiClient.get('/restaurants/search', { params });
-      
+
       return (response.data || []).map((item: any, index: number) => ({
         id: item.id || item.place_id || `place-${Date.now()}-${index}`,
         place_id: item.id || item.place_id || `place-${Date.now()}-${index}`,
