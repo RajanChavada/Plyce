@@ -1303,6 +1303,51 @@ async def get_restaurant_photo(reference: str, maxwidth: int = 400):
         raise HTTPException(status_code=404, detail=f"Photo not found: {str(e)}")
 
 
+@app.get("/debug/proxy")
+async def debug_proxy():
+    """Debug endpoint to test proxy connection"""
+    browser = None
+    context = None
+    try:
+        proxy_url = os.getenv("TIKTOK_PROXY_URL")
+        if not proxy_url:
+            return {"status": "error", "message": "No TIKTOK_PROXY_URL set"}
+            
+        browser = await browser_pool.acquire()
+        
+        proxy_config = {"server": proxy_url}
+        
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            proxy=proxy_config
+        )
+        
+        page = await context.new_page()
+        
+        # Try to load a simple IP check service
+        start_time = time.time()
+        await page.goto("https://api.ipify.org?format=json", timeout=30000)
+        content = await page.content()
+        duration = time.time() - start_time
+        
+        # Extract IP from body (it's wrapped in pre/json usually)
+        ip_data = await page.evaluate("() => document.body.innerText")
+        
+        await context.close()
+        await browser_pool.release(browser)
+        
+        return {
+            "status": "success", 
+            "proxy_url": proxy_url.split("@")[-1] if "@" in proxy_url else proxy_url, # Hide auth
+            "detected_ip": ip_data,
+            "duration_seconds": round(duration, 2)
+        }
+        
+    except Exception as e:
+        if context: await context.close()
+        if browser: await browser_pool.release(browser)
+        return {"status": "error", "error": str(e)}
+
 @app.get("/restaurants/{place_id}/fallback-image")
 async def get_restaurant_fallback_image(place_id: str):
     """Get a restaurant image from web search as fallback"""
