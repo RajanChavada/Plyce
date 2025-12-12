@@ -125,10 +125,15 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
 
         <Dialog.Content
           className={cn(
-            'fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2',
-            // High opacity glass for premium feel + readability
+            'fixed z-50',
+            // Mobile: Full screen
+            'inset-0 w-full h-full rounded-none',
+            // Desktop: Centered modal
+            'md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2',
+            'md:w-full md:max-w-4xl md:h-auto md:max-h-[90vh] md:rounded-2xl',
+            // Shared styles
             'bg-white/90 backdrop-blur-xl shadow-glass border border-white/20',
-            'flex flex-col overflow-hidden rounded-2xl',
+            'flex flex-col overflow-hidden',
             'focus:outline-none'
           )}
           onClick={(e) => e.stopPropagation()}
@@ -138,7 +143,7 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col w-full max-h-[90vh] overflow-hidden"
+            className="flex flex-col w-full h-full md:h-auto overflow-hidden"
           >
             {/* Header Image */}
             <div className="relative h-64 rounded-t-2xl overflow-hidden">

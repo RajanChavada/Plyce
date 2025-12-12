@@ -37,18 +37,19 @@ export default function Sidebar({
     <motion.aside
       initial={false}
       animate={{
-        width: isOpen ? '400px' : 0,
+        width: isOpen ? '100%' : 0, // Allow full width, controlled by CSS max-width/width classes
         opacity: isOpen ? 1 : 0,
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      style={{ maxWidth: isOpen ? '400px' : 0 }}
+      style={{ maxWidth: isOpen ? '100%' : 0 }}
       className={cn(
         'flex flex-col h-full overflow-hidden border-r border-white/20',
         glassStyles.gradient,
-        'rounded-r-3xl' // Optional: round the right edge
+        'rounded-r-3xl', // Optional: round the right edge
+        'w-full md:w-[400px]' // Responsive width
       )}
     >
-      <div className="flex flex-col h-full p-4 w-[400px]">
+      <div className="flex flex-col h-full p-4 w-full md:w-[400px]">
         {/* Header Card */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}

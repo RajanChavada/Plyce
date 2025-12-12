@@ -25,7 +25,7 @@ export const glassStyles = {
   input: "bg-white/60 backdrop-blur-md border border-white/20 focus:bg-white/80 focus:border-accent-400/50 transition-all",
 
   // Vibrant gradient glass (Apple-like)
-  gradient: "bg-gradient-to-br from-white/95 via-white/85 to-white/70 backdrop-blur-2xl saturate-150 border border-white/50 shadow-glass ring-1 ring-white/20",
+  gradient: "bg-gradient-to-br from-white/95 via-white/85 to-white/70 backdrop-blur-2xl saturate-150 border border-white/50 shadow-[0_4px_20px_rgba(0,0,0,0.05)] ring-1 ring-white/20",
 };
 
 // Hover state utilities
