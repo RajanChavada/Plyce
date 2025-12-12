@@ -146,9 +146,9 @@ export default function HomePage() {
       {/* Main Content Area (Map) */}
       <div className={cn(
         "flex-1 h-full p-4 relative",
-        // On mobile: Hide map if sidebar is open (List View active)
-        // On desktop: Always show map (Sidebar pushes it)
-        isSidebarOpen ? "hidden md:block" : "block"
+        // Mobile: Show map only if sidebar is CLOSED (List View is hidden)
+        // Desktop: Always show map (Sidebar pushes it)
+        !isSidebarOpen ? "block" : "hidden md:block"
       )}>
         {/* Map Card Container */}
         <div className="w-full h-full rounded-3xl overflow-hidden border-4 border-white/50 shadow-2xl relative bg-white">

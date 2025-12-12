@@ -46,7 +46,7 @@ export default function Sidebar({
         'flex flex-col h-full overflow-hidden border-r border-white/20',
         glassStyles.gradient,
         'rounded-r-3xl', // Optional: round the right edge
-        'w-full md:w-[400px]' // Responsive width
+        'w-full md:!w-[400px]' // Responsive width (Force 400px on desktop to override inline motion style)
       )}
     >
       <div className="flex flex-col h-full p-4 w-full md:w-[400px]">
