@@ -1304,18 +1304,18 @@ async def get_restaurant_photo(reference: str, maxwidth: int = 400):
 
 
 @app.get("/debug/proxy")
-async def debug_proxy():
+async def debug_proxy(use_proxy: bool = True):
     """Debug endpoint to test proxy connection"""
     browser = None
     context = None
     try:
         proxy_url = os.getenv("TIKTOK_PROXY_URL")
-        if not proxy_url:
-            return {"status": "error", "message": "No TIKTOK_PROXY_URL set"}
-            
+        
         browser = await browser_pool.acquire()
         
-        proxy_config = {"server": proxy_url}
+        proxy_config = None
+        if use_proxy and proxy_url:
+            proxy_config = {"server": proxy_url}
         
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -1326,19 +1326,25 @@ async def debug_proxy():
         
         # Try to load a simple IP check service
         start_time = time.time()
-        await page.goto("https://api.ipify.org?format=json", timeout=30000)
-        content = await page.content()
+        # Increased timeout to 60s for slow proxies
+        try:
+            await page.goto("https://api.ipify.org?format=json", timeout=60000)
+            # Extract IP from body
+            ip_data = await page.evaluate("() => document.body.innerText")
+        except:
+            # Fallback to example.com if ipify fails
+            await page.goto("http://example.com", timeout=60000)
+            ip_data = "Loaded example.com (IP check failed)"
+            
         duration = time.time() - start_time
-        
-        # Extract IP from body (it's wrapped in pre/json usually)
-        ip_data = await page.evaluate("() => document.body.innerText")
         
         await context.close()
         await browser_pool.release(browser)
         
         return {
             "status": "success", 
-            "proxy_url": proxy_url.split("@")[-1] if "@" in proxy_url else proxy_url, # Hide auth
+            "using_proxy": bool(proxy_config),
+            "proxy_url": (proxy_url.split("@")[-1] if "@" in proxy_url else proxy_url) if proxy_config else "Direct",
             "detected_ip": ip_data,
             "duration_seconds": round(duration, 2)
         }
