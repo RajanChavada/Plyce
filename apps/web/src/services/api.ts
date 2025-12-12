@@ -190,7 +190,7 @@ export const ApiService = {
 
   // Get photo URL
   getPhotoUrl(restaurant: Restaurant, index: number = 0): string {
-    const fallbackUrl = `https://via.placeholder.com/400x300/f0f0f0/666666?text=${encodeURIComponent(
+    const fallbackUrl = `https://placehold.co/400x300/f0f0f0/666666/png?text=${encodeURIComponent(
       restaurant?.displayName?.text || restaurant?.name || 'Restaurant'
     )}`;
 
