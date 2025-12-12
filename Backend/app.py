@@ -200,7 +200,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", # Local development
-        "https://plyce.vercel.app", # Production frontend
+        "https://plyce.vercel.app/", # Production frontend
         "https://plyce-lso4mcg4s-rajanchavada111-7999s-projects.vercel.app" # Specific Vercel preview
     ],
     allow_origin_regex=r"https://.*\.vercel\.app", # Allow all Vercel deployments
