@@ -215,7 +215,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
         {/* Search Input Container - Glass Effect */}
         <div className={cn(
           'relative flex items-center rounded-2xl',
-          'bg-white/95 backdrop-blur-xl border border-white/40 shadow-glass ring-1 ring-white/40',
+          'bg-white/95 backdrop-blur-xl border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.05)] ring-1 ring-white/30',
           'transition-all duration-300 hover:bg-white',
           showPredictions && 'ring-2 ring-accent-400/50 bg-white'
         )}>
@@ -229,7 +229,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
             }}
             placeholder={placeholder}
             className={cn(
-              'w-full pl-10 pr-24 py-3 bg-transparent',
+              'w-full pl-10 pr-24 py-2 md:py-3 bg-transparent',
               'text-primary-900 placeholder:text-primary-400',
               'focus:outline-none transition-all duration-200'
             )}
