@@ -1023,6 +1023,13 @@ async def scrape_tiktok_videos_playwright(
         # Acquire browser from pool
         browser = await browser_pool.acquire()
         
+        # Configure proxy if available
+        proxy_config = None
+        proxy_url = os.getenv("TIKTOK_PROXY_URL")
+        if proxy_url:
+            logger.info(f"🛡️ Using proxy for TikTok scraping")
+            proxy_config = {"server": proxy_url}
+        
         # Create new page/context (isolated) with stealth settings
         # Block images and media to save bandwidth/memory
         context = await browser.new_context(
@@ -1032,6 +1039,7 @@ async def scrape_tiktok_videos_playwright(
             timezone_id="America/New_York",
             ignore_https_errors=True,
             java_script_enabled=True,
+            proxy=proxy_config,
             extra_http_headers={
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.9",
