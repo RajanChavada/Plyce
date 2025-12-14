@@ -1026,8 +1026,8 @@ async def scrape_tiktok_videos_rapidapi(
     }
 
     headers = {
-        "x-rapidapi-key": api_key,
-        "x-rapidapi-host": api_host
+        "X-RapidAPI-Key": api_key,
+        "X-RapidAPI-Host": api_host
     }
 
     try:
