@@ -2,7 +2,15 @@
 
 Food locator application that uses Google Maps Places API to discover restaurants nearby with comprehensive filtering capabilities.
 
-## 🎯 Features
+## Core Diagram / Mockups
+| | |
+| --- | --- |
+| <img src="https://github.com/user-attachments/assets/0e3f4559-cf18-4954-b3f2-8f745d2af7cb" width="250" /> | <img src="https://github.com/user-attachments/assets/5ea56b06-3522-4c5f-80e2-9ea2beba95ab" width="250" /> |
+| <img src="https://github.com/user-attachments/assets/d0e5b1a4-31f4-4e43-adee-33bce7560a6a" width="250" /> | <img src="https://github.com/user-attachments/assets/2a8809f5-a159-42b8-a63b-96a2b2ea9525" width="250" /> |
+| <img src="https://github.com/user-attachments/assets/205637f7-df85-4ea2-a839-01476c3d58b0" width="250" /> |  |
+
+
+## Features
 
 ### Core Features
 - 📍 Location-based restaurant discovery
@@ -11,30 +19,30 @@ Food locator application that uses Google Maps Places API to discover restaurant
 - 🎬 TikTok integration for restaurant videos
 - 📱 Mobile-first responsive design
 
-### 🆕 Advanced Filtering (NEW)
+### Advanced Filtering (NEW)
 Plyce now supports comprehensive restaurant filtering:
 
 #### Filter Categories
 
-1. **Cuisine Types** 🍽️
+1. **Cuisine Types** 
    - Italian, Indian, Chinese, Japanese, Mexican, Thai, French
    - Mediterranean, American, Korean, Vietnamese, Greek
 
-2. **Dietary Preferences** 🥗
+2. **Dietary Preferences** 
    - Vegetarian, Vegan, Gluten-Free
    - Halal, Kosher, Dairy-Free
 
-3. **Price Range** 💰
+3. **Price Range** 
    - $ (Inexpensive)
    - $$ (Moderate)
    - $$$ (Expensive)
    - $$$$ (Very Expensive)
 
 4. **Service Attributes** ♿
-   - 🌳 Outdoor Seating
-   - 🐕 Pet Friendly
-   - ♿ Wheelchair Accessible
-   - 🚚 Delivery Available
+   - Outdoor Seating
+   - Pet Friendly
+   - Wheelchair Accessible
+   - Delivery Available
 
 ### How Filtering Works
 
@@ -45,7 +53,7 @@ The app uses a smart two-step filtering process:
 
 This approach minimizes API calls while providing comprehensive filtering options.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.11+
@@ -88,7 +96,7 @@ npm install
 npx expo start
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Restaurant Search
 ```
@@ -142,11 +150,11 @@ cd /path/to/Plyce
 ./test_filtering.sh
 ```
 
-## 📖 Documentation
+## Documentation
 
 Detailed implementation guide: [FILTERING_FEATURE_GUIDE.md](./FILTERING_FEATURE_GUIDE.md)
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 Plyce/
@@ -166,7 +174,7 @@ Plyce/
 └── FILTERING_FEATURE_GUIDE.md # Complete feature documentation
 ```
 
-## 🎨 UI/UX Highlights
+## UI/UX Highlights
 
 - **Filter Button**: Shows count of active filters with visual indicator
 - **Active Filter Pills**: Display currently applied filters at a glance
@@ -174,7 +182,7 @@ Plyce/
 - **Clear All Option**: Quickly reset all filters
 - **Responsive Design**: Optimized for mobile devices
 
-## 📊 Example Use Cases
+## Example Use Cases
 
 ### Use Case 1: Health-Conscious User
 **Goal**: Find vegan restaurants with outdoor seating within 10km
@@ -208,7 +216,7 @@ Plyce/
 
 **Result**: Affordable Mexican dining options
 
-## 🔒 API Key Configuration
+## API Key Configuration
 
 Your Google API Key needs these APIs enabled:
 - Places API (New)
@@ -216,14 +224,14 @@ Your Google API Key needs these APIs enabled:
 - Places API - Text Search
 - Places API - Nearby Search
 
-## 💡 Performance Considerations
+## Performance Considerations
 
 - **Caching**: Results cached when no filters active
 - **Smart Fetching**: Place Details only fetched when service filters used
 - **Batch Operations**: Multiple place details fetched efficiently
 - **Client-side Search**: Text search doesn't trigger API calls
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Backend Issues
 - **API Key Errors**: Verify `GOOGLE_API_KEY` in `.env` file
@@ -235,7 +243,7 @@ Your Google API Key needs these APIs enabled:
 - **Filter Not Working**: Check network tab for API responses
 - **Cache Issues**: Force refresh or clear app cache
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! Areas for enhancement:
 - Additional filter categories
@@ -243,11 +251,7 @@ Contributions welcome! Areas for enhancement:
 - Filter analytics
 - Performance optimizations
 
-## 📝 License
-
-[Your License Here]
-
-## 🙏 Acknowledgments
+## Resources Used
 
 - Google Maps Places API
 - React Native & Expo
