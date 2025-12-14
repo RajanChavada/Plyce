@@ -1070,15 +1070,26 @@ async def scrape_tiktok_videos_rapidapi(
                         vid.get("video", {}).get("cover") or \
                         vid.get("video", {}).get("cover_url")
                         
-                # Video URL (Play URL)
-                play_url = vid.get("play") or vid.get("play_url") or \
-                           vid.get("video", {}).get("play_addr", {}).get("url_list", [""])[0]
+                # Video Web URL (Prioritize this for clicking)
+                # Try to get the official "share" URL or construct it
+                web_url = vid.get("share_url") or \
+                          vid.get("share_info", {}).get("share_url") or \
+                          vid.get("web_video_url")
                 
-                if play_url:
+                # If we don't have a direct link, try to construct it: https://www.tiktok.com/@{user}/video/{id}
+                if not web_url:
+                    author_id = vid.get("author", {}).get("unique_id")
+                    if author_id and vid_id:
+                        web_url = f"https://www.tiktok.com/@{author_id}/video/{vid_id}"
+
+                # Fallback to play_url if we really can't find a web link (better than nothing)
+                final_url = web_url if web_url else play_url
+                
+                if final_url:
                     videos.append({
                         "id": vid_id or f"vid-{i}",
                         "thumbnail": cover,
-                        "url": play_url, # Direct video link
+                        "url": final_url, # Now points to official web page if possible
                         "description": title[:100]
                     })
             except Exception as e:
