@@ -37,3 +37,6 @@ __pycache__/
 *.pyc
 
 .env.local
+
+# Markdown
+*.md

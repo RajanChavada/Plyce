@@ -1000,177 +1000,97 @@ async def get_restaurant_tiktok_google(place_id: str, limit: int = 5):
         }
 
 # ==================== PLAYWRIGHT SCRAPER FUNCTION ====================
-async def scrape_tiktok_videos_playwright(
+# ==================== RAPIDAPI SCRAPER FUNCTION ====================
+async def scrape_tiktok_videos_rapidapi(
     restaurant_name: str,
-    limit: int = 4,
-    timeout: int = 8000
+    limit: int = 4
 ) -> List[Dict]:
     """
-    Scrape TikTok videos using Playwright (async, fast, pooled)
-    
-    Args:
-        restaurant_name: Name of restaurant to search
-        limit: Number of videos to fetch
-        timeout: Timeout in milliseconds
-    
-    Returns:
-        List of video dictionaries with id, thumbnail, url, description
+    Scrape TikTok videos using RapidAPI (TikTok Scraper or similar)
     """
+    api_key = os.getenv("RAPIDAPI_KEY")
+    api_host = os.getenv("RAPIDAPI_HOST", "tiktok-scraper7.p.rapidapi.com")
     
-    browser = None
-    context = None
-    try:
-        # Acquire browser from pool
-        browser = await browser_pool.acquire()
-        
-        # Configure proxy if available
-        proxy_config = None
-        proxy_url = os.getenv("TIKTOK_PROXY_URL")
-        if proxy_url:
-            logger.info(f"🛡️ Using proxy for TikTok scraping")
-            proxy_config = {"server": proxy_url}
-        
-        # Create new page/context (isolated) with stealth settings
-        # Block images and media to save bandwidth/memory
-        context = await browser.new_context(
-            viewport={"width": 1920, "height": 1080},
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            locale="en-US",
-            timezone_id="America/New_York",
-            ignore_https_errors=True,
-            java_script_enabled=True,
-            proxy=proxy_config,
-            extra_http_headers={
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.9",
-                "DNT": "1",
-                "Upgrade-Insecure-Requests": "1"
-            }
-        )
-        
-        # Block resource heavy requests
-        await context.route("**/*.{png,jpg,jpeg,gif,webp,svg,mp4,avi,mov,mp3,wav,woff,woff2,ttf,eot}", lambda route: route.abort())
-        
-        page = await context.new_page()
-        
-        # Add stealth scripts to avoid detection
-        await page.add_init_script("""
-            Object.defineProperty(navigator, 'webdriver', { get: () => false });
-        """)
-        
-        # Construct search URL
-        search_query = f"{restaurant_name} restaurant"
-        tiktok_search_url = f"https://www.tiktok.com/search?q={search_query.replace(' ', '+')}"
-        
-        logger.info(f"🔍 Scraping TikTok for: {search_query}")
-        
-        # Navigate to TikTok search with retry logic
-        try:
-            await page.goto(
-                tiktok_search_url,
-                wait_until="domcontentloaded",
-                timeout=timeout
-            )
-            # Wait a bit for dynamic content
-            await page.wait_for_timeout(2000)
-        except Exception as e:
-            logger.warning(f"⏱️ Navigation failed for {search_query}: {str(e)}")
-            return []
-        
-        # Try multiple selector strategies
-        video_elements_found = False
-        selectors_to_try = [
-            "div[data-e2e='search_video-item']",
-            "div[data-e2e='search-card-item']", 
-            "div[class*='DivItemContainer']",
-            "a[href*='/video/']"
-        ]
-        
-        for selector in selectors_to_try:
-            try:
-                await page.wait_for_selector(selector, timeout=2000)
-                logger.info(f"✅ Found videos with selector: {selector}")
-                video_elements_found = True
-                break
-            except:
-                continue
-        
-        if not video_elements_found:
-            logger.warning(f"❌ No video elements found for {restaurant_name}")
-            return []
-        
-        # Extract video data using evaluate
-        videos = await page.evaluate("""
-            (limit) => {
-                const videos = [];
-                
-                // Strategy 1: Try data-e2e attributes
-                let videoElements = document.querySelectorAll("div[data-e2e='search_video-item'], div[data-e2e='search-card-item']");
-                
-                // Strategy 2: If not found, try class-based selectors
-                if (videoElements.length === 0) {
-                    videoElements = document.querySelectorAll("div[class*='DivItemContainer']");
-                }
-                
-                // Strategy 3: If still not found, find all links with /video/
-                if (videoElements.length === 0) {
-                    const allLinks = Array.from(document.querySelectorAll("a[href*='/video/']"));
-                    videoElements = allLinks.map(link => link.closest('div')).filter(Boolean);
-                }
-                
-                for (let i = 0; i < Math.min(videoElements.length, limit); i++) {
-                    try {
-                        const elem = videoElements[i];
-                        
-                        // Get link
-                        let linkElem = elem.querySelector("a[href*='/video/']");
-                        if (!linkElem) linkElem = elem.querySelector("a");
-                        const url = linkElem ? linkElem.href : "";
-                        
-                        // Get thumbnail
-                        let thumbnail = "";
-                        const imgElem = elem.querySelector("img");
-                        if (imgElem) {
-                            thumbnail = imgElem.src || imgElem.getAttribute('data-src') || "";
-                        }
-                        
-                        // Get description
-                        let description = "TikTok Video";
-                        const descElem = elem.querySelector("div[data-e2e*='desc'], h1, h2, h3, div[class*='title']");
-                        if (descElem) description = descElem.textContent.trim();
-                        
-                        if (url && url.includes('/video/')) {
-                            videos.push({
-                                id: `video-${i+1}`,
-                                thumbnail: thumbnail || "",
-                                url: url,
-                                description: description.substring(0, 100) || "TikTok Video"
-                            });
-                        }
-                    } catch (e) {}
-                }
-                return videos;
-            }
-        """, limit)
-        
-        logger.info(f"✅ Successfully scraped {len(videos)} videos for {restaurant_name}")
-        return videos
-    
-    except Exception as e:
-        logger.error(f"❌ Error scraping TikTok: {str(e)}")
+    if not api_key:
+        logger.warning("⚠️ RAPIDAPI_KEY not set, skipping API scrape")
         return []
+
+    url = f"https://{api_host}/feed/search"
     
-    finally:
-        # CRITICAL: Always close context to free memory
-        if context:
+    querystring = {
+        "keywords": f"{restaurant_name} restaurant",
+        "count": str(limit),
+        "region": "US",
+        "publish_time": "0",
+        "sort_type": "0"
+    }
+
+    headers = {
+        "x-rapidapi-key": api_key,
+        "x-rapidapi-host": api_host
+    }
+
+    try:
+        logger.info(f"🚀 Calling RapidAPI ({api_host}) for: {restaurant_name}")
+        # Run synchronous request in thread pool to avoid blocking async loop
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, lambda: requests.get(url, headers=headers, params=querystring, timeout=10))
+        
+        if response.status_code != 200:
+            logger.error(f"❌ RapidAPI Error: {response.status_code} - {response.text}")
+            return []
+            
+        data = response.json()
+        
+        # Parse response (adjust based on specific API response structure)
+        # Verify structure: usually data['data']['videos'] or similar
+        videos = []
+        
+        # Handle "TikTok Scraper" (logicbuilder) structure
+        video_list = data.get("data", {}).get("videos", [])
+        if not video_list and isinstance(data.get("data"), list):
+             video_list = data.get("data") # Some endpoints return list directly
+             
+        # Fallback for "TikTok All-in-One" structure if needed
+        if not video_list:
+            video_list = data.get("aweme_list", [])
+
+        for i, vid in enumerate(video_list):
+            if i >= limit: break
             try:
-                await context.close()
-            except:
-                pass
+                # Extract fields safely
+                # Different APIs have different field names, trying common ones
+                vid_id = vid.get("video_id") or vid.get("aweme_id")
                 
-        # Always return browser to pool
-        if browser:
-            await browser_pool.release(browser)
+                # Description
+                title = vid.get("title") or vid.get("desc") or "TikTok Video"
+                
+                # Cover URL
+                cover = vid.get("cover") or vid.get("cover_url") or \
+                        vid.get("video", {}).get("cover") or \
+                        vid.get("video", {}).get("cover_url")
+                        
+                # Video URL (Play URL)
+                play_url = vid.get("play") or vid.get("play_url") or \
+                           vid.get("video", {}).get("play_addr", {}).get("url_list", [""])[0]
+                
+                if play_url:
+                    videos.append({
+                        "id": vid_id or f"vid-{i}",
+                        "thumbnail": cover,
+                        "url": play_url, # Direct video link
+                        "description": title[:100]
+                    })
+            except Exception as e:
+                logger.error(f"⚠️ Error parsing video item: {e}")
+                continue
+                
+        logger.info(f"✅ RapidAPI found {len(videos)} videos")
+        return videos
+
+    except Exception as e:
+        logger.error(f"❌ RapidAPI Request Failed: {str(e)}")
+        return []
 
 # Helper function to generate placeholder videos
 def generate_placeholder_videos(restaurant_name: str, limit: int, search_url: str) -> List[Dict]:
@@ -1239,12 +1159,11 @@ async def get_restaurant_tiktok_videos(place_id: str, limit: int = 4):
         
         logger.info(f"🔍 Scraping TikTok for: {restaurant_name}")
         
-        # Scrape using Playwright with browser pool
-        # Increased timeout to 45s for proxy latency
+        # Call RapidAPI
         try:
-            videos = await scrape_tiktok_videos_playwright(restaurant_name, limit, timeout=45000)
+            videos = await scrape_tiktok_videos_rapidapi(restaurant_name, limit)
         except Exception as e:
-            logger.error(f"⚠️ Playwright scraping failed: {str(e)}")
+            logger.error(f"⚠️ API scraping failed: {str(e)}")
             videos = []
         
         # Create TikTok search URL for fallback
